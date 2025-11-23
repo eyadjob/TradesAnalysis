@@ -5,6 +5,7 @@ import java.util.*;
 
 // Apache POI imports for Excel formatting
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import java.awt.Color;
@@ -28,20 +29,44 @@ public class TradeProfitAnalyzer {
     }
 
     public static void main(String[] args) {
-        String inputFile = "D:\\TradesAnalysis\\Theranto v3 Live 2.csv";
-        String outputFile = "D:\\TradesAnalysis\\Theranto v3 Live 2.xlsx";
+        String directoryPath = "D:\\\\TradesAnalysis";
 
         try {
-            Map<String, Double> monthlyProfits = analyzeTrades(inputFile);
-            writeResultsToExcel(monthlyProfits, outputFile);
-            System.out.println("Analysis complete! Results saved to: " + outputFile);
+            // Get all CSV files in the directory
+            File directory = new File(directoryPath);
+            File[] csvFiles = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(".csv"));
 
-        } catch (IOException e) {
-            System.err.println("Error processing files: " + e.getMessage());
+            if (csvFiles == null || csvFiles.length == 0) {
+                System.out.println("No CSV files found in directory: " + directoryPath);
+                return;
+            }
+
+            System.out.println("Found " + csvFiles.length + " CSV file(s) to process:");
+
+            for (File csvFile : csvFiles) {
+                String inputFile = csvFile.getAbsolutePath();
+                String outputFile = inputFile.replace(".csv", ".xlsx");
+
+                System.out.println("Processing: " + csvFile.getName());
+
+                try {
+                    Map<String, Double> monthlyProfits = analyzeTrades(inputFile);
+                    writeResultsToExcel(monthlyProfits, outputFile);
+                    System.out.println("  ✓ Analysis complete! Results saved to: " + outputFile);
+
+                } catch (IOException e) {
+                    System.err.println("  ✗ Error processing file " + csvFile.getName() + ": " + e.getMessage());
+                }
+            }
+
+            System.out.println("\nAll files processed successfully!");
+
+        } catch (Exception e) {
+            System.err.println("Error processing directory: " + e.getMessage());
             e.printStackTrace();
         }
-
     }
+
     public static Map<String, Double> analyzeTrades(String inputFilePath) throws IOException {
         Map<String, Double> monthlyProfits = new TreeMap<>();
 
@@ -138,13 +163,26 @@ public class TradeProfitAnalyzer {
 
             // Create styles
             CellStyle headerStyle = createHeaderStyle(workbook);
+            CellStyle titleStyle = createTitleStyle(workbook);
             CellStyle positiveProfitStyle = createPositiveProfitStyle(workbook);
             CellStyle negativeProfitStyle = createNegativeProfitStyle(workbook);
             CellStyle defaultStyle = createDefaultCellStyle(workbook);
             CellStyle summaryStyle = createSummaryStyle(workbook);
 
+            // Create title row with filename (without .csv)
+            String fileName = outputFilePath.substring(outputFilePath.lastIndexOf("\\") + 1);
+            fileName = fileName.replace(".xlsx", "");
+
+            Row titleRow = sheet.createRow(0);
+            Cell titleCell = titleRow.createCell(0);
+            titleCell.setCellValue(fileName);
+            titleCell.setCellStyle(titleStyle);
+
+            // Merge cells A1:B1 for the title
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 1));
+
             // Create header row
-            Row headerRow = sheet.createRow(0);
+            Row headerRow = sheet.createRow(1);
             Cell headerCell1 = headerRow.createCell(0);
             headerCell1.setCellValue("Month");
             headerCell1.setCellStyle(headerStyle);
@@ -154,7 +192,7 @@ public class TradeProfitAnalyzer {
             headerCell2.setCellStyle(headerStyle);
 
             // Write data rows and calculate totals
-            int rowNum = 1;
+            int rowNum = 2;
             double totalProfits = 0.0;
             int monthCount = 0;
 
@@ -206,6 +244,29 @@ public class TradeProfitAnalyzer {
             }
         }
     }
+
+    private static CellStyle createTitleStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+
+        // Set font to Aptos Narrow, size 14 (2 pixels bigger than header), bold
+        font.setFontName("Aptos Narrow");
+        font.setFontHeightInPoints((short) 14);
+        font.setBold(true);
+
+        // Set background color to #83CCEB (same as header)
+        style.setFillForegroundColor(new XSSFColor(new Color(131, 204, 235), null));
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        // Set centered alignment
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+
+        style.setFont(font);
+
+        return style;
+    }
+
 
     private static CellStyle createHeaderStyle(Workbook workbook) {
         CellStyle style = workbook.createCellStyle();
