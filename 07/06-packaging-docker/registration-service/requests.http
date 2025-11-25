@@ -1,0 +1,42 @@
+### Create a new registration
+
+POST localhost:8080/registrations
+Content-Type: application/json
+
+{"productId": 801, "attendeeName": "Jesper de Jong"}
+
+### Get all registrations
+
+GET localhost:8080/registrations
+Accept: application/json
+
+### Get a list of Actuator endpoints
+
+GET localhost:8080/actuator
+
+### Check service health
+
+GET localhost:8080/actuator/health
+
+### Get information about request mappings
+
+GET localhost:8080/actuator/mappings
+
+### Get logging level
+
+GET localhost:8080/actuator/loggers/org.springframework.web
+
+### Change logging level
+
+POST localhost:8080/actuator/loggers/org.springframework.web
+Content-Type: application/json
+
+{"configuredLevel": "DEBUG"}
+
+### Metrics overview
+
+GET localhost:8080/actuator/metrics/http.server.requests
+
+### Show the number of POST requests to the path /registrations
+
+GET localhost:8080/actuator/metrics/http.server.requests?tag=method:POST&tag=uri:/registrations
