@@ -301,7 +301,8 @@ public class TradeProfitAnalyzer {
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         style.setFont(font);
-        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
         style.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
 
         return style;
@@ -318,7 +319,8 @@ public class TradeProfitAnalyzer {
         style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
         style.setFont(font);
-        style.setAlignment(HorizontalAlignment.RIGHT);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
         style.setDataFormat(workbook.createDataFormat().getFormat("#,##0.00"));
 
         return style;
@@ -331,7 +333,8 @@ public class TradeProfitAnalyzer {
         font.setFontHeightInPoints((short) 11);
 
         style.setFont(font);
-        style.setAlignment(HorizontalAlignment.LEFT);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
 
         return style;
     }
