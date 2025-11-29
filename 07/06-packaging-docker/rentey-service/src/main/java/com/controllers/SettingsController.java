@@ -6,8 +6,10 @@ import com.beans.UpdateAllSettingsRequestBean;
 import com.services.SettingsService;
 import org.springframework.web.bind.annotation.*;
 
+import static com.controllers.ApiPaths.*;
+
 @RestController
-@RequestMapping(path = "/api/services/app")
+@RequestMapping(path = BASE_PATH)
 public class SettingsController {
 
     private final SettingsService settingsService;
@@ -24,7 +26,7 @@ public class SettingsController {
      * @param request The request containing all the settings to be updated.
      * @return The response containing the result of the operation.
      */
-    @PostMapping(path = "/TenantSettings/UpdateAllSettings", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = TENANT_SETTINGS_UPDATE_ALL, consumes = "application/json", produces = "application/json")
     public AbpResponseBean updateAllSettings(
             @RequestBody(required = true) UpdateAllSettingsRequestBean request) {
 
@@ -44,7 +46,7 @@ public class SettingsController {
      * @param request The request containing the settings to be changed.
      * @return The response containing the result of the operation.
      */
-    @PostMapping(path = "/GeoSettings/ChangeTenantSettings", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = GEO_SETTINGS_CHANGE_TENANT, consumes = "application/json", produces = "application/json")
     public AbpResponseBean changeTenantSettings(
             @RequestParam(required = true) Integer countryId,
             @RequestBody(required = true) TenantAndCountrySettingsRequestBean request) {
@@ -69,7 +71,7 @@ public class SettingsController {
      * @param request The request containing the settings to be updated.
      * @return The response containing the result of the operation.
      */
-    @PostMapping(path = "/GeoSettings/UpdateCountrySettings", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = GEO_SETTINGS_UPDATE_COUNTRY, consumes = "application/json", produces = "application/json")
     public AbpResponseBean updateCountrySettings(
             @RequestParam(required = true) Integer countryId,
             @RequestBody(required = true) TenantAndCountrySettingsRequestBean request) {
@@ -95,7 +97,7 @@ public class SettingsController {
      * @param request The request containing the settings to be changed.
      * @return The response containing the result of the operation.
      */
-    @PostMapping(path = "/GeoSettings/ChangeBranchSettings", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = GEO_SETTINGS_CHANGE_BRANCH, consumes = "application/json", produces = "application/json")
     public AbpResponseBean changeBranchSettings(
             @RequestParam(required = true) Integer countryId,
             @RequestParam(required = true) Integer branchId,
