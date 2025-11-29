@@ -14,7 +14,7 @@
         <module>events-service</module>
         <module>registration-service</module>
         <module>authorization-service</module>
-        <module>settings-service</module>
+        <module>rentey-service</module>
     </modules>
 
     <properties>
