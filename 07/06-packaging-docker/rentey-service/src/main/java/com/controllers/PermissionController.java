@@ -6,8 +6,10 @@ import com.beans.GetAllPermissionsResponseBean;
 import com.services.PermissionService;
 import org.springframework.web.bind.annotation.*;
 
+import static com.controllers.ApiPaths.*;
+
 @RestController
-@RequestMapping(path = "/api/services/app")
+@RequestMapping(path = BASE_PATH)
 public class PermissionController {
 
     private final PermissionService permissionService;
@@ -23,7 +25,7 @@ public class PermissionController {
      *
      * @return The response containing all permissions.
      */
-    @GetMapping(path = "/Permission/GetAllPermissions", produces = "application/json")
+    @GetMapping(path = PERMISSION_GET_ALL, produces = "application/json")
     public GetAllPermissionsResponseBean getAllPermissions() {
         return permissionService.getAllPermissions();
     }
@@ -36,7 +38,7 @@ public class PermissionController {
      * @param request The request containing role information, granted permissions, and notifications.
      * @return The response containing the result of the operation.
      */
-    @PostMapping(path = "/Role/CreateOrUpdateRole", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = ROLE_CREATE_OR_UPDATE, consumes = "application/json", produces = "application/json")
     public AbpResponseBean createOrUpdateRole(
             @RequestBody(required = true) CreateOrUpdateRoleRequestBean request) {
 
