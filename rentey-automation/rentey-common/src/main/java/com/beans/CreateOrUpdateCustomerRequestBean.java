@@ -1,14 +1,17 @@
 package com.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
  * Request bean for CreateOrUpdateCustomer API.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record CreateOrUpdateCustomerRequestBean(
         @JsonProperty("customer") CustomerData customer
 ) {
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record CustomerData(
             @JsonProperty("fullName") FullName fullName,
             @JsonProperty("contactInformation") ContactInformation contactInformation,
@@ -24,6 +27,7 @@ public record CreateOrUpdateCustomerRequestBean(
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record FullName(
             @JsonProperty("first") String first,
             @JsonProperty("second") String second,
@@ -31,12 +35,14 @@ public record CreateOrUpdateCustomerRequestBean(
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ContactInformation(
             @JsonProperty("primaryPhone") String primaryPhone,
             @JsonProperty("email") String email
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record BasicInformation(
             @JsonProperty("nationalityId") String nationalityId,
             @JsonProperty("genderId") String genderId,
@@ -44,6 +50,7 @@ public record CreateOrUpdateCustomerRequestBean(
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record ProfessionalInformation(
             // Empty object - fields are nullable to support empty JSON objects
             @JsonProperty("organizationId") String organizationId,
@@ -52,12 +59,14 @@ public record CreateOrUpdateCustomerRequestBean(
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Address(
             @JsonProperty("countryId") String countryId,
             @JsonProperty("cityId") Integer cityId
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record SecondaryAddress(
             // Empty object - fields are nullable to support empty JSON objects
             @JsonProperty("countryId") String countryId,
@@ -66,6 +75,7 @@ public record CreateOrUpdateCustomerRequestBean(
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record EmergencyContact(
             // Structure can be defined based on actual requirements
             @JsonProperty("name") String name,
@@ -74,6 +84,7 @@ public record CreateOrUpdateCustomerRequestBean(
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record PersonalPhoto(
             @JsonProperty("id") String id,
             @JsonProperty("url") String url,
@@ -82,6 +93,7 @@ public record CreateOrUpdateCustomerRequestBean(
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record DocumentDto(
             @JsonProperty("discriminator") String discriminator,
             @JsonProperty("issueCountryId") String issueCountryId,
@@ -98,6 +110,7 @@ public record CreateOrUpdateCustomerRequestBean(
     ) {
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public record Attachment(
             @JsonProperty("url") String url,
             @JsonProperty("size") Integer size,
