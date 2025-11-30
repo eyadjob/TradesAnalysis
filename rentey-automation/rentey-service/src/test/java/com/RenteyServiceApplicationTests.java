@@ -1,11 +1,10 @@
-package com.pluralsight.springboot.settings;
+package com;
 
-import com.RenteyServiceApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = RenteyServiceApplication.class)
-class SettingsServiceApplicationTests {
+class RenteyServiceApplicationTests {
 
     @Test
     void contextLoads() {

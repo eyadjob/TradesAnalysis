@@ -28,6 +28,7 @@ public final class ApiPaths {
     
     // Country endpoints
     public static final String COUNTRY_GET_OPERATIONAL_COUNTRIES = "/Country/GetOperationalCountries";
+    public static final String COUNTRY_GET_COUNTRIES_PHONE = "/Country/GetCountriesPhone";
     
     // Currency endpoints
     public static final String CURRENCY_GET_COUNTRY_CURRENCY_INFO = "/Currency/GetCountryCurrencyInfo";
@@ -37,6 +38,9 @@ public final class ApiPaths {
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
+    
+    // File Upload endpoints
+    public static final String FILE_UPLOAD_BASE64 = "/FileUpload/UploadBase64File";
     
     // Lookups endpoints
     public static final String LOOKUPS_GET_ALL_ITEMS_COMBOBOX = "/Lookups/GetAllItemsComboboxItems";

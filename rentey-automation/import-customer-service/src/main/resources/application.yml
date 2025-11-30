@@ -1,0 +1,17 @@
+server:
+  port: 8090
+
+spring:
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+      fail-on-invalid-subtype: false
+      fail-on-null-for-primitives: false
+    default-property-inclusion: non_null
+
+rentey:
+  service:
+    base-url: http://localhost:8089
+    api:
+      base-path: /api/services/app
+
