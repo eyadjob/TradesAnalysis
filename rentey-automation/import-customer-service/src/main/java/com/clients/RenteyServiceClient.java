@@ -1,5 +1,7 @@
 package com.clients;
 
+
+import com.beans.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -7,7 +9,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Client service to call all APIs in rentey-service.
@@ -31,22 +32,22 @@ public class RenteyServiceClient {
     /**
      * Get all permissions from rentey-service.
      */
-    public Mono<Object> getAllPermissions() {
+    public Mono<GetAllPermissionsResponseBean> getAllPermissions() {
         return renteyServiceWebClient.get()
                 .uri(basePath + "/Permission/GetAllPermissions")
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(GetAllPermissionsResponseBean.class);
     }
 
     /**
      * Create or update a role in rentey-service.
      */
-    public Mono<Object> createOrUpdateRole(Object request) {
+    public Mono<AbpResponseBean> createOrUpdateRole(Object request) {
         return renteyServiceWebClient.post()
                 .uri(basePath + "/Role/CreateOrUpdateRole")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(AbpResponseBean.class);
     }
 
     // ==================== Settings APIs ====================
@@ -54,18 +55,18 @@ public class RenteyServiceClient {
     /**
      * Update all settings for the tenant.
      */
-    public Mono<Object> updateAllSettings(Object request) {
+    public Mono<AbpResponseBean> updateAllSettings(Object request) {
         return renteyServiceWebClient.post()
                 .uri(basePath + "/TenantSettings/UpdateAllSettings")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(AbpResponseBean.class);
     }
 
     /**
      * Change tenant settings for a specific country.
      */
-    public Mono<Object> changeTenantSettings(Integer countryId, Object request) {
+    public Mono<AbpResponseBean> changeTenantSettings(Integer countryId, Object request) {
         return renteyServiceWebClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path(basePath + "/GeoSettings/ChangeTenantSettings")
@@ -73,13 +74,13 @@ public class RenteyServiceClient {
                         .build())
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(AbpResponseBean.class);
     }
 
     /**
      * Update country settings for a specific country.
      */
-    public Mono<Object> updateCountrySettings(Integer countryId, Object request) {
+    public Mono<AbpResponseBean> updateCountrySettings(Integer countryId, Object request) {
         return renteyServiceWebClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path(basePath + "/GeoSettings/UpdateCountrySettings")
@@ -87,13 +88,13 @@ public class RenteyServiceClient {
                         .build())
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(AbpResponseBean.class);
     }
 
     /**
      * Change branch settings for a specific country and branch.
      */
-    public Mono<Object> changeBranchSettings(Integer countryId, Integer branchId, Object request) {
+    public Mono<AbpResponseBean> changeBranchSettings(Integer countryId, Integer branchId, Object request) {
         return renteyServiceWebClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path(basePath + "/GeoSettings/ChangeBranchSettings")
@@ -102,17 +103,17 @@ public class RenteyServiceClient {
                         .build())
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(AbpResponseBean.class);
     }
 
     /**
      * Get operational countries.
      */
-    public Mono<Object> getOperationalCountries() {
+    public Mono<GetOperationalCountriesResponseBean> getOperationalCountries() {
         return renteyServiceWebClient.get()
                 .uri(basePath + "/Country/GetOperationalCountries")
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(GetOperationalCountriesResponseBean.class);
     }
 
     // ==================== Country APIs ====================
@@ -120,20 +121,20 @@ public class RenteyServiceClient {
     /**
      * Get country currency information by country ID.
      */
-    public Mono<Object> getCountryCurrencyInfo(Integer countryId) {
+    public Mono<GetCountryCurrencyInfoResponseBean> getCountryCurrencyInfo(Integer countryId) {
         return renteyServiceWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(basePath + "/Currency/GetCountryCurrencyInfo")
                         .queryParam("countryId", countryId)
                         .build())
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(GetCountryCurrencyInfoResponseBean.class);
     }
 
     /**
      * Get user branches for combobox.
      */
-    public Mono<Object> getUserBranchesForCombobox(
+    public Mono<GetUserBranchesForComboboxResponseBean> getUserBranchesForCombobox(
             Boolean includeInActive,
             Integer countryId,
             Boolean includeAll,
@@ -158,13 +159,13 @@ public class RenteyServiceClient {
                     return builder.build();
                 })
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(GetUserBranchesForComboboxResponseBean.class);
     }
 
     /**
      * Get countries phone information.
      */
-    public Mono<Object> getCountriesPhone(
+    public Mono<GetCountriesPhoneResponseBean> getCountriesPhone(
             Integer typeId,
             Boolean includeInActive,
             Boolean includeNotAssign) {
@@ -176,7 +177,7 @@ public class RenteyServiceClient {
                         .queryParam("includeNotAssign", includeNotAssign)
                         .build())
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(GetCountriesPhoneResponseBean.class);
     }
 
     // ==================== Customer APIs ====================
@@ -184,12 +185,12 @@ public class RenteyServiceClient {
     /**
      * Create or update a customer.
      */
-    public Mono<Object> createOrUpdateCustomer(Object request) {
+    public Mono<CreateOrUpdateCustomerResponseBean> createOrUpdateCustomer(CreateOrUpdateCustomerRequestBean request) {
         return renteyServiceWebClient.post()
                 .uri(basePath + "/Customer/CreateOrUpdateCustomer")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(CreateOrUpdateCustomerResponseBean.class);
     }
 
     // ==================== Lookups APIs ====================
@@ -197,7 +198,7 @@ public class RenteyServiceClient {
     /**
      * Get all items for a combobox based on the lookup type.
      */
-    public Mono<Object> getAllItemsComboboxItems(
+    public Mono<GetAllItemsComboboxItemsResponseBean> getAllItemsComboboxItems(
             Integer typeId,
             Boolean includeInActive,
             Boolean includeNotAssign) {
@@ -209,7 +210,7 @@ public class RenteyServiceClient {
                         .queryParam("includeNotAssign", includeNotAssign)
                         .build())
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class);
     }
 
     // ==================== File Upload APIs ====================
@@ -217,12 +218,12 @@ public class RenteyServiceClient {
     /**
      * Upload a base64 encoded file.
      */
-    public Mono<Object> uploadBase64File(Object request) {
+    public Mono<UploadBase64FileResponseBean> uploadBase64File(Object request) {
         return renteyServiceWebClient.post()
                 .uri(basePath + "/FileUpload/UploadBase64File")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(Object.class);
+                .bodyToMono(UploadBase64FileResponseBean.class);
     }
 }
 
