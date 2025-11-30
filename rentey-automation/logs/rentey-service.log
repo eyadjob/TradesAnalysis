@@ -1,0 +1,30 @@
+2025-11-30T16:12:29.142+03:00  INFO 66716 --- [main] com.RenteyServiceApplication             : Starting RenteyServiceApplication using Java 22.0.2 with PID 66716 (D:\TradesAnalysis\rentey-automation\rentey-service\target\classes started by eyadm in D:\TradesAnalysis\rentey-automation)
+2025-11-30T16:12:29.144+03:00 DEBUG 66716 --- [main] com.RenteyServiceApplication             : Running with Spring Boot v3.1.1, Spring v6.0.10
+2025-11-30T16:12:29.144+03:00  INFO 66716 --- [main] com.RenteyServiceApplication             : No active profile set, falling back to 1 default profile: "default"
+2025-11-30T16:12:30.246+03:00  INFO 66716 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8089 (http)
+2025-11-30T16:12:30.253+03:00  INFO 66716 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-11-30T16:12:30.253+03:00  INFO 66716 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.10]
+2025-11-30T16:12:30.325+03:00  INFO 66716 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-11-30T16:12:30.326+03:00  INFO 66716 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1140 ms
+2025-11-30T16:12:30.508+03:00 DEBUG 66716 --- [main] c.services.AuthorizationServiceManager   : Found project root at: D:\TradesAnalysis\rentey-automation
+2025-11-30T16:12:30.522+03:00  INFO 66716 --- [main] com.RenteyControllerExceptionHandler     : RenteyControllerExceptionHandler initialized and registered
+2025-11-30T16:12:30.522+03:00  INFO 66716 --- [main] com.RenteyControllerExceptionHandler     : RenteyControllerExceptionHandler bean created
+2025-11-30T16:12:30.759+03:00  WARN 66716 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-11-30T16:12:30.778+03:00  INFO 66716 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-11-30T16:12:30.795+03:00  INFO 66716 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-11-30T16:12:30.823+03:00 ERROR 66716 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8089 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8089 or configure this application to listen on another port.
+
