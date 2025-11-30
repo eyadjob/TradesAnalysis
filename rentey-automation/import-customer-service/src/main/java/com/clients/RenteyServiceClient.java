@@ -2,10 +2,13 @@ package com.clients;
 
 
 import com.beans.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -17,6 +20,8 @@ import java.util.List;
 @Service
 public class RenteyServiceClient {
 
+    private static final Logger logger = LoggerFactory.getLogger(RenteyServiceClient.class);
+    
     private final WebClient renteyServiceWebClient;
     private final String basePath;
 
@@ -190,7 +195,17 @@ public class RenteyServiceClient {
                 .uri(basePath + "/Customer/CreateOrUpdateCustomer")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(CreateOrUpdateCustomerResponseBean.class);
+                .bodyToMono(CreateOrUpdateCustomerResponseBean.class)
+                .doOnError(WebClientResponseException.class, error -> {
+                    String responseBody = error.getResponseBodyAsString();
+                    logger.error("rentey-service returned error - Status: {}, Response Body: {}", 
+                            error.getStatusCode(), responseBody);
+                })
+                .doOnError(error -> {
+                    if (!(error instanceof WebClientResponseException)) {
+                        logger.error("Error calling rentey-service: {}", error.getMessage(), error);
+                    }
+                });
     }
 
     // ==================== Lookups APIs ====================

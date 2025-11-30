@@ -17,16 +17,19 @@ import org.springframework.stereotype.Service;
 public class AuthorizationTokenService {
 
     private final AuthorizationServiceClient authorizationServiceClient;
+    private final AuthorizationServiceManager authorizationServiceManager;
     private final String userNameOrEmailAddress;
     private final String password;
     private final Boolean rememberClient;
 
     public AuthorizationTokenService(
             AuthorizationServiceClient authorizationServiceClient,
+            AuthorizationServiceManager authorizationServiceManager,
             @Value("${authorization.service.credentials.userNameOrEmailAddress}") String userNameOrEmailAddress,
             @Value("${authorization.service.credentials.password}") String password,
             @Value("${authorization.service.credentials.rememberClient}") Boolean rememberClient) {
         this.authorizationServiceClient = authorizationServiceClient;
+        this.authorizationServiceManager = authorizationServiceManager;
         this.userNameOrEmailAddress = userNameOrEmailAddress;
         this.password = password;
         this.rememberClient = rememberClient;
@@ -34,11 +37,24 @@ public class AuthorizationTokenService {
 
     /**
      * Retrieves a refresh token from the authorization service.
+     * This method automatically ensures authorization-service is running before making the call.
      * 
      * @return The refresh token string
      * @throws RuntimeException if the token cannot be retrieved or if there's a connection error
      */
     public String getRefreshToken() {
+        try {
+            // Ensure authorization-service is running before making the call
+            authorizationServiceManager.ensureAuthorizationServiceIsRunning();
+        } catch (RuntimeException e) {
+            // If authorization-service failed to start, wrap the error with more context
+            throw new RuntimeException(
+                "Failed to start authorization-service automatically: " + e.getMessage() + 
+                ". Please ensure authorization-service can be started or start it manually.",
+                e
+            );
+        }
+        
         AuthenticateRequestBean authRequest = new AuthenticateRequestBean(
                 userNameOrEmailAddress,
                 password,
@@ -60,8 +76,8 @@ public class AuthorizationTokenService {
             if (e.getCause() instanceof java.net.ConnectException) {
                 throw new RuntimeException(
                     "Cannot connect to authorization-service at http://localhost:8088. " +
-                    "Please ensure the authorization-service is running. " +
-                    "Start it by running: cd authorization-service && mvnw spring-boot:run",
+                    "The service may have failed to start automatically. " +
+                    "Please check the logs or start it manually: cd authorization-service && mvnw spring-boot:run",
                     e
                 );
             }

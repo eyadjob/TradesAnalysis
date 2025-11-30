@@ -36,7 +36,7 @@ public class ImportCustomerController {
      * @return ResponseEntity containing the response from the createOrUpdateCustomer API
      */
     @PostMapping(path = "/customer", consumes = "application/json", produces = "application/json")
-    public Mono<ResponseEntity<CreateOrUpdateCustomerResponseBean>> createOrUpdateCustomer(
+    public Mono<ResponseEntity<Object>> createOrUpdateCustomer(
             @RequestBody(required = true) CreateOrUpdateCustomerRequestBean request) {
 
         // Validate request
@@ -56,17 +56,33 @@ public class ImportCustomerController {
 
         // Call the service to create or update customer
         return importCustomersService.createOrUpdateCustomer(request)
-                .map(response -> {
+                .map((CreateOrUpdateCustomerResponseBean response) -> {
                     logger.info("Successfully created/updated customer");
-                    return ResponseEntity
+                    ResponseEntity<Object> responseEntity = ResponseEntity
                             .status(HttpStatus.OK)
-                            .body(response);
+                            .body((Object) response);
+                    return responseEntity;
                 })
                 .onErrorResume(error -> {
-                    logger.error("Error creating/updating customer: {}", error.getMessage(), error);
-                    return Mono.just(ResponseEntity
+                    String errorMessage = error.getMessage();
+                    logger.error("Error creating/updating customer: {}", errorMessage, error);
+                    
+                    // Check if it's a WebClientResponseException to get more details
+                    if (error instanceof org.springframework.web.reactive.function.client.WebClientResponseException) {
+                        org.springframework.web.reactive.function.client.WebClientResponseException webClientEx = 
+                                (org.springframework.web.reactive.function.client.WebClientResponseException) error;
+                        String responseBody = webClientEx.getResponseBodyAsString();
+                        logger.error("rentey-service error details - Status: {}, Response: {}", 
+                                webClientEx.getStatusCode(), responseBody);
+                        errorMessage = String.format("rentey-service error: %s. Response: %s", 
+                                webClientEx.getStatusCode(), 
+                                responseBody != null ? responseBody : "No response body");
+                    }
+                    
+                    ResponseEntity<Object> errorResponse = ResponseEntity
                             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .build());
+                            .body((Object) errorMessage);
+                    return Mono.just(errorResponse);
                 });
     }
 
