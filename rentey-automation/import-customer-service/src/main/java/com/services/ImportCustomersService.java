@@ -23,7 +23,7 @@ public class ImportCustomersService {
      *
      * @return Mono containing the response from the createOrUpdateCustomer API
      */
-    public Mono<CreateOrUpdateCustomerResponseBean> createOrUpdateCustomerWithDummyData() {
+    public Mono<CreateOrUpdateCustomerResponseBean> createOrUpdateCustomer() {
         // Build the request with default dummy data using CustomerDataBuilder
         CreateOrUpdateCustomerRequestBean request = CustomerDataBuilder.create()
                 .build();
@@ -66,6 +66,17 @@ public class ImportCustomersService {
      */
     public Mono<CreateOrUpdateCustomerResponseBean> createOrUpdateCustomer(CustomerDataBuilder builder) {
         CreateOrUpdateCustomerRequestBean request = builder.build();
+        return renteyServiceClient.createOrUpdateCustomer(request);
+    }
+
+    /**
+     * Creates or updates a customer with the provided request.
+     * This method accepts a CreateOrUpdateCustomerRequestBean and calls the rentey-service API.
+     *
+     * @param request The request containing customer information.
+     * @return Mono containing the response from the createOrUpdateCustomer API
+     */
+    public Mono<CreateOrUpdateCustomerResponseBean> createOrUpdateCustomer(CreateOrUpdateCustomerRequestBean request) {
         return renteyServiceClient.createOrUpdateCustomer(request);
     }
 }
