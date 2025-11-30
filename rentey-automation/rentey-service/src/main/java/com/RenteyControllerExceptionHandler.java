@@ -17,13 +17,18 @@ import java.util.NoSuchElementException;
  * Global exception handler for rentey-service.
  * Provides consistent error responses across all endpoints.
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = "com.controllers")
 public class RenteyControllerExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RenteyControllerExceptionHandler.class);
     
     static {
         logger.info("RenteyControllerExceptionHandler initialized and registered");
+    }
+    
+    // Constructor to ensure the bean is created
+    public RenteyControllerExceptionHandler() {
+        logger.info("RenteyControllerExceptionHandler bean created");
     }
 
     @ExceptionHandler(NoSuchElementException.class)

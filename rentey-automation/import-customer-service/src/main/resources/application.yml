@@ -16,9 +16,18 @@ spring:
   codec:
     max-in-memory-size: 10MB
 
+logging:
+  file:
+    name: logs/import-customer-service.log
+  level:
+    root: INFO
+    com: DEBUG  # To see DEBUG logs from your packages
+    org.springframework.web: INFO
+    org.springframework.boot: INFO
+
 rentey:
   service:
-    base-url: http://localhost:8089
+    base-url: http://localhost:8091
     api:
       base-path: /api/services/app
 

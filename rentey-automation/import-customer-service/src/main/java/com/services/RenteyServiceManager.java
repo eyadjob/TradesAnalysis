@@ -29,7 +29,7 @@ public class RenteyServiceManager {
     public RenteyServiceManager(
             @Value("${rentey.service.base-url}") String renteyServiceBaseUrl) {
         this.renteyServiceBaseUrl = renteyServiceBaseUrl;
-        // Extract port from URL (e.g., http://localhost:8089 -> 8089)
+        // Extract port from URL (e.g., http://localhost:8091 -> 8091)
         this.renteyServicePort = extractPort(renteyServiceBaseUrl);
         // Get project root - try to find it relative to current working directory
         this.projectRootPath = findProjectRoot();
@@ -216,7 +216,7 @@ public class RenteyServiceManager {
         try {
             // Remove protocol (http:// or https://)
             String withoutProtocol = url.replaceFirst("^https?://", "");
-            // Extract port (e.g., localhost:8089 -> 8089)
+            // Extract port (e.g., localhost:8091 -> 8091)
             if (withoutProtocol.contains(":")) {
                 String portStr = withoutProtocol.substring(withoutProtocol.lastIndexOf(":") + 1);
                 // Remove any path after port
@@ -228,8 +228,8 @@ public class RenteyServiceManager {
             // Default ports
             return url.startsWith("https") ? 443 : 80;
         } catch (Exception e) {
-            logger.warn("Could not extract port from URL: {}, using default 8089", url);
-            return 8089;
+            logger.warn("Could not extract port from URL: {}, using default 8091", url);
+            return 8091;
         }
     }
 

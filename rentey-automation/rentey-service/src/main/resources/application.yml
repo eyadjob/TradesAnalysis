@@ -1,5 +1,5 @@
 server:
-  port: 8089
+  port: 8091
 
 spring:
   jackson:
@@ -8,6 +8,15 @@ spring:
       fail-on-invalid-subtype: false
       fail-on-null-for-primitives: false
     default-property-inclusion: non_null
+
+logging:
+  file:
+    name: logs/rentey-service.log
+  level:
+    root: INFO
+    com: DEBUG  # To see DEBUG logs from your packages
+    org.springframework.web: INFO
+    org.springframework.boot: INFO
 
 authorization:
   service:
