@@ -26,6 +26,18 @@ public final class ApiPaths {
     public static final String GEO_SETTINGS_UPDATE_COUNTRY = "/GeoSettings/UpdateCountrySettings";
     public static final String GEO_SETTINGS_CHANGE_BRANCH = "/GeoSettings/ChangeBranchSettings";
     
+    // Country endpoints
+    public static final String COUNTRY_GET_OPERATIONAL_COUNTRIES = "/Country/GetOperationalCountries";
+    
+    // Currency endpoints
+    public static final String CURRENCY_GET_COUNTRY_CURRENCY_INFO = "/Currency/GetCountryCurrencyInfo";
+    
+    // Branch endpoints
+    public static final String BRANCH_GET_USER_BRANCHES_FOR_COMBOBOX = "/Branch/GetUserBranchesForCombobox";
+    
+    // Customer endpoints
+    public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
+    
     // Lookups endpoints
     public static final String LOOKUPS_GET_ALL_ITEMS_COMBOBOX = "/Lookups/GetAllItemsComboboxItems";
     

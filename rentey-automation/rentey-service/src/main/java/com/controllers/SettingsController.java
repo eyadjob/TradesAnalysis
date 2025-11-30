@@ -1,12 +1,14 @@
 package com.controllers;
 
 import com.beans.AbpResponseBean;
-import com.beans.TenantAndCountrySettingsRequestBean;
+
 import com.beans.UpdateAllSettingsRequestBean;
 import com.services.SettingsService;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;
+import com.beans.GetOperationalCountriesResponseBean;
+import com.beans.TenantAndCountrySettingsRequestBean;
 
 @RestController
 @RequestMapping(path = BASE_PATH)
@@ -116,6 +118,18 @@ public class SettingsController {
         }
 
         return settingsService.changeBranchSettings(countryId, branchId, request);
+    }
+
+    /**
+     * Get operational countries.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @return The response containing all operational countries.
+     */
+    @GetMapping(path = COUNTRY_GET_OPERATIONAL_COUNTRIES, produces = "application/json")
+    public GetOperationalCountriesResponseBean getOperationalCountries() {
+        return settingsService.getOperationalCountries();
     }
 }
 
