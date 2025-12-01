@@ -1,6 +1,9 @@
 package com.configs;
 
 import com.clients.AuthorizationServiceClient;
+import com.filters.AuthorizationHeaderFilter;
+import com.filters.WebClientLoggingFilter;
+import com.services.AuthorizationTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +18,7 @@ public class RenteyConfiguration {
 
     @Bean("settingsWebClient")
     public WebClient settingsWebClient(
+            AuthorizationTokenService authorizationTokenService,
             @Value("${settings.api.base-url}") String baseUrl,
             @Value("${settings.api.headers.tenant-id}") String tenantId,
             @Value("${settings.api.headers.user-agent}") String userAgent,
@@ -38,6 +42,10 @@ public class RenteyConfiguration {
         return WebClient.builder()
                 .baseUrl(baseUrl)
                 .exchangeStrategies(strategies)
+                // Add Authorization header filter FIRST, so it's applied to all requests
+                .filter(AuthorizationHeaderFilter.addAuthorizationHeader(authorizationTokenService))
+                // Add logging filter AFTER authorization, so we can see the Authorization header in logs
+                .filter(WebClientLoggingFilter.logRequestAndResponse())
                 .defaultHeader(HttpHeaders.CONNECTION, "keep-alive")
                 .defaultHeader("Abp.TenantId", tenantId)
                 .defaultHeader(HttpHeaders.USER_AGENT, userAgent)

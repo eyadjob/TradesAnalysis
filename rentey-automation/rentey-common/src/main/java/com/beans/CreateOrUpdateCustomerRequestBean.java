@@ -13,10 +13,12 @@ public record CreateOrUpdateCustomerRequestBean(
 ) {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record CustomerData(
+            @JsonProperty("id") Integer id,
             @JsonProperty("fullName") FullName fullName,
             @JsonProperty("contactInformation") ContactInformation contactInformation,
             @JsonProperty("basicInformation") BasicInformation basicInformation,
             @JsonProperty("professionalInformation") ProfessionalInformation professionalInformation,
+            @JsonProperty("customerPolicyVerification") CustomerPolicyVerification customerPolicyVerification,
             @JsonProperty("address") Address address,
             @JsonProperty("secondaryAddress") SecondaryAddress secondaryAddress,
             @JsonProperty("emergencyContacts") List<EmergencyContact> emergencyContacts,
@@ -115,6 +117,14 @@ public record CreateOrUpdateCustomerRequestBean(
             @JsonProperty("url") String url,
             @JsonProperty("size") Integer size,
             @JsonProperty("type") String type
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record CustomerPolicyVerification(
+            @JsonProperty("isTermsConditionsAndPrivacyPolicyApproved") Boolean isTermsConditionsAndPrivacyPolicyApproved,
+            @JsonProperty("isMarketingMaterialsApproved") Boolean isMarketingMaterialsApproved,
+            @JsonProperty("isDataSharingPolicyApproved") Boolean isDataSharingPolicyApproved
     ) {
     }
 }

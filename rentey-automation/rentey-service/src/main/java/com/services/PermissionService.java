@@ -11,34 +11,25 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class PermissionService {
 
     private final WebClient settingsWebClient;
-    private final AuthorizationTokenService authorizationTokenService;
 
     public PermissionService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient,
-            AuthorizationTokenService authorizationTokenService) {
+            @Qualifier("settingsWebClient") WebClient settingsWebClient) {
         this.settingsWebClient = settingsWebClient;
-        this.authorizationTokenService = authorizationTokenService;
     }
 
     public GetAllPermissionsResponseBean getAllPermissions() {
-        String refreshToken = authorizationTokenService.getRefreshToken();
-        String authorization = "Bearer " + refreshToken;
-        
+        // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri("/webapigw/api/services/app/Permission/GetAllPermissions")
-                .header("Authorization", authorization)
                 .retrieve()
                 .bodyToMono(GetAllPermissionsResponseBean.class)
                 .block();
     }
 
     public AbpResponseBean createOrUpdateRole(CreateOrUpdateRoleRequestBean request) {
-        String refreshToken = authorizationTokenService.getRefreshToken();
-        String authorization = "Bearer " + refreshToken;
-        
+        // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
                 .uri("/webapigw/api/services/app/Role/CreateOrUpdateRole")
-                .header("Authorization", authorization)
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(AbpResponseBean.class)
