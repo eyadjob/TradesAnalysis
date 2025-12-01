@@ -2,10 +2,10 @@ package com.services;
 
 import com.beans.CreateOrUpdateCustomerRequestBean;
 import com.beans.CreateOrUpdateCustomerResponseBean;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -16,13 +16,13 @@ public class CustomerService {
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
     
     private final WebClient settingsWebClient;
-    private final AuthorizationTokenService authorizationTokenService;
+    private final ObjectMapper objectMapper;
 
     public CustomerService(
             @Qualifier("settingsWebClient") WebClient settingsWebClient,
-            AuthorizationTokenService authorizationTokenService) {
+            ObjectMapper objectMapper) {
         this.settingsWebClient = settingsWebClient;
-        this.authorizationTokenService = authorizationTokenService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -40,14 +40,18 @@ public class CustomerService {
         }
         
         try {
-            String refreshToken = authorizationTokenService.getRefreshToken();
-            String authorization = "Bearer " + refreshToken;
+            // Log the request payload (Authorization header is automatically added by filter)
+            try {
+                String requestJson = objectMapper.writeValueAsString(request);
+                logger.info("Calling external API to create/update customer");
+                logger.info("Request Body: {}", requestJson);
+            } catch (Exception e) {
+                logger.warn("Could not serialize request to JSON for logging: {}", e.getMessage());
+            }
             
-            logger.debug("Calling external API to create/update customer");
-            
+            // Authorization header and all other headers from RenteyConfiguration are automatically included
             return settingsWebClient.post()
                     .uri("/webapigw/api/services/app/Customer/CreateOrUpdateCustomer")
-                    .header("Authorization", authorization)
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(CreateOrUpdateCustomerResponseBean.class)

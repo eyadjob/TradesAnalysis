@@ -11,33 +11,26 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class CountryService {
 
     private final WebClient settingsWebClient;
-    private final AuthorizationTokenService authorizationTokenService;
 
     public CountryService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient,
-            AuthorizationTokenService authorizationTokenService) {
+            @Qualifier("settingsWebClient") WebClient settingsWebClient) {
         this.settingsWebClient = settingsWebClient;
-        this.authorizationTokenService = authorizationTokenService;
     }
 
     /**
      * Get country currency information by country ID.
-     * This method automatically calls the authorization-service to get the refreshToken
-     * and uses it in the Authorization header when calling the external API.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
      * @param countryId The country ID for which to get the currency information.
      * @return The response containing the country currency information.
      */
     public GetCountryCurrencyInfoResponseBean getCountryCurrencyInfo(Integer countryId) {
-        String refreshToken = authorizationTokenService.getRefreshToken();
-        String authorization = "Bearer " + refreshToken;
-        
+        // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/webapigw/api/services/app/Currency/GetCountryCurrencyInfo")
                         .queryParam("countryId", countryId)
                         .build())
-                .header("Authorization", authorization)
                 .retrieve()
                 .bodyToMono(GetCountryCurrencyInfoResponseBean.class)
                 .block();
@@ -45,8 +38,7 @@ public class CountryService {
 
     /**
      * Get user branches for combobox.
-     * This method automatically calls the authorization-service to get the refreshToken
-     * and uses it in the Authorization header when calling the external API.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
      * @param includeInActive Whether to include inactive branches.
      * @param countryId The country ID for which to get the branches.
@@ -59,9 +51,7 @@ public class CountryService {
             Integer countryId,
             Boolean includeAll,
             List<Integer> filterTypes) {
-        String refreshToken = authorizationTokenService.getRefreshToken();
-        String authorization = "Bearer " + refreshToken;
-        
+        // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
@@ -84,7 +74,6 @@ public class CountryService {
                     
                     return builder.build();
                 })
-                .header("Authorization", authorization)
                 .retrieve()
                 .bodyToMono(GetUserBranchesForComboboxResponseBean.class)
                 .block();
