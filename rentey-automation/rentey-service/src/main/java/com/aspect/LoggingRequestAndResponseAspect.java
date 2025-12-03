@@ -46,15 +46,43 @@ public class LoggingRequestAndResponseAspect {
         // Log request details
         logRequest(request, joinPoint);
 
-        // Execute the method
-        Object result = joinPoint.proceed();
+        // Execute method and track execution time
+        ExecutionResult executionResult = executeWithTimeTracking(joinPoint);
 
         // Log response details
         if (response != null) {
-            logResponse(response, result);
+            logResponse(response, executionResult.result, executionResult.duration);
         }
 
-        return result;
+        return executionResult.result;
+    }
+
+    /**
+     * Executes the method and tracks the execution time.
+     * 
+     * @param joinPoint The join point representing the method execution
+     * @return ExecutionResult containing the method result and execution duration
+     * @throws Throwable if the method execution throws an exception
+     */
+    private ExecutionResult executeWithTimeTracking(ProceedingJoinPoint joinPoint) throws Throwable {
+        long startTime = System.currentTimeMillis();
+        Object result = joinPoint.proceed();
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        return new ExecutionResult(result, duration);
+    }
+
+    /**
+     * Inner class to hold execution result and duration.
+     */
+    private static class ExecutionResult {
+        final Object result;
+        final long duration;
+
+        ExecutionResult(Object result, long duration) {
+            this.result = result;
+            this.duration = duration;
+        }
     }
 
     private void logRequest(HttpServletRequest request, ProceedingJoinPoint joinPoint) {
@@ -105,7 +133,7 @@ public class LoggingRequestAndResponseAspect {
         }
     }
 
-    private void logResponse(HttpServletResponse response, Object result) {
+    private void logResponse(HttpServletResponse response, Object result, long duration) {
         try {
             // Get response headers
             Map<String, String> responseHeaders = getResponseHeaders(response);
@@ -122,6 +150,7 @@ public class LoggingRequestAndResponseAspect {
             } else {
                 logger.info("Response Body: (empty)");
             }
+            logger.info("Time Consumed: {} ms", duration);
             logger.info("===================================");
             
         } catch (Exception e) {

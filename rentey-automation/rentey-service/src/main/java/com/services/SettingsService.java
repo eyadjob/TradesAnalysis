@@ -12,16 +12,19 @@ import com.beans.GetOperationalCountriesResponseBean;
 public class SettingsService {
 
     private final WebClient settingsWebClient;
+    private final String apiBasePath;
 
     public SettingsService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient) {
+            @Qualifier("settingsWebClient") WebClient settingsWebClient,
+            @Qualifier("apiBasePath") String apiBasePath) {
         this.settingsWebClient = settingsWebClient;
+        this.apiBasePath = apiBasePath;
     }
 
     public AbpResponseBean updateAllSettings(UpdateAllSettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
-                .uri("/webapigw/api/services/app/TenantSettings/UpdateAllSettings")
+                .uri(apiBasePath + "/TenantSettings/UpdateAllSettings")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(AbpResponseBean.class)
@@ -32,7 +35,7 @@ public class SettingsService {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/webapigw/api/services/app/GeoSettings/ChangeTenantSettings")
+                        .path(apiBasePath + "/GeoSettings/ChangeTenantSettings")
                         .queryParam("countryId", countryId)
                         .build())
                 .bodyValue(request.settings())
@@ -45,7 +48,7 @@ public class SettingsService {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/webapigw/api/services/app/GeoSettings/UpdateCountrySettings")
+                        .path(apiBasePath + "/GeoSettings/UpdateCountrySettings")
                         .queryParam("countryId", countryId)
                         .build())
                 .bodyValue(request.settings())
@@ -58,7 +61,7 @@ public class SettingsService {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/webapigw/api/services/app/GeoSettings/ChangeBranchSettings")
+                        .path(apiBasePath + "/GeoSettings/ChangeBranchSettings")
                         .queryParam("countryId", countryId)
                         .queryParam("branchId", branchId)
                         .build())
@@ -77,7 +80,7 @@ public class SettingsService {
     public GetOperationalCountriesResponseBean getOperationalCountries() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
-                .uri("/webapigw/api/services/app/Country/GetOperationalCountries")
+                .uri(apiBasePath + "/Country/GetOperationalCountries")
                 .retrieve()
                 .bodyToMono(GetOperationalCountriesResponseBean.class)
                 .block();

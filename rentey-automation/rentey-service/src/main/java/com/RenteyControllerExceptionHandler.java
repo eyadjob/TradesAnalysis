@@ -21,11 +21,11 @@ import java.util.NoSuchElementException;
 public class RenteyControllerExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RenteyControllerExceptionHandler.class);
-    
+
     static {
         logger.info("RenteyControllerExceptionHandler initialized and registered");
     }
-    
+
     // Constructor to ensure the bean is created
     public RenteyControllerExceptionHandler() {
         logger.info("RenteyControllerExceptionHandler bean created");
@@ -46,7 +46,7 @@ public class RenteyControllerExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorResponseBean> badRequest(HttpMessageNotReadableException ex, HttpServletRequest request) {
         String exMessage = ex.getMessage();
-        String message = "Invalid request body. Please ensure the JSON is complete and properly formatted. " + 
+        String message = "Invalid request body. Please ensure the JSON is complete and properly formatted. " +
                          (exMessage != null ? exMessage : "Request body may be empty or malformed.");
         logger.warn("Invalid request body: {}", message);
         ErrorResponseBean errorResponse = ErrorResponseBean.create(
@@ -74,23 +74,23 @@ public class RenteyControllerExceptionHandler {
     public ResponseEntity<ErrorResponseBean> handleRuntimeException(RuntimeException ex, HttpServletRequest request) {
         String exMessage = ex.getMessage();
         logger.error("RuntimeException in controller - Message: {}, URI: {}", exMessage, request.getRequestURI(), ex);
-        
+
         // Check if it's a WebClientResponseException wrapped in RuntimeException
         Throwable cause = ex.getCause();
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
         String message = exMessage != null ? exMessage : "Internal server error";
-        
+
         if (cause instanceof WebClientResponseException) {
             WebClientResponseException webClientEx = (WebClientResponseException) cause;
             status = HttpStatus.valueOf(webClientEx.getStatusCode().value());
             // Extract detailed error message from the external API response
             String responseBody = webClientEx.getResponseBodyAsString();
             if (responseBody != null && !responseBody.trim().isEmpty()) {
-                message = String.format("External API error (%s): %s", 
+                message = String.format("External API error (%s): %s",
                         webClientEx.getStatusCode(), responseBody);
             } else {
-                message = exMessage != null ? exMessage : 
-                        String.format("External API error: %s %s", 
+                message = exMessage != null ? exMessage :
+                        String.format("External API error: %s %s",
                                 webClientEx.getStatusCode(), webClientEx.getMessage());
             }
             logger.error("Extracted WebClientResponseException - Status: {}, Message: {}", status, message);
@@ -99,14 +99,14 @@ public class RenteyControllerExceptionHandler {
             message = exMessage;
             logger.error("Using existing External API error message: {}", message);
         }
-        
+
         ErrorResponseBean errorResponse = ErrorResponseBean.create(
                 status,
                 message,
                 request.getRequestURI(),
                 ex
         );
-        
+
         logger.error("Returning ErrorResponseBean - Status: {}, Message: {}", status, message);
         return ResponseEntity.status(status).body(errorResponse);
     }
