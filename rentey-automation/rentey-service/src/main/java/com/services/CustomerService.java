@@ -1,7 +1,9 @@
 package com.services;
 
+import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.CreateOrUpdateCustomerRequestBean;
 import com.beans.CreateOrUpdateCustomerResponseBean;
+import com.util.ObjectMapperUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,15 +16,17 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 public class CustomerService {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
-    
-    private final WebClient settingsWebClient;
-    private final ObjectMapper objectMapper;
 
-    public CustomerService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient,
-            ObjectMapper objectMapper) {
-        this.settingsWebClient = settingsWebClient;
+    private final WebClient webClient;
+    private final ObjectMapper objectMapper;
+    private final ObjectMapperUtil objectMapperUtil;
+
+    public CustomerService(@Qualifier("settingsWebClient") WebClient webClient, 
+                          ObjectMapper objectMapper,
+                          ObjectMapperUtil objectMapperUtil) {
+        this.webClient = webClient;
         this.objectMapper = objectMapper;
+        this.objectMapperUtil = objectMapperUtil;
     }
 
     /**
@@ -34,47 +38,59 @@ public class CustomerService {
      * @return The response containing the created or updated customer data.
      * @throws RuntimeException if the external API call fails
      */
+    @LogRequestAndResponseOnDesk
     public CreateOrUpdateCustomerResponseBean createOrUpdateCustomer(CreateOrUpdateCustomerRequestBean request) {
         if (request == null) {
             throw new IllegalArgumentException("Request cannot be null.");
         }
-        
+
+        // Serialize request body for error logging
+        final String requestJson = objectMapperUtil.toJsonStringWithLogging(request);
+
         try {
-            // Log the request payload (Authorization header is automatically added by filter)
-            try {
-                String requestJson = objectMapper.writeValueAsString(request);
-                logger.info("Calling external API to create/update customer");
-                logger.info("Request Body: {}", requestJson);
-            } catch (Exception e) {
-                logger.warn("Could not serialize request to JSON for logging: {}", e.getMessage());
-            }
-            
             // Authorization header and all other headers from RenteyConfiguration are automatically included
-            return settingsWebClient.post()
+            return webClient.post()
                     .uri("/webapigw/api/services/app/Customer/CreateOrUpdateCustomer")
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(CreateOrUpdateCustomerResponseBean.class)
                     .doOnError(error -> {
-                        logger.error("Error calling external API: {}", error.getMessage(), error);
+                        logger.error("=== Error calling external API ===");
+                        logger.error("Error message: {}", error.getMessage());
+                        logger.error("Request Body: {}", requestJson);
+                        logger.error("Note: Request headers are logged by WebClientLoggingFilter above");
+                        logger.error("===================================");
                     })
                     .block();
+
         } catch (WebClientResponseException e) {
+            // Extract detailed error information from the response
             String responseBody = e.getResponseBodyAsString();
             logger.error("External API returned error - Status: {}, Response Body: {}", 
                     e.getStatusCode(), responseBody);
             
-            // Create a detailed error message that will be included in the response
-            String errorMessage = String.format(
-                    "External API error (%s): %s",
-                    e.getStatusCode(),
-                    responseBody != null && !responseBody.trim().isEmpty() 
-                            ? responseBody 
-                            : "No response body from external API"
-            );
+            // Try to parse the error response to get more details
+            String errorMessage = "External API error (" + e.getStatusCode() + ")";
+            if (responseBody != null && !responseBody.trim().isEmpty()) {
+                try {
+                    // Try to extract error message from the response
+                    var errorResponse = objectMapper.readTree(responseBody);
+                    if (errorResponse.has("error") && errorResponse.get("error").has("message")) {
+                        String apiErrorMessage = errorResponse.get("error").get("message").asText();
+                        errorMessage += ": " + apiErrorMessage;
+                    } else {
+                        errorMessage += ": " + responseBody;
+                    }
+                } catch (Exception parseException) {
+                    logger.warn("Could not parse error response: {}", parseException.getMessage());
+                    errorMessage += ": " + responseBody;
+                }
+            } else {
+                errorMessage += ": " + e.getMessage();
+            }
             
-            logger.error("Throwing RuntimeException with message: {}", errorMessage);
-            throw new RuntimeException(errorMessage, e);
+            throw new RuntimeException("Failed to create/update customer: " + errorMessage, e);
+            
         } catch (Exception e) {
             logger.error("Unexpected error while creating/updating customer: {}", e.getMessage(), e);
             String errorMessage = "Failed to create/update customer: " + 

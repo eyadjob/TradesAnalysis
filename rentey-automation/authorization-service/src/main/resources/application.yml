@@ -1,6 +1,23 @@
 server:
   port: 8088
 
+spring:
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
+      fail-on-invalid-subtype: false
+      fail-on-null-for-primitives: false
+    default-property-inclusion: non_null
+
+logging:
+  file:
+    name: logs/authorization-service.log
+  level:
+    root: INFO
+    com: DEBUG  # To see DEBUG logs from your packages
+    org.springframework.web: INFO
+    org.springframework.boot: INFO
+
 authorization:
   api:
     base-url: http://172.86.86.151:2800

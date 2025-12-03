@@ -26,11 +26,30 @@ authorization:
       password: "123456"
       rememberClient: false
 
+#For rentey http://172.86.86.151:2800/
+#settings:
+#  api:
+#    base-url: http://172.86.86.151:2800
+#    headers:
+#      tenant-id: "1"
+#      user-agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0"
+#      accept: "application/json"
+#      accept-language: "en"
+#      accept-encoding: "gzip, deflate"
+#      pragma: "no-cache"
+#      cache-control: "no-cache"
+#      expires: "Sat, 01 Jan 2000 00:00:00 GMT"
+#      x-requested-with: "XMLHttpRequest"
+#      aspnetcore-culture: "en"
+#      origin: "http://172.86.86.151:2800"
+#      referer: "http://172.86.86.151:2800/"
+
+#For rentey https://ejar-jor-test.iyelo.com:4900/
 settings:
   api:
-    base-url: http://172.86.86.151:2800
+    base-url: https://ejar-jor-test.iyelo.com:9900
     headers:
-      tenant-id: "1"
+      tenant-id: "47"
       user-agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0"
       accept: "application/json"
       accept-language: "en"
@@ -40,6 +59,7 @@ settings:
       expires: "Sat, 01 Jan 2000 00:00:00 GMT"
       x-requested-with: "XMLHttpRequest"
       aspnetcore-culture: "en"
-      origin: "http://172.86.86.151:2800"
-      referer: "http://172.86.86.151:2800/"
+      origin: "https://ejar-jor-test.iyelo.com:9900/"
+      referer: "https://ejar-jor-test.iyelo.com:9900/"
+      authorization: bearer
 

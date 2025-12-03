@@ -11,12 +11,10 @@
     <description>Spring Boot 3 Fundamentals</description>
     <packaging>pom</packaging>
     <modules>
-        <module>rentey-common</module>
         <module>events-service</module>
         <module>registration-service</module>
         <module>authorization-service</module>
         <module>rentey-service</module>
-        <module>import-customer-service</module>
     </modules>
 
     <properties>

@@ -38,7 +38,7 @@ public class WebClientLoggingFilter {
         HttpMethod method = request.method();
         String uri = request.url().toString();
         HttpHeaders headers = request.headers();
-        
+
         logger.info("=== Outgoing Request from rentey-service ===");
         logger.info("Method: {}", method);
         logger.info("URI: {}", uri);
@@ -64,9 +64,6 @@ public class WebClientLoggingFilter {
                     String headerName = entry.getKey();
                     String headerValue = String.join(", ", entry.getValue());
                     // Mask sensitive headers but show enough to verify it's present
-                    if (isSensitiveHeader(headerName)) {
-                        headerValue = maskSensitiveValue(headerValue);
-                    }
                     return "\"" + headerName + "\": \"" + headerValue + "\"";
                 })
                 .collect(Collectors.joining(", ", "{", "}"));
@@ -74,8 +71,8 @@ public class WebClientLoggingFilter {
 
     private static boolean isSensitiveHeader(String headerName) {
         String lowerName = headerName.toLowerCase();
-        return lowerName.contains("authorization") || 
-               lowerName.contains("password") || 
+        return lowerName.contains("authorization") ||
+               lowerName.contains("password") ||
                lowerName.contains("token") ||
                lowerName.contains("secret") ||
                lowerName.contains("key");

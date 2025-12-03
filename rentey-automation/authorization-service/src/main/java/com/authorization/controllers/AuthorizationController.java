@@ -1,9 +1,9 @@
 package com.authorization.controllers;
 
 
+import com.authorization.beans.AuthenticateRequest;
 import com.authorization.beans.AuthenticateResponse;
 import com.authorization.services.AuthorizationService;
-import com.pluralsight.springboot.beans.AuthenticateRequest;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
