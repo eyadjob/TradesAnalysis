@@ -8,16 +8,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import reactor.netty.http.client.HttpClient;
+import io.netty.channel.ChannelOption;
 
 @Configuration
 public class RenteyConfiguration {
 
     @Bean("settingsWebClient")
-    public WebClient settingsWebClient(
+    public WebClient renteyWebClient(
             AuthorizationTokenService authorizationTokenService,
             @Value("${settings.api.base-url}") String baseUrl,
             @Value("${settings.api.headers.tenant-id}") String tenantId,
@@ -43,6 +46,7 @@ public class RenteyConfiguration {
                 .baseUrl(baseUrl)
                 .exchangeStrategies(strategies)
                 // Add Authorization header filter FIRST, so it's applied to all requests
+                // This filter dynamically retrieves the token from authorization-service and adds it as "Bearer <token>"
                 .filter(AuthorizationHeaderFilter.addAuthorizationHeader(authorizationTokenService))
                 // Add logging filter AFTER authorization, so we can see the Authorization header in logs
                 .filter(WebClientLoggingFilter.logRequestAndResponse())
@@ -74,8 +78,16 @@ public class RenteyConfiguration {
 
     @Bean
     public AuthorizationServiceClient authorizationServiceClient(@Value("${authorization.service.base-url}") String baseUrl) {
+        // Configure WebClient with increased *timeouts for authorization service
+        // Default timeout is 5 seconds, we'll increase it to 30 seconds
+        HttpClient httpClient = HttpClient.create()
+                .responseTimeout(java.time.Duration.ofSeconds(30)) // 30 seconds for response timeout
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000); // 10 seconds for connection timeout
+        
         WebClient webClient = WebClient.builder()
                 .baseUrl(baseUrl)
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .defaultHeader(HttpHeaders.ACCEPT, "application/json")
                 .build();

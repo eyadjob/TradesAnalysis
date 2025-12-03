@@ -1,4 +1,4 @@
-//package com.filters;
+//package com.authorization.filters;
 //
 //import jakarta.servlet.Filter;
 //import jakarta.servlet.FilterChain;
@@ -13,18 +13,19 @@
 //import org.springframework.web.util.ContentCachingResponseWrapper;
 //
 //import java.io.IOException;
+//import java.util.Collection;
 //import java.util.Enumeration;
 //import java.util.HashMap;
 //import java.util.Map;
 //
 ///**
-// * Filter to log all incoming requests with payload, URI, and headers.
+// * Filter to log all incoming requests and outgoing responses with payload, URI, and headers.
 // */
 //@Component
 //@Order(1)
-//public class RequestLoggingFilter implements Filter {
+//public class AuthorizationRequestLoggingFilter implements Filter {
 //
-//    private static final Logger logger = LoggerFactory.getLogger(RequestLoggingFilter.class);
+//    private static final Logger logger = LoggerFactory.getLogger(AuthorizationRequestLoggingFilter.class);
 //
 //    @Override
 //    public void doFilter(jakarta.servlet.ServletRequest request, jakarta.servlet.ServletResponse response,
@@ -38,15 +39,16 @@
 //        HttpServletRequest httpRequest = (HttpServletRequest) request;
 //        HttpServletResponse httpResponse = (HttpServletResponse) response;
 //
-//        // Wrap request to cache the body content
+//        // Wrap request and response to cache the body content
 //        ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(httpRequest);
 //        ContentCachingResponseWrapper wrappedResponse = new ContentCachingResponseWrapper(httpResponse);
 //
 //        try {
 //            chain.doFilter(wrappedRequest, wrappedResponse);
 //        } finally {
-//            // Log request details after processing
+//            // Log request and response details after processing
 //            logRequest(wrappedRequest);
+//            logResponse(wrappedResponse);
 //            // Copy response body back to original response
 //            wrappedResponse.copyBodyToResponse();
 //        }
@@ -56,27 +58,12 @@
 //        try {
 //            // Extract request details
 //            String method = request.getMethod();
-//
-//            // Build full URL with scheme, host, port, path, and query string
-//            String scheme = request.getScheme();
-//            String serverName = request.getServerName();
-//            int serverPort = request.getServerPort();
-//            String requestURI = request.getRequestURI();
+//            String uri = request.getRequestURI();
 //            String queryString = request.getQueryString();
-//
-//            StringBuilder fullUrl = new StringBuilder();
-//            fullUrl.append(scheme).append("://").append(serverName);
-//            if ((scheme.equals("http") && serverPort != 80) ||
-//                (scheme.equals("https") && serverPort != 443)) {
-//                fullUrl.append(":").append(serverPort);
-//            }
-//            fullUrl.append(requestURI);
-//            if (queryString != null && !queryString.isEmpty()) {
-//                fullUrl.append("?").append(queryString);
-//            }
+//            String fullUri = queryString != null ? uri + "?" + queryString : uri;
 //
 //            // Get all headers
-//            Map<String, String> headers = getHeaders(request);
+//            Map<String, String> headers = getRequestHeaders(request);
 //
 //            // Get request body
 //            String requestBody = getRequestBody(request);
@@ -84,7 +71,7 @@
 //            // Log the request details
 //            logger.info("=== Incoming Request ===");
 //            logger.info("Method: {}", method);
-//            logger.info("Full URI: {}", fullUrl.toString());
+//            logger.info("URI: {}", fullUri);
 //            logger.info("Headers: {}", formatHeaders(headers));
 //            if (requestBody != null && !requestBody.trim().isEmpty()) {
 //                logger.info("Request Body: {}", requestBody);
@@ -98,7 +85,34 @@
 //        }
 //    }
 //
-//    private Map<String, String> getHeaders(HttpServletRequest request) {
+//    private void logResponse(ContentCachingResponseWrapper response) {
+//        try {
+//            // Extract response details
+//            int status = response.getStatus();
+//
+//            // Get all response headers
+//            Map<String, String> headers = getResponseHeaders(response);
+//
+//            // Get response body
+//            String responseBody = getResponseBody(response);
+//
+//            // Log the response details
+//            logger.info("=== Outgoing Response ===");
+//            logger.info("Status: {}", status);
+//            logger.info("Headers: {}", formatHeaders(headers));
+//            if (responseBody != null && !responseBody.trim().isEmpty()) {
+//                logger.info("Response Body: {}", responseBody);
+//            } else {
+//                logger.info("Response Body: (empty)");
+//            }
+//            logger.info("========================");
+//
+//        } catch (Exception e) {
+//            logger.warn("Error logging response: {}", e.getMessage());
+//        }
+//    }
+//
+//    private Map<String, String> getRequestHeaders(HttpServletRequest request) {
 //        Map<String, String> headers = new HashMap<>();
 //        Enumeration<String> headerNames = request.getHeaderNames();
 //        if (headerNames != null) {
@@ -106,6 +120,22 @@
 //                String headerName = headerNames.nextElement();
 //                String headerValue = request.getHeader(headerName);
 //                headers.put(headerName, headerValue);
+//            }
+//        }
+//        return headers;
+//    }
+//
+//    private Map<String, String> getResponseHeaders(HttpServletResponse response) {
+//        Map<String, String> headers = new HashMap<>();
+//        Collection<String> headerNames = response.getHeaderNames();
+//        if (headerNames != null) {
+//            for (String headerName : headerNames) {
+//                Collection<String> headerValues = response.getHeaders(headerName);
+//                if (headerValues != null && !headerValues.isEmpty()) {
+//                    // Join multiple values with comma
+//                    String headerValue = String.join(", ", headerValues);
+//                    headers.put(headerName, headerValue);
+//                }
 //            }
 //        }
 //        return headers;
@@ -125,9 +155,6 @@
 //            // Mask sensitive headers
 //            String headerName = entry.getKey();
 //            String headerValue = entry.getValue();
-//            if (isSensitiveHeader(headerName)) {
-//                headerValue = maskSensitiveValue(headerValue);
-//            }
 //            sb.append("\"").append(headerName).append("\": \"").append(headerValue).append("\"");
 //            first = false;
 //        }
@@ -135,21 +162,6 @@
 //        return sb.toString();
 //    }
 //
-//    private boolean isSensitiveHeader(String headerName) {
-//        String lowerName = headerName.toLowerCase();
-//        return lowerName.contains("authorization") ||
-//               lowerName.contains("password") ||
-//               lowerName.contains("token") ||
-//               lowerName.contains("secret") ||
-//               lowerName.contains("key");
-//    }
-//
-//    private String maskSensitiveValue(String value) {
-//        if (value == null || value.length() <= 10) {
-//            return "***";
-//        }
-//        return value.substring(0, 10) + "***";
-//    }
 //
 //    private String getRequestBody(ContentCachingRequestWrapper request) {
 //        byte[] content = request.getContentAsByteArray();
@@ -166,6 +178,25 @@
 //            return new String(content, java.nio.charset.Charset.forName(charset));
 //        } catch (java.nio.charset.IllegalCharsetNameException | java.nio.charset.UnsupportedCharsetException e) {
 //            logger.warn("Error decoding request body with charset {}: {}", charset, e.getMessage());
+//            return new String(content, java.nio.charset.StandardCharsets.UTF_8);
+//        }
+//    }
+//
+//    private String getResponseBody(ContentCachingResponseWrapper response) {
+//        byte[] content = response.getContentAsByteArray();
+//        if (content.length == 0) {
+//            return null;
+//        }
+//
+//        String charset = response.getCharacterEncoding();
+//        if (charset == null || charset.trim().isEmpty()) {
+//            charset = "UTF-8";
+//        }
+//
+//        try {
+//            return new String(content, java.nio.charset.Charset.forName(charset));
+//        } catch (java.nio.charset.IllegalCharsetNameException | java.nio.charset.UnsupportedCharsetException e) {
+//            logger.warn("Error decoding response body with charset {}: {}", charset, e.getMessage());
 //            return new String(content, java.nio.charset.StandardCharsets.UTF_8);
 //        }
 //    }

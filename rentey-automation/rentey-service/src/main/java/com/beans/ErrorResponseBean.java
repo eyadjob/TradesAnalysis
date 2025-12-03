@@ -14,7 +14,7 @@ public record ErrorResponseBean(
         @JsonProperty("error") String error,
         @JsonProperty("message") String message,
         @JsonProperty("path") String path
-) {
+) implements ResponsePayload {
     public static ErrorResponseBean create(HttpStatus status, String message, String path) {
         return new ErrorResponseBean(
                 Instant.now().toString(),
