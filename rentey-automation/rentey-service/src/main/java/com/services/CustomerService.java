@@ -4,7 +4,6 @@ import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.CreateOrUpdateCustomerRequestBean;
 import com.beans.CreateOrUpdateCustomerResponseBean;
 import com.util.ObjectMapperUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,25 +17,25 @@ public class CustomerService {
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
     private final WebClient webClient;
-    private final ObjectMapper objectMapper;
     private final ObjectMapperUtil objectMapperUtil;
+    private final String apiBasePath;
 
-    public CustomerService(@Qualifier("settingsWebClient") WebClient webClient, 
-                          ObjectMapper objectMapper,
-                          ObjectMapperUtil objectMapperUtil) {
+    public CustomerService(@Qualifier("settingsWebClient") WebClient webClient,
+                          ObjectMapperUtil objectMapperUtil,
+                          @Qualifier("apiBasePath") String apiBasePath) {
         this.webClient = webClient;
-        this.objectMapper = objectMapper;
         this.objectMapperUtil = objectMapperUtil;
+        this.apiBasePath = apiBasePath;
     }
 
     /**
      * Create or update a customer.
      * This method automatically calls the authorization-service to get the refreshToken
      * and uses it in the Authorization header when calling the external API.
+     * On error (e.g., 500), returns a response with error message and status code instead of throwing.
      *
      * @param request The request containing customer information.
-     * @return The response containing the created or updated customer data.
-     * @throws RuntimeException if the external API call fails
+     * @return The response containing the created or updated customer data, or error response on failure.
      */
     @LogRequestAndResponseOnDesk
     public CreateOrUpdateCustomerResponseBean createOrUpdateCustomer(CreateOrUpdateCustomerRequestBean request) {
@@ -50,7 +49,7 @@ public class CustomerService {
         try {
             // Authorization header and all other headers from RenteyConfiguration are automatically included
             return webClient.post()
-                    .uri("/webapigw/api/services/app/Customer/CreateOrUpdateCustomer")
+                    .uri(apiBasePath + "/Customer/CreateOrUpdateCustomer")
                     .bodyValue(request)
                     .retrieve()
                     .bodyToMono(CreateOrUpdateCustomerResponseBean.class)
@@ -62,40 +61,41 @@ public class CustomerService {
                         logger.error("===================================");
                     })
                     .block();
-
         } catch (WebClientResponseException e) {
-            // Extract detailed error information from the response
-            String responseBody = e.getResponseBodyAsString();
-            logger.error("External API returned error - Status: {}, Response Body: {}", 
-                    e.getStatusCode(), responseBody);
+            // Return error response instead of throwing
+            e.getResponseBodyAsString();
+            String errorMessage = String.format("%d %s - %s",
+                    e.getStatusCode().value(),
+                    e.getStatusCode().isError(),
+                    !e.getResponseBodyAsString().trim().isEmpty()
+                            ? e.getResponseBodyAsString() 
+                            : e.getMessage());
             
-            // Try to parse the error response to get more details
-            String errorMessage = "External API error (" + e.getStatusCode() + ")";
-            if (responseBody != null && !responseBody.trim().isEmpty()) {
-                try {
-                    // Try to extract error message from the response
-                    var errorResponse = objectMapper.readTree(responseBody);
-                    if (errorResponse.has("error") && errorResponse.get("error").has("message")) {
-                        String apiErrorMessage = errorResponse.get("error").get("message").asText();
-                        errorMessage += ": " + apiErrorMessage;
-                    } else {
-                        errorMessage += ": " + responseBody;
-                    }
-                } catch (Exception parseException) {
-                    logger.warn("Could not parse error response: {}", parseException.getMessage());
-                    errorMessage += ": " + responseBody;
-                }
-            } else {
-                errorMessage += ": " + e.getMessage();
-            }
+            logger.error("WebClientResponseException caught in createOrUpdateCustomer - Status: {}, Response Body: {}", 
+                    e.getStatusCode(), e.getResponseBodyAsString());
             
-            throw new RuntimeException("Failed to create/update customer: " + errorMessage, e);
-            
+            return new CreateOrUpdateCustomerResponseBean(
+                    null, // result
+                    null, // targetUrl
+                    false, // success
+                    errorMessage, // error
+                    false, // unAuthorizedRequest
+                    false // __abp
+            );
         } catch (Exception e) {
-            logger.error("Unexpected error while creating/updating customer: {}", e.getMessage(), e);
-            String errorMessage = "Failed to create/update customer: " + 
-                    (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            throw new RuntimeException(errorMessage, e);
+            // Return error response for any other exception
+            String errorMessage = String.format("Error: %s", e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
+            
+            logger.error("Exception caught in createOrUpdateCustomer: {}", e.getMessage(), e);
+            
+            return new CreateOrUpdateCustomerResponseBean(
+                    null, // result
+                    null, // targetUrl
+                    false, // success
+                    errorMessage, // error
+                    false, // unAuthorizedRequest
+                    false // __abp
+            );
         }
     }
 }

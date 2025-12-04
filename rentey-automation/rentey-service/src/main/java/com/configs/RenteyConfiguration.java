@@ -67,6 +67,11 @@ public class RenteyConfiguration {
                 .build();
     }
 
+    @Bean("apiBasePath")
+    public String apiBasePath(@Value("${settings.api.api-base-path}") String apiBasePath) {
+        return apiBasePath;
+    }
+
     @Bean("authorizationWebClient")
     public WebClient authorizationWebClient(@Value("${authorization.service.base-url}") String baseUrl) {
         return WebClient.builder()
@@ -77,12 +82,14 @@ public class RenteyConfiguration {
     }
 
     @Bean
-    public AuthorizationServiceClient authorizationServiceClient(@Value("${authorization.service.base-url}") String baseUrl) {
-        // Configure WebClient with increased *timeouts for authorization service
-        // Default timeout is 5 seconds, we'll increase it to 30 seconds
+    public AuthorizationServiceClient authorizationServiceClient(
+            @Value("${authorization.service.base-url}") String baseUrl,
+            @Value("${authorization.service.response-timeout-seconds}") int responseTimeoutSeconds,
+            @Value("${authorization.service.connect-timeout-millis}") int connectTimeoutMillis) {
+        // Configure WebClient with configurable timeouts for authorization service
         HttpClient httpClient = HttpClient.create()
-                .responseTimeout(java.time.Duration.ofSeconds(30)) // 30 seconds for response timeout
-                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000); // 10 seconds for connection timeout
+                .responseTimeout(java.time.Duration.ofSeconds(responseTimeoutSeconds))
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeoutMillis);
         
         WebClient webClient = WebClient.builder()
                 .baseUrl(baseUrl)

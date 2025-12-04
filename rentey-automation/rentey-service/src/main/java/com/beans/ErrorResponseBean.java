@@ -43,32 +43,24 @@ public record ErrorResponseBean(
         }
         
         // Check if it's a WebClientResponseException (external API error)
-        if (throwable instanceof org.springframework.web.reactive.function.client.WebClientResponseException) {
-            org.springframework.web.reactive.function.client.WebClientResponseException webClientEx = 
-                    (org.springframework.web.reactive.function.client.WebClientResponseException) throwable;
+        if (throwable instanceof org.springframework.web.reactive.function.client.WebClientResponseException webClientEx) {
             String responseBody = webClientEx.getResponseBodyAsString();
-            if (responseBody != null && !responseBody.trim().isEmpty()) {
-                return String.format("External API error (%s): %s", 
-                        webClientEx.getStatusCode(), responseBody);
+            if (!responseBody.trim().isEmpty()) {
+                return  webClientEx.getStatusCode() + " " + responseBody;
             }
-            return String.format("External API error: %s %s", 
-                    webClientEx.getStatusCode(), webClientEx.getMessage());
+            return webClientEx.getStatusCode() + " "+ responseBody;
         }
         
-        // Check the cause chain for WebClientResponseException
-        Throwable cause = throwable.getCause();
-        if (cause instanceof org.springframework.web.reactive.function.client.WebClientResponseException) {
-            org.springframework.web.reactive.function.client.WebClientResponseException webClientEx = 
-                    (org.springframework.web.reactive.function.client.WebClientResponseException) cause;
-            String responseBody = webClientEx.getResponseBodyAsString();
-            if (responseBody != null && !responseBody.trim().isEmpty()) {
-                return String.format("External API error (%s): %s", 
-                        webClientEx.getStatusCode(), responseBody);
-            }
-            return String.format("External API error: %s %s", 
-                    webClientEx.getStatusCode(), webClientEx.getMessage());
-        }
-        
+//        // Check the cause chain for WebClientResponseException
+//        Throwable cause = throwable.getCause();
+//        if (cause instanceof org.springframework.web.reactive.function.client.WebClientResponseException webClientEx) {
+//            String responseBody = webClientEx.getResponseBodyAsString();
+//            if (!responseBody.trim().isEmpty()) {
+//                return  webClientEx.getStatusCode() + " " + responseBody;
+//            }
+//            return  webClientEx.getStatusCode() + " " + responseBody;
+//        }
+//
         // Use the exception message if available, otherwise use default
         String exceptionMessage = throwable.getMessage();
         if (exceptionMessage != null && !exceptionMessage.trim().isEmpty()) {

@@ -9,10 +9,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class LookupsService {
 
     private final WebClient settingsWebClient;
+    private final String apiBasePath;
 
     public LookupsService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient) {
+            @Qualifier("settingsWebClient") WebClient settingsWebClient,
+            @Qualifier("apiBasePath") String apiBasePath) {
         this.settingsWebClient = settingsWebClient;
+        this.apiBasePath = apiBasePath;
     }
 
     /**
@@ -31,7 +34,7 @@ public class LookupsService {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/webapigw/api/services/app/Lookups/GetAllItemsComboboxItems")
+                        .path(apiBasePath + "/Lookups/GetAllItemsComboboxItems")
                         .queryParam("typeId", typeId)
                         .queryParam("includeInActive", includeInActive)
                         .queryParam("includeNotAssign", includeNotAssign)

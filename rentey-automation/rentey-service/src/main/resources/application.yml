@@ -21,6 +21,8 @@ logging:
 authorization:
   service:
     base-url: http://localhost:8088
+    response-timeout-seconds: 120
+    connect-timeout-millis: 100000
     credentials:
       userNameOrEmailAddress: "ejaradmin"
       password: "123456"
@@ -48,6 +50,7 @@ authorization:
 settings:
   api:
     base-url: https://ejar-jor-test.iyelo.com:9900
+    api-base-path: /webapigw/api/services/app
     headers:
       tenant-id: "47"
       user-agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0"
@@ -61,5 +64,5 @@ settings:
       aspnetcore-culture: "en"
       origin: "https://ejar-jor-test.iyelo.com:9900/"
       referer: "https://ejar-jor-test.iyelo.com:9900/"
-      authorization: bearer
+
 

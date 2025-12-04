@@ -11,10 +11,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class CountryService {
 
     private final WebClient settingsWebClient;
+    private final String apiBasePath;
 
     public CountryService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient) {
+            @Qualifier("settingsWebClient") WebClient settingsWebClient,
+            @Qualifier("apiBasePath") String apiBasePath) {
         this.settingsWebClient = settingsWebClient;
+        this.apiBasePath = apiBasePath;
     }
 
     /**
@@ -28,7 +31,7 @@ public class CountryService {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/webapigw/api/services/app/Currency/GetCountryCurrencyInfo")
+                        .path(apiBasePath + "/Currency/GetCountryCurrencyInfo")
                         .queryParam("countryId", countryId)
                         .build())
                 .retrieve()
@@ -55,7 +58,7 @@ public class CountryService {
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
-                            .path("/webapigw/api/services/app/Branch/GetUserBranchesForCombobox");
+                            .path(apiBasePath + "/Branch/GetUserBranchesForCombobox");
                     
                     if (includeInActive != null) {
                         builder.queryParam("includeInActive", includeInActive);

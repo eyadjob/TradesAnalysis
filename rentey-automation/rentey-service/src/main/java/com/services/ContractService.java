@@ -9,10 +9,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class ContractService {
 
     private final WebClient settingsWebClient;
+    private final String apiBasePath;
 
     public ContractService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient) {
+            @Qualifier("settingsWebClient") WebClient settingsWebClient,
+            @Qualifier("apiBasePath") String apiBasePath) {
         this.settingsWebClient = settingsWebClient;
+        this.apiBasePath = apiBasePath;
     }
 
     /**
@@ -31,7 +34,7 @@ public class ContractService {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/webapigw/api/services/app/Country/GetCountriesPhone")
+                        .path(apiBasePath + "/Country/GetCountriesPhone")
                         .queryParam("typeId", typeId)
                         .queryParam("includeInActive", includeInActive)
                         .queryParam("includeNotAssign", includeNotAssign)

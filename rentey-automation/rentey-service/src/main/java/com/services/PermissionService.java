@@ -11,16 +11,19 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class PermissionService {
 
     private final WebClient settingsWebClient;
+    private final String apiBasePath;
 
     public PermissionService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient) {
+            @Qualifier("settingsWebClient") WebClient settingsWebClient,
+            @Qualifier("apiBasePath") String apiBasePath) {
         this.settingsWebClient = settingsWebClient;
+        this.apiBasePath = apiBasePath;
     }
 
     public GetAllPermissionsResponseBean getAllPermissions() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
-                .uri("/webapigw/api/services/app/Permission/GetAllPermissions")
+                .uri(apiBasePath + "/Permission/GetAllPermissions")
                 .retrieve()
                 .bodyToMono(GetAllPermissionsResponseBean.class)
                 .block();
@@ -29,7 +32,7 @@ public class PermissionService {
     public AbpResponseBean createOrUpdateRole(CreateOrUpdateRoleRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
-                .uri("/webapigw/api/services/app/Role/CreateOrUpdateRole")
+                .uri(apiBasePath + "/Role/CreateOrUpdateRole")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(AbpResponseBean.class)
