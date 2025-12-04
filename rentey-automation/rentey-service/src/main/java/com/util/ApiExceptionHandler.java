@@ -1,5 +1,6 @@
 package com.util;
 
+import com.exception.ApiException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +23,11 @@ public class ApiExceptionHandler {
 
     /**
      * Handles WebClientResponseException by extracting detailed error information
-     * and throwing a RuntimeException with a descriptive message.
+     * and throwing an ApiException with only the operation and error message.
      *
      * @param e           The WebClientResponseException to handle
      * @param operation   A description of the operation that failed (e.g., "create/update customer")
-     * @throws RuntimeException with detailed error message
+     * @throws ApiException with operation and error message only
      */
     public void handleWebClientResponseException(WebClientResponseException e, String operation) {
         String responseBody = e.getResponseBodyAsString();
@@ -34,7 +35,7 @@ public class ApiExceptionHandler {
                 e.getStatusCode(), responseBody);
 
         String errorMessage = buildErrorMessage(e, responseBody);
-        throw new RuntimeException("Failed to " + operation + ": " + errorMessage);
+        throw new ApiException(operation, errorMessage);
     }
 
     /**
