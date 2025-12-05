@@ -2,6 +2,7 @@ package com.services;
 
 import com.beans.AuthenticateRequestBean;
 import com.clients.AuthorizationServiceClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -16,24 +17,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorizationTokenService {
 
-    private final AuthorizationServiceClient authorizationServiceClient;
-    private final AuthorizationServiceManager authorizationServiceManager;
-    private final String userNameOrEmailAddress;
-    private final String password;
-    private final Boolean rememberClient;
+    @Autowired
+    private AuthorizationServiceClient authorizationServiceClient;
 
-    public AuthorizationTokenService(
-            AuthorizationServiceClient authorizationServiceClient,
-            AuthorizationServiceManager authorizationServiceManager,
-            @Value("${authorization.service.credentials.userNameOrEmailAddress}") String userNameOrEmailAddress,
-            @Value("${authorization.service.credentials.password}") String password,
-            @Value("${authorization.service.credentials.rememberClient}") Boolean rememberClient) {
-        this.authorizationServiceClient = authorizationServiceClient;
-        this.authorizationServiceManager = authorizationServiceManager;
-        this.userNameOrEmailAddress = userNameOrEmailAddress;
-        this.password = password;
-        this.rememberClient = rememberClient;
-    }
+    @Autowired
+    private AuthorizationServiceManager authorizationServiceManager;
+
+    @Value("${authorization.service.credentials.userNameOrEmailAddress}")
+    private String userNameOrEmailAddress;
+
+    @Value("${authorization.service.credentials.password}")
+    private String password;
+
+    @Value("${authorization.service.credentials.rememberClient}")
+    private Boolean rememberClient;
 
     /**
      * Retrieves a refresh token from the authorization service.

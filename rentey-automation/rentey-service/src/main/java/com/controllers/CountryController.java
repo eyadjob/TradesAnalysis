@@ -3,6 +3,7 @@ package com.controllers;
 import com.beans.GetCountryCurrencyInfoResponseBean;
 import com.beans.GetUserBranchesForComboboxResponseBean;
 import com.services.CountryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -12,11 +13,8 @@ import static com.controllers.ApiPaths.*;
 @RequestMapping(path = BASE_PATH)
 public class CountryController {
 
-    private final CountryService countryService;
-
-    public CountryController(CountryService countryService) {
-        this.countryService = countryService;
-    }
+    @Autowired
+    private CountryService countryService;
 
     /**
      * Get country currency information by country ID.

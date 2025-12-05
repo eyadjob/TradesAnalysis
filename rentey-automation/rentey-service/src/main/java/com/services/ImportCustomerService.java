@@ -16,18 +16,15 @@ public class ImportCustomerService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImportCustomerService.class);
 
-    private final WebClient settingsWebClient;
-    private final ObjectMapper objectMapper;
+    @Autowired
+    @Qualifier("settingsWebClient")
+    private WebClient webClient;
 
     @Autowired
-    CustomerService customerService;
+    private ObjectMapper objectMapper;
 
-    public ImportCustomerService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient,
-            ObjectMapper objectMapper) {
-        this.settingsWebClient = settingsWebClient;
-        this.objectMapper = objectMapper;
-    }
+    @Autowired
+    private CustomerService customerService;
     public CreateOrUpdateCustomerResponseBean importCustomer(CreateOrUpdateCustomerRequestBean request) {
 
         return customerService.createOrUpdateCustomer(request);

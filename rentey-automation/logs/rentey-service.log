@@ -1,0 +1,320 @@
+2025-12-05T23:20:53.685+03:00  INFO 51196 --- [main] com.RenteyServiceApplication             : Starting RenteyServiceApplication using Java 22.0.2 with PID 51196 (D:\TradesAnalysis\rentey-automation\rentey-service\target\classes started by eyadm in D:\TradesAnalysis\rentey-automation)
+2025-12-05T23:20:53.686+03:00 DEBUG 51196 --- [main] com.RenteyServiceApplication             : Running with Spring Boot v3.1.1, Spring v6.0.10
+2025-12-05T23:20:53.687+03:00  INFO 51196 --- [main] com.RenteyServiceApplication             : No active profile set, falling back to 1 default profile: "default"
+2025-12-05T23:20:54.368+03:00 ERROR 51196 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+java.lang.IllegalStateException: Error processing condition on org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration.propertySourcesPlaceholderConfigurer
+	at org.springframework.boot.autoconfigure.condition.SpringBootCondition.matches(SpringBootCondition.java:60) ~[spring-boot-autoconfigure-3.1.1.jar:3.1.1]
+	at org.springframework.context.annotation.ConditionEvaluator.shouldSkip(ConditionEvaluator.java:108) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsForBeanMethod(ConfigurationClassBeanDefinitionReader.java:183) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitionsForConfigurationClass(ConfigurationClassBeanDefinitionReader.java:144) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.context.annotation.ConfigurationClassBeanDefinitionReader.loadBeanDefinitions(ConfigurationClassBeanDefinitionReader.java:120) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.processConfigBeanDefinitions(ConfigurationClassPostProcessor.java:427) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanDefinitionRegistry(ConfigurationClassPostProcessor.java:287) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanDefinitionRegistryPostProcessors(PostProcessorRegistrationDelegate.java:344) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:115) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:771) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:589) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:734) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:436) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:312) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1306) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1295) ~[spring-boot-3.1.1.jar:3.1.1]
+	at com.RenteyServiceApplication.main(RenteyServiceApplication.java:12) ~[classes/:na]
+Caused by: java.lang.IllegalStateException: Failed to introspect Class [com.configs.RenteyConfiguration] from ClassLoader [jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528]
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:483) ~[spring-core-6.0.10.jar:6.0.10]
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:360) ~[spring-core-6.0.10.jar:6.0.10]
+	at org.springframework.util.ReflectionUtils.getUniqueDeclaredMethods(ReflectionUtils.java:417) ~[spring-core-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.lambda$getTypeForFactoryMethod$1(AbstractAutowireCapableBeanFactory.java:748) ~[spring-beans-6.0.10.jar:6.0.10]
+	at java.base/java.util.concurrent.ConcurrentHashMap.computeIfAbsent(ConcurrentHashMap.java:1710) ~[na:na]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.getTypeForFactoryMethod(AbstractAutowireCapableBeanFactory.java:747) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineTargetType(AbstractAutowireCapableBeanFactory.java:680) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.predictBeanType(AbstractAutowireCapableBeanFactory.java:651) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.isFactoryBean(AbstractBeanFactory.java:1632) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doGetBeanNamesForType(DefaultListableBeanFactory.java:560) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanNamesForType(DefaultListableBeanFactory.java:532) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.collectBeanNamesForType(OnBeanCondition.java:246) ~[spring-boot-autoconfigure-3.1.1.jar:3.1.1]
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.getBeanNamesForType(OnBeanCondition.java:239) ~[spring-boot-autoconfigure-3.1.1.jar:3.1.1]
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.getBeanNamesForType(OnBeanCondition.java:229) ~[spring-boot-autoconfigure-3.1.1.jar:3.1.1]
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.getMatchingBeans(OnBeanCondition.java:182) ~[spring-boot-autoconfigure-3.1.1.jar:3.1.1]
+	at org.springframework.boot.autoconfigure.condition.OnBeanCondition.getMatchOutcome(OnBeanCondition.java:157) ~[spring-boot-autoconfigure-3.1.1.jar:3.1.1]
+	at org.springframework.boot.autoconfigure.condition.SpringBootCondition.matches(SpringBootCondition.java:47) ~[spring-boot-autoconfigure-3.1.1.jar:3.1.1]
+	... 17 common frames omitted
+Caused by: java.lang.NoClassDefFoundError: AuthorizationServiceClient
+	at java.base/java.lang.Class.getDeclaredMethods0(Native Method) ~[na:na]
+	at java.base/java.lang.Class.privateGetDeclaredMethods(Class.java:3601) ~[na:na]
+	at java.base/java.lang.Class.getDeclaredMethods(Class.java:2686) ~[na:na]
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:465) ~[spring-core-6.0.10.jar:6.0.10]
+	... 33 common frames omitted
+Caused by: java.lang.ClassNotFoundException: AuthorizationServiceClient
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641) ~[na:na]
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[na:na]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:525) ~[na:na]
+	... 37 common frames omitted
+
+2025-12-05T23:20:54.382+03:00  WARN 51196 --- [main] o.s.boot.SpringApplication               : Unable to close ApplicationContext
+
+java.lang.IllegalStateException: Failed to introspect Class [com.configs.RenteyConfiguration] from ClassLoader [jdk.internal.loader.ClassLoaders$AppClassLoader@76ed5528]
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:483) ~[spring-core-6.0.10.jar:6.0.10]
+	at org.springframework.util.ReflectionUtils.doWithMethods(ReflectionUtils.java:360) ~[spring-core-6.0.10.jar:6.0.10]
+	at org.springframework.util.ReflectionUtils.getUniqueDeclaredMethods(ReflectionUtils.java:417) ~[spring-core-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.lambda$getTypeForFactoryMethod$1(AbstractAutowireCapableBeanFactory.java:748) ~[spring-beans-6.0.10.jar:6.0.10]
+	at java.base/java.util.concurrent.ConcurrentHashMap.computeIfAbsent(ConcurrentHashMap.java:1710) ~[na:na]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.getTypeForFactoryMethod(AbstractAutowireCapableBeanFactory.java:747) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.determineTargetType(AbstractAutowireCapableBeanFactory.java:680) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.predictBeanType(AbstractAutowireCapableBeanFactory.java:651) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.isFactoryBean(AbstractBeanFactory.java:1632) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doGetBeanNamesForType(DefaultListableBeanFactory.java:560) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeanNamesForType(DefaultListableBeanFactory.java:532) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeansOfType(DefaultListableBeanFactory.java:659) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.getBeansOfType(DefaultListableBeanFactory.java:651) ~[spring-beans-6.0.10.jar:6.0.10]
+	at org.springframework.context.support.AbstractApplicationContext.getBeansOfType(AbstractApplicationContext.java:1300) ~[spring-context-6.0.10.jar:6.0.10]
+	at org.springframework.boot.SpringApplication.getExitCodeFromMappedException(SpringApplication.java:867) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.getExitCodeFromException(SpringApplication.java:855) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.handleExitCode(SpringApplication.java:842) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.handleRunFailure(SpringApplication.java:782) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:325) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1306) ~[spring-boot-3.1.1.jar:3.1.1]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1295) ~[spring-boot-3.1.1.jar:3.1.1]
+	at com.RenteyServiceApplication.main(RenteyServiceApplication.java:12) ~[classes/:na]
+Caused by: java.lang.NoClassDefFoundError: AuthorizationServiceClient
+	at java.base/java.lang.Class.getDeclaredMethods0(Native Method) ~[na:na]
+	at java.base/java.lang.Class.privateGetDeclaredMethods(Class.java:3601) ~[na:na]
+	at java.base/java.lang.Class.getDeclaredMethods(Class.java:2686) ~[na:na]
+	at org.springframework.util.ReflectionUtils.getDeclaredMethods(ReflectionUtils.java:465) ~[spring-core-6.0.10.jar:6.0.10]
+	... 21 common frames omitted
+Caused by: java.lang.ClassNotFoundException: AuthorizationServiceClient
+	at java.base/jdk.internal.loader.BuiltinClassLoader.loadClass(BuiltinClassLoader.java:641) ~[na:na]
+	at java.base/jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(ClassLoaders.java:188) ~[na:na]
+	at java.base/java.lang.ClassLoader.loadClass(ClassLoader.java:525) ~[na:na]
+	... 25 common frames omitted
+
+2025-12-05T23:26:07.595+03:00  INFO 25500 --- [main] com.RenteyServiceApplication             : Starting RenteyServiceApplication using Java 22.0.2 with PID 25500 (D:\TradesAnalysis\rentey-automation\rentey-service\target\classes started by eyadm in D:\TradesAnalysis\rentey-automation)
+2025-12-05T23:26:07.596+03:00 DEBUG 25500 --- [main] com.RenteyServiceApplication             : Running with Spring Boot v3.1.1, Spring v6.0.10
+2025-12-05T23:26:07.597+03:00  INFO 25500 --- [main] com.RenteyServiceApplication             : No active profile set, falling back to 1 default profile: "default"
+2025-12-05T23:26:09.038+03:00  INFO 25500 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8091 (http)
+2025-12-05T23:26:09.044+03:00  INFO 25500 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-05T23:26:09.044+03:00  INFO 25500 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.10]
+2025-12-05T23:26:09.101+03:00  INFO 25500 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-05T23:26:09.101+03:00  INFO 25500 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1462 ms
+2025-12-05T23:26:09.637+03:00 DEBUG 25500 --- [main] c.services.AuthorizationServiceManager   : Found project root at: D:\TradesAnalysis\rentey-automation
+2025-12-05T23:26:09.732+03:00  WARN 25500 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'importCustomerController': Unsatisfied dependency expressed through field 'importCustomerService': Error creating bean with name 'importCustomerService': Unsatisfied dependency expressed through field 'webClient': No qualifying bean of type 'org.springframework.web.reactive.function.client.WebClient' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true), @org.springframework.beans.factory.annotation.Qualifier("webClient")}
+2025-12-05T23:26:09.733+03:00  INFO 25500 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-12-05T23:26:09.740+03:00  INFO 25500 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-12-05T23:26:09.758+03:00 DEBUG 25500 --- [main] c.services.AuthorizationServiceManager   : Found project root at: D:\TradesAnalysis\rentey-automation
+2025-12-05T23:26:09.762+03:00 ERROR 25500 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Field webClient in com.services.ImportCustomerService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
+
+The injection point has the following annotations:
+	- @org.springframework.beans.factory.annotation.Autowired(required=true)
+
+The following candidates were found but could not be injected:
+	- User-defined bean method 'renteyWebClient' in 'RenteyConfiguration'
+	- User-defined bean method 'authorizationWebClient' in 'RenteyConfiguration'
+
+
+Action:
+
+Consider revisiting the entries above or defining a bean of type 'org.springframework.web.reactive.function.client.WebClient' in your configuration.
+
+2025-12-05T23:27:06.378+03:00  INFO 56812 --- [main] com.RenteyServiceApplication             : Starting RenteyServiceApplication using Java 22.0.2 with PID 56812 (D:\TradesAnalysis\rentey-automation\rentey-service\target\classes started by eyadm in D:\TradesAnalysis\rentey-automation)
+2025-12-05T23:27:06.378+03:00 DEBUG 56812 --- [main] com.RenteyServiceApplication             : Running with Spring Boot v3.1.1, Spring v6.0.10
+2025-12-05T23:27:06.379+03:00  INFO 56812 --- [main] com.RenteyServiceApplication             : No active profile set, falling back to 1 default profile: "default"
+2025-12-05T23:27:07.920+03:00  INFO 56812 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8091 (http)
+2025-12-05T23:27:07.927+03:00  INFO 56812 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-05T23:27:07.927+03:00  INFO 56812 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.10]
+2025-12-05T23:27:07.997+03:00  INFO 56812 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-12-05T23:27:07.997+03:00  INFO 56812 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1579 ms
+2025-12-05T23:27:08.644+03:00 DEBUG 56812 --- [main] c.services.AuthorizationServiceManager   : Found project root at: D:\TradesAnalysis\rentey-automation
+2025-12-05T23:27:08.763+03:00  INFO 56812 --- [main] com.RenteyControllerExceptionHandler     : RenteyControllerExceptionHandler initialized and registered
+2025-12-05T23:27:08.763+03:00  INFO 56812 --- [main] com.RenteyControllerExceptionHandler     : RenteyControllerExceptionHandler bean created
+2025-12-05T23:27:09.318+03:00  INFO 56812 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8091 (http) with context path ''
+2025-12-05T23:27:09.328+03:00  INFO 56812 --- [main] com.RenteyServiceApplication             : Started RenteyServiceApplication in 3.393 seconds (process running for 3.68)
+2025-12-05T23:27:13.907+03:00  INFO 56812 --- [http-nio-8091-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-05T23:27:13.907+03:00  INFO 56812 --- [http-nio-8091-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-05T23:27:13.908+03:00  INFO 56812 --- [http-nio-8091-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-12-05T23:27:14.026+03:00  INFO 56812 --- [http-nio-8091-exec-1] c.a.LoggingRequestAndResponseAspect      : === Incoming Request (Aspect) In Rentey Service Module ===
+2025-12-05T23:27:14.026+03:00  INFO 56812 --- [http-nio-8091-exec-1] c.a.LoggingRequestAndResponseAspect      : Method: POST
+2025-12-05T23:27:14.026+03:00  INFO 56812 --- [http-nio-8091-exec-1] c.a.LoggingRequestAndResponseAspect      : Full URI: http://localhost:8091/api/services/app/Customer/CreateOrUpdateCustomer
+2025-12-05T23:27:14.026+03:00  INFO 56812 --- [http-nio-8091-exec-1] c.a.LoggingRequestAndResponseAspect      : Controller Method: com.services.CustomerService.createOrUpdateCustomer
+2025-12-05T23:27:14.027+03:00  INFO 56812 --- [http-nio-8091-exec-1] c.a.LoggingRequestAndResponseAspect      : Headers: {"referer": "https://ejar-jor-test.iyelo.com:9900/", "content-length": "2249", "abp.tenantid": "47", "expires": "Sat, 01 Jan 2000 00:00:00 GMT", "accept-language": "en", ".aspnetcore.culture": "en", "postman-token": "0644f95f-8f50-49e9-9608-bf08a14a143b", "origin": "https://ejar-jor-test.iyelo.com:9900/", "pragma": "no-cache", "accept": "application/json", "x-requested-with": "XMLHttpRequest", "host": "localhost:8091", "connection": "keep-alive", "content-type": "application/json", "cache-control": "no-cache", "accept-encoding": "gzip, deflate", "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0"}
+2025-12-05T23:27:14.027+03:00  INFO 56812 --- [http-nio-8091-exec-1] c.a.LoggingRequestAndResponseAspect      : Request Body: {"customer":{"id":0,"fullName":{"first":"Eyad Automation Test Customer acctyvhwdusx","second":"Eyad Automation Test Customer acctyvhwdusx","family":"Eyad Automation Test Customer acctyvhwdusx"},"contactInformation":{"primaryPhone":"966-517112100","email":"EyadAutomationTestCustomeracctyvhwdusx@iyelo.com"},"basicInformation":{"nationalityId":"1","genderId":"110","dateOfBirth":"1999-08-26T16:14:05+03:00"},"professionalInformation":{},"customerPolicyVerification":{"isTermsConditionsAndPrivacyPolicyApproved":true},"address":{"countryId":"1","cityId":-1},"secondaryAddress":{},"emergencyContacts":[],"personalPhoto":{"id":"","url":"","size":0,"type":""},"documents":[{"discriminator":"IdentityDto","issueCountryId":"1","typeId":"250","number":"0271121006","copyNumber":1,"issueDate":"2020-08-26T00:00:00+03:00","expiryDate":"2030-08-26T16:23:00+03:00","typeName":"Identity","issueCountry":"Saudi Arabia ","attachment":{"url":"https://ejar-jor-test.iyelo.com:9900/webapigw\\Temp\\Downloads\\e97b065a-4e44-4ae8-a000-d2b89b839d1f.png","size":11649,"type":".PNG"}},{"discriminator":"DriverLicenseDto","issueCountryId":"1","typeId":"253","number":"4362354161","issueDate":"2020-08-26T00:00:00+03:00","expiryDate":"2029-08-08T16:24:00+03:00","typeName":"Driver License","issueCountry":"Saudi Arabia","attachment":{"url":"https://ejar-jor-test.iyelo.com:9900/webapigw\\Temp\\Downloads\\e97b065a-4e44-4ae8-a000-d2b89b839d1f.png","size":11649,"type":".PNG"},"licenseCategoryId":"-1"}],"externalLoyalties":[],"sourceId":120}}
+2025-12-05T23:27:14.027+03:00  INFO 56812 --- [http-nio-8091-exec-1] c.a.LoggingRequestAndResponseAspect      : ==================================
+2025-12-05T23:27:14.032+03:00 DEBUG 56812 --- [http-nio-8091-exec-1] com.util.ObjectMapperUtil                : Request Body: {"customer":{"id":0,"fullName":{"first":"Eyad Automation Test Customer acctyvhwdusx","second":"Eyad Automation Test Customer acctyvhwdusx","family":"Eyad Automation Test Customer acctyvhwdusx"},"contactInformation":{"primaryPhone":"966-517112100","email":"EyadAutomationTestCustomeracctyvhwdusx@iyelo.com"},"basicInformation":{"nationalityId":"1","genderId":"110","dateOfBirth":"1999-08-26T16:14:05+03:00"},"professionalInformation":{},"customerPolicyVerification":{"isTermsConditionsAndPrivacyPolicyApproved":true},"address":{"countryId":"1","cityId":-1},"secondaryAddress":{},"emergencyContacts":[],"personalPhoto":{"id":"","url":"","size":0,"type":""},"documents":[{"discriminator":"IdentityDto","issueCountryId":"1","typeId":"250","number":"0271121006","copyNumber":1,"issueDate":"2020-08-26T00:00:00+03:00","expiryDate":"2030-08-26T16:23:00+03:00","typeName":"Identity","issueCountry":"Saudi Arabia ","attachment":{"url":"https://ejar-jor-test.iyelo.com:9900/webapigw\\Temp\\Downloads\\e97b065a-4e44-4ae8-a000-d2b89b839d1f.png","size":11649,"type":".PNG"}},{"discriminator":"DriverLicenseDto","issueCountryId":"1","typeId":"253","number":"4362354161","issueDate":"2020-08-26T00:00:00+03:00","expiryDate":"2029-08-08T16:24:00+03:00","typeName":"Driver License","issueCountry":"Saudi Arabia","attachment":{"url":"https://ejar-jor-test.iyelo.com:9900/webapigw\\Temp\\Downloads\\e97b065a-4e44-4ae8-a000-d2b89b839d1f.png","size":11649,"type":".PNG"},"licenseCategoryId":"-1"}],"externalLoyalties":[],"sourceId":120}}
+2025-12-05T23:27:14.073+03:00 DEBUG 56812 --- [boundedElastic-1] com.filters.AuthorizationHeaderFilter    : Fetching new token from authorization-service
+2025-12-05T23:27:14.080+03:00  INFO 56812 --- [boundedElastic-1] c.services.AuthorizationServiceManager   : authorization-service is already running on port 8088
+2025-12-05T23:27:15.372+03:00  INFO 56812 --- [boundedElastic-1] com.filters.AuthorizationHeaderFilter    : Added Authorization header to request: https://ejar-jor-test.iyelo.com:9900/webapigw/api/services/app/Customer/CreateOrUpdateCustomer (token length: 2184)
+2025-12-05T23:27:15.372+03:00 DEBUG 56812 --- [boundedElastic-1] com.filters.AuthorizationHeaderFilter    : Authorization header value: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiNGYyOGJkMGUtYmYxNi00NWY4LTk2NmItY2Y3NTVlOGNlZDM4IiwiaWF0IjoxNzY0OTY2NDUyLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiI3MWRlNTg0Ny04NmU5LTQ1MWYtODdhNS0zOTUyZTUxMWM4NmYiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NDk2NjQ1MiwiZXhwIjoxNzY1MDUyODUyLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.zTbSVQ2l7reHjc_LCS8UE87Uosz63ND7AkN3oTfmhTk...
+2025-12-05T23:27:15.372+03:00  INFO 56812 --- [boundedElastic-1] com.filters.WebClientLoggingFilter       : === Outgoing Request from rentey-service ===
+2025-12-05T23:27:15.372+03:00  INFO 56812 --- [boundedElastic-1] com.filters.WebClientLoggingFilter       : Method: POST
+2025-12-05T23:27:15.372+03:00  INFO 56812 --- [boundedElastic-1] com.filters.WebClientLoggingFilter       : URI: https://ejar-jor-test.iyelo.com:9900/webapigw/api/services/app/Customer/CreateOrUpdateCustomer
+2025-12-05T23:27:15.373+03:00  INFO 56812 --- [boundedElastic-1] com.filters.WebClientLoggingFilter       : Headers: {"Connection": "keep-alive", "Abp.TenantId": "47", "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0", "Accept": "application/json", "Accept-Language": "en", "Accept-Encoding": "gzip, deflate", "Content-Type": "application/json", "Pragma": "no-cache", "Cache-Control": "no-cache", "Expires": "Sat, 01 Jan 2000 00:00:00 GMT", "X-Requested-With": "XMLHttpRequest", ".AspNetCore.Culture": "en", "Origin": "https://ejar-jor-test.iyelo.com:9900/", "Referer": "https://ejar-jor-test.iyelo.com:9900/", "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiNGYyOGJkMGUtYmYxNi00NWY4LTk2NmItY2Y3NTVlOGNlZDM4IiwiaWF0IjoxNzY0OTY2NDUyLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiI3MWRlNTg0Ny04NmU5LTQ1MWYtODdhNS0zOTUyZTUxMWM4NmYiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NDk2NjQ1MiwiZXhwIjoxNzY1MDUyODUyLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.zTbSVQ2l7reHjc_LCS8UE87Uosz63ND7AkN3oTfmhTk"}
+2025-12-05T23:27:15.373+03:00  INFO 56812 --- [boundedElastic-1] com.filters.WebClientLoggingFilter       : ==============================================
+2025-12-05T23:27:17.239+03:00  INFO 56812 --- [reactor-http-nio-3] com.filters.WebClientLoggingFilter       : === Response from External API ===
+2025-12-05T23:27:17.239+03:00  INFO 56812 --- [reactor-http-nio-3] com.filters.WebClientLoggingFilter       : Status: 500 INTERNAL_SERVER_ERROR
+2025-12-05T23:27:17.251+03:00  INFO 56812 --- [reactor-http-nio-3] com.filters.WebClientLoggingFilter       : Headers: {"Content-Length": "190", "Content-Type": "application/json; charset=utf-8", "Server": "Microsoft-IIS/10.0", "X-Content-Type-Options": "nosniff", "X-XSS-Protection": "1; mode=block", "X-Frame-Options": "SAMEORIGIN", "x-miniprofiler-ids": "["e522bc54-343e-49c6-abfd-ae7b89f76ea3"]", "Strict-Transport-Security": "max-age=2592000", "X-Powered-By": "ASP.NET", "Date": "Fri, 05 Dec 2025 20:27:33 GMT"}
+2025-12-05T23:27:17.251+03:00  INFO 56812 --- [reactor-http-nio-3] com.filters.WebClientLoggingFilter       : ==================================
+2025-12-05T23:27:17.272+03:00 ERROR 56812 --- [reactor-http-nio-3] com.services.CustomerService             : === Error calling external API ===
+2025-12-05T23:27:17.272+03:00 ERROR 56812 --- [reactor-http-nio-3] com.services.CustomerService             : Error message: 500 Internal Server Error from POST https://ejar-jor-test.iyelo.com:9900/webapigw/api/services/app/Customer/CreateOrUpdateCustomer
+2025-12-05T23:27:17.272+03:00 ERROR 56812 --- [reactor-http-nio-3] com.services.CustomerService             : Request Body: {"customer":{"id":0,"fullName":{"first":"Eyad Automation Test Customer acctyvhwdusx","second":"Eyad Automation Test Customer acctyvhwdusx","family":"Eyad Automation Test Customer acctyvhwdusx"},"contactInformation":{"primaryPhone":"966-517112100","email":"EyadAutomationTestCustomeracctyvhwdusx@iyelo.com"},"basicInformation":{"nationalityId":"1","genderId":"110","dateOfBirth":"1999-08-26T16:14:05+03:00"},"professionalInformation":{},"customerPolicyVerification":{"isTermsConditionsAndPrivacyPolicyApproved":true},"address":{"countryId":"1","cityId":-1},"secondaryAddress":{},"emergencyContacts":[],"personalPhoto":{"id":"","url":"","size":0,"type":""},"documents":[{"discriminator":"IdentityDto","issueCountryId":"1","typeId":"250","number":"0271121006","copyNumber":1,"issueDate":"2020-08-26T00:00:00+03:00","expiryDate":"2030-08-26T16:23:00+03:00","typeName":"Identity","issueCountry":"Saudi Arabia ","attachment":{"url":"https://ejar-jor-test.iyelo.com:9900/webapigw\\Temp\\Downloads\\e97b065a-4e44-4ae8-a000-d2b89b839d1f.png","size":11649,"type":".PNG"}},{"discriminator":"DriverLicenseDto","issueCountryId":"1","typeId":"253","number":"4362354161","issueDate":"2020-08-26T00:00:00+03:00","expiryDate":"2029-08-08T16:24:00+03:00","typeName":"Driver License","issueCountry":"Saudi Arabia","attachment":{"url":"https://ejar-jor-test.iyelo.com:9900/webapigw\\Temp\\Downloads\\e97b065a-4e44-4ae8-a000-d2b89b839d1f.png","size":11649,"type":".PNG"},"licenseCategoryId":"-1"}],"externalLoyalties":[],"sourceId":120}}
+2025-12-05T23:27:17.272+03:00 ERROR 56812 --- [reactor-http-nio-3] com.services.CustomerService             : Note: Request headers are logged by WebClientLoggingFilter above
+2025-12-05T23:27:17.273+03:00 ERROR 56812 --- [reactor-http-nio-3] com.services.CustomerService             : ===================================
+2025-12-05T23:27:17.273+03:00 ERROR 56812 --- [http-nio-8091-exec-1] com.aspect.ExecutionTimeLoggingAspect    : Method com.services.CustomerService.createOrUpdateCustomer failed after 3275 ms with error: 500 Internal Server Error from POST https://ejar-jor-test.iyelo.com:9900/webapigw/api/services/app/Customer/CreateOrUpdateCustomer - Exception type: InternalServerError
+2025-12-05T23:27:17.274+03:00 ERROR 56812 --- [http-nio-8091-exec-1] com.RenteyControllerExceptionHandler     : RuntimeException in controller - Message: 500 Internal Server Error from POST https://ejar-jor-test.iyelo.com:9900/webapigw/api/services/app/Customer/CreateOrUpdateCustomer, URI: /api/services/app/Customer/CreateOrUpdateCustomer
+
+org.springframework.web.reactive.function.client.WebClientResponseException$InternalServerError: 500 Internal Server Error from POST https://ejar-jor-test.iyelo.com:9900/webapigw/api/services/app/Customer/CreateOrUpdateCustomer
+	at org.springframework.web.reactive.function.client.WebClientResponseException.create(WebClientResponseException.java:330) ~[spring-webflux-6.0.10.jar:6.0.10]
+	Suppressed: reactor.core.publisher.FluxOnAssembly$OnAssemblyException: 
+Error has been observed at the following site(s):
+	*__checkpoint ⇢ 500 INTERNAL_SERVER_ERROR from POST https://ejar-jor-test.iyelo.com:9900/webapigw/api/services/app/Customer/CreateOrUpdateCustomer [DefaultWebClient]
+Original Stack Trace:
+		at org.springframework.web.reactive.function.client.WebClientResponseException.create(WebClientResponseException.java:330) ~[spring-webflux-6.0.10.jar:6.0.10]
+		at org.springframework.web.reactive.function.client.DefaultClientResponse.lambda$createException$1(DefaultClientResponse.java:213) ~[spring-webflux-6.0.10.jar:6.0.10]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onNext(FluxMap.java:106) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.FluxOnErrorReturn$ReturnSubscriber.onNext(FluxOnErrorReturn.java:162) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.FluxDefaultIfEmpty$DefaultIfEmptySubscriber.onNext(FluxDefaultIfEmpty.java:122) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.FluxMapFuseable$MapFuseableSubscriber.onNext(FluxMapFuseable.java:129) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.FluxContextWrite$ContextWriteSubscriber.onNext(FluxContextWrite.java:107) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.FluxMapFuseable$MapFuseableConditionalSubscriber.onNext(FluxMapFuseable.java:299) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.FluxFilterFuseable$FilterFuseableConditionalSubscriber.onNext(FluxFilterFuseable.java:337) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.Operators$BaseFluxToMonoOperator.completePossiblyEmpty(Operators.java:2071) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.MonoCollect$CollectSubscriber.onComplete(MonoCollect.java:145) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onComplete(FluxMap.java:144) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.FluxPeek$PeekSubscriber.onComplete(FluxPeek.java:260) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.FluxMap$MapSubscriber.onComplete(FluxMap.java:144) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.netty.channel.FluxReceive.onInboundComplete(FluxReceive.java:413) ~[reactor-netty-core-1.1.8.jar:1.1.8]
+		at reactor.netty.channel.ChannelOperations.onInboundComplete(ChannelOperations.java:431) ~[reactor-netty-core-1.1.8.jar:1.1.8]
+		at reactor.netty.channel.ChannelOperations.terminate(ChannelOperations.java:485) ~[reactor-netty-core-1.1.8.jar:1.1.8]
+		at reactor.netty.http.client.HttpClientOperations.onInboundNext(HttpClientOperations.java:712) ~[reactor-netty-http-1.1.8.jar:1.1.8]
+		at reactor.netty.channel.ChannelOperationsHandler.channelRead(ChannelOperationsHandler.java:113) ~[reactor-netty-core-1.1.8.jar:1.1.8]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.handler.codec.MessageToMessageDecoder.channelRead(MessageToMessageDecoder.java:103) ~[netty-codec-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.CombinedChannelDuplexHandler$DelegatingChannelHandlerContext.fireChannelRead(CombinedChannelDuplexHandler.java:436) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.handler.codec.ByteToMessageDecoder.fireChannelRead(ByteToMessageDecoder.java:346) ~[netty-codec-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:318) ~[netty-codec-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.CombinedChannelDuplexHandler.channelRead(CombinedChannelDuplexHandler.java:251) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:442) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.handler.ssl.SslHandler.unwrap(SslHandler.java:1383) ~[netty-handler-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.handler.ssl.SslHandler.decodeJdkCompatible(SslHandler.java:1246) ~[netty-handler-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.handler.ssl.SslHandler.decode(SslHandler.java:1295) ~[netty-handler-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.handler.codec.ByteToMessageDecoder.decodeRemovalReentryProtection(ByteToMessageDecoder.java:529) ~[netty-codec-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.handler.codec.ByteToMessageDecoder.callDecode(ByteToMessageDecoder.java:468) ~[netty-codec-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.handler.codec.ByteToMessageDecoder.channelRead(ByteToMessageDecoder.java:290) ~[netty-codec-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:444) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.fireChannelRead(AbstractChannelHandlerContext.java:412) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.DefaultChannelPipeline$HeadContext.channelRead(DefaultChannelPipeline.java:1410) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:440) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.AbstractChannelHandlerContext.invokeChannelRead(AbstractChannelHandlerContext.java:420) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.DefaultChannelPipeline.fireChannelRead(DefaultChannelPipeline.java:919) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:166) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:788) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[netty-transport-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[netty-common-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[netty-common-4.1.94.Final.jar:4.1.94.Final]
+		at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[netty-common-4.1.94.Final.jar:4.1.94.Final]
+		at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+	Suppressed: java.lang.Exception: #block terminated with an error
+		at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:102) ~[reactor-core-3.5.7.jar:3.5.7]
+		at reactor.core.publisher.Mono.block(Mono.java:1712) ~[reactor-core-3.5.7.jar:3.5.7]
+		at com.services.CustomerService.createOrUpdateCustomer(CustomerService.java:63) ~[classes/:na]
+		at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+		at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+		at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89) ~[spring-aop-6.0.10.jar:6.0.10]
+		at com.aspect.LoggingRequestAndResponseAspect.executeWithTimeTracking(LoggingRequestAndResponseAspect.java:69) ~[classes/:na]
+		at com.aspect.LoggingRequestAndResponseAspect.logRequestAndResponse(LoggingRequestAndResponseAspect.java:50) ~[classes/:na]
+		at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+		at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+		at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89) ~[spring-aop-6.0.10.jar:6.0.10]
+		at com.aspect.ExecutionTimeLoggingAspect.logExecutionTime(ExecutionTimeLoggingAspect.java:29) ~[classes/:na]
+		at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+		at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+		at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+		at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-6.0.10.jar:6.0.10]
+		at com.services.CustomerService$$SpringCGLIB$$0.createOrUpdateCustomer(<generated>) ~[classes/:na]
+		at com.controllers.CustomerController.createOrUpdateCustomer(CustomerController.java:39) ~[classes/:na]
+		at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+		at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+		at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:207) ~[spring-web-6.0.10.jar:6.0.10]
+		at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:152) ~[spring-web-6.0.10.jar:6.0.10]
+		at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.0.10.jar:6.0.10]
+		at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884) ~[spring-webmvc-6.0.10.jar:6.0.10]
+		at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797) ~[spring-webmvc-6.0.10.jar:6.0.10]
+		at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.0.10.jar:6.0.10]
+		at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081) ~[spring-webmvc-6.0.10.jar:6.0.10]
+		at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974) ~[spring-webmvc-6.0.10.jar:6.0.10]
+		at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011) ~[spring-webmvc-6.0.10.jar:6.0.10]
+		at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.0.10.jar:6.0.10]
+		at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.10.jar:6.0]
+		at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.0.10.jar:6.0.10]
+		at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.10.jar:6.0]
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.0.10.jar:6.0.10]
+		at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.0.10.jar:6.0.10]
+		at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.0.10.jar:6.0.10]
+		at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+		at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+		at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+
+2025-12-05T23:27:17.281+03:00 ERROR 56812 --- [http-nio-8091-exec-1] com.RenteyControllerExceptionHandler     : Returning ErrorResponseBean - Status: 500 INTERNAL_SERVER_ERROR, Message: 500 Internal Server Error from POST https://ejar-jor-test.iyelo.com:9900/webapigw/api/services/app/Customer/CreateOrUpdateCustomer

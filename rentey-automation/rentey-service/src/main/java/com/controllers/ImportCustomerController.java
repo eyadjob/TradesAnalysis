@@ -2,7 +2,6 @@ package com.controllers;
 
 import com.beans.CreateOrUpdateCustomerRequestBean;
 import com.beans.CreateOrUpdateCustomerResponseBean;
-import com.services.CustomerService;
 import com.services.ImportCustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

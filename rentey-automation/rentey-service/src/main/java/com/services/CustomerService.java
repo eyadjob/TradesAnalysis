@@ -8,6 +8,7 @@ import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.util.ObjectMapperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -21,15 +22,16 @@ public class CustomerService {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
-    private final WebClient webClient;
-    private final ObjectMapperUtil objectMapperUtil;
-    private final String apiBasePath;
+    @Autowired
+    @Qualifier("settingsWebClient")
+    private WebClient webClient;
 
-    public CustomerService(@Qualifier("settingsWebClient") WebClient webClient, ObjectMapperUtil objectMapperUtil, @Qualifier("apiBasePath") String apiBasePath) {
-        this.webClient = webClient;
-        this.objectMapperUtil = objectMapperUtil;
-        this.apiBasePath = apiBasePath;
-    }
+    @Autowired
+    private ObjectMapperUtil objectMapperUtil;
+
+    @Autowired
+    @Qualifier("apiBasePath")
+    private String apiBasePath;
 
     /**
      * Create or update a customer.

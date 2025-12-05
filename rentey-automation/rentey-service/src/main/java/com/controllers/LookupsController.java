@@ -2,6 +2,7 @@ package com.controllers;
 
 import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.services.LookupsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;
@@ -13,11 +14,8 @@ import static com.controllers.ApiPaths.*;
 @RequestMapping(path = BASE_PATH)
 public class LookupsController {
 
-    private final LookupsService lookupsService;
-
-    public LookupsController(LookupsService lookupsService) {
-        this.lookupsService = lookupsService;
-    }
+    @Autowired
+    private LookupsService lookupsService;
 
     /**
      * Get all types for combobox items.

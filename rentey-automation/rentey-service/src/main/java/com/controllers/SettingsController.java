@@ -4,6 +4,7 @@ import com.beans.AbpResponseBean;
 
 import com.beans.UpdateAllSettingsRequestBean;
 import com.services.SettingsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;
@@ -14,11 +15,8 @@ import com.beans.TenantAndCountrySettingsRequestBean;
 @RequestMapping(path = BASE_PATH)
 public class SettingsController {
 
-    private final SettingsService settingsService;
-
-    public SettingsController(SettingsService settingsService) {
-        this.settingsService = settingsService;
-    }
+    @Autowired
+    private SettingsService settingsService;
 
     /**
      * Update all settings for the tenant.

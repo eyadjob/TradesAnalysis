@@ -3,6 +3,7 @@ package com.services;
 import com.beans.AbpResponseBean;
 import com.beans.CreateOrUpdateRoleRequestBean;
 import com.beans.GetAllPermissionsResponseBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,15 +11,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class PermissionService {
 
-    private final WebClient settingsWebClient;
-    private final String apiBasePath;
+    @Autowired
+    @Qualifier("settingsWebClient")
+    private WebClient settingsWebClient;
 
-    public PermissionService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient,
-            @Qualifier("apiBasePath") String apiBasePath) {
-        this.settingsWebClient = settingsWebClient;
-        this.apiBasePath = apiBasePath;
-    }
+    @Autowired
+    @Qualifier("apiBasePath")
+    private String apiBasePath;
 
     public GetAllPermissionsResponseBean getAllPermissions() {
         // Authorization header and all headers from RenteyConfiguration are automatically included

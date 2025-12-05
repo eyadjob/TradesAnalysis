@@ -4,6 +4,7 @@ import com.beans.CreateOrUpdateCustomerRequestBean;
 import com.beans.CreateOrUpdateCustomerResponseBean;
 import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.services.CustomerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;
@@ -12,12 +13,8 @@ import static com.controllers.ApiPaths.*;
 @RequestMapping(path = BASE_PATH)
 public class CustomerController {
 
-    private final CustomerService customerService;
-
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
-
-    }
+    @Autowired
+    private CustomerService customerService;
 
     /**
      * Create or update a customer.

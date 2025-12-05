@@ -2,6 +2,7 @@ package com.services;
 
 import com.beans.UploadBase64FileRequestBean;
 import com.beans.UploadBase64FileResponseBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -9,12 +10,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class VehicleService {
 
-    private final WebClient settingsWebClient;
-
-    public VehicleService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient) {
-        this.settingsWebClient = settingsWebClient;
-    }
+    @Autowired
+    @Qualifier("settingsWebClient")
+    private WebClient settingsWebClient;
 
     /**
      * Upload a base64 encoded file.

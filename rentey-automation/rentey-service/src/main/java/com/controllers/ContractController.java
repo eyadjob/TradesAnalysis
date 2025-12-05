@@ -2,6 +2,7 @@ package com.controllers;
 
 import com.beans.GetCountriesPhoneResponseBean;
 import com.services.ContractService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;
@@ -10,11 +11,8 @@ import static com.controllers.ApiPaths.*;
 @RequestMapping(path = BASE_PATH)
 public class ContractController {
 
-    private final ContractService contractService;
-
-    public ContractController(ContractService contractService) {
-        this.contractService = contractService;
-    }
+    @Autowired
+    private ContractService contractService;
 
     /**
      * Get countries phone information.

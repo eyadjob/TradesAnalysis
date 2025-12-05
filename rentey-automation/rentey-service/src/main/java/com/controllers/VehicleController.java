@@ -3,6 +3,7 @@ package com.controllers;
 import com.beans.UploadBase64FileRequestBean;
 import com.beans.UploadBase64FileResponseBean;
 import com.services.VehicleService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;
@@ -11,11 +12,8 @@ import static com.controllers.ApiPaths.*;
 @RequestMapping(path = BASE_PATH)
 public class VehicleController {
 
-    private final VehicleService vehicleService;
-
-    public VehicleController(VehicleService vehicleService) {
-        this.vehicleService = vehicleService;
-    }
+    @Autowired
+    private VehicleService vehicleService;
 
     /**
      * Upload a base64 encoded file.
