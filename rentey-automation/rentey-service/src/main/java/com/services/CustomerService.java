@@ -64,37 +64,6 @@ public class CustomerService {
     }
 
 
-    /**
-     * Get all items for a combobox based on the lookup type.
-     * Authorization header and all headers from RenteyConfiguration are automatically included.
-     *
-     * @param typeId The type ID for the lookup items.
-     * @param selectedItemId The selected item ID (optional, can be null).
-     * @param includeInActive Whether to include inactive items.
-     * @param includeNotAssign Whether to include not assigned items.
-     * @return The response containing all combobox items.
-     */
-    public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
-            Integer typeId,
-            Integer selectedItemId,
-            Boolean includeInActive,
-            Boolean includeNotAssign) {
-        // Authorization header and all headers from RenteyConfiguration are automatically included
-        return webClient.get()
-                .uri(uriBuilder -> {
-                    var builder = uriBuilder
-                            .path(apiBasePath + "/Lookups/GetAllItemsComboboxItems")
-                            .queryParam("typeId", typeId)
-                            .queryParam("includeInActive", includeInActive)
-                            .queryParam("includeNotAssign", includeNotAssign);
-                    if (selectedItemId != null) {
-                        builder.queryParam("selectedItemId", selectedItemId);
-                    }
-                    return builder.build();
-                })
-                .retrieve()
-                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
-                .block();
-    }
+
 }
 

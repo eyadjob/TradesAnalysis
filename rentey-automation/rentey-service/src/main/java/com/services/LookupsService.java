@@ -39,4 +39,33 @@ public class LookupsService {
                 .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
                 .block();
     }
+
+    /**
+     * Get all items for a combobox based on the lookup type.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param typeId The type ID for the lookup items.
+
+     * @param includeInActive Whether to include inactive items.
+     * @param includeNotAssign Whether to include not assigned items.
+     * @return The response containing all combobox items.
+     */
+    public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
+            Integer typeId,
+            Boolean includeInActive,
+            Boolean includeNotAssign) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Lookups/GetAllItemsComboboxItems")
+                            .queryParam("typeId", typeId)
+                            .queryParam("includeInActive", includeInActive)
+                            .queryParam("includeNotAssign", includeNotAssign);
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
+    }
 }
