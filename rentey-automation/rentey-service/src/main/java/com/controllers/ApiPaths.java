@@ -38,12 +38,14 @@ public final class ApiPaths {
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
+    public static final String CUSTOMER_GET_ALL_ITEMS_COMBOBOX = "/Customer/GetAllItemsComboboxItems";
     
     // File Upload endpoints
     public static final String FILE_UPLOAD_BASE64 = "/FileUpload/UploadBase64File";
     
     // Lookups endpoints
     public static final String LOOKUPS_GET_ALL_ITEMS_COMBOBOX = "/Lookups/GetAllItemsComboboxItems";
+    public static final String LOOKUPS_GET_TYPES_COMBOBOX = "/Lookups/GetTypesComboboxItems";
     
     // Private constructor to prevent instantiation
     private ApiPaths() {

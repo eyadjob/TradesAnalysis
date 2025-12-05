@@ -4,6 +4,7 @@ import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.CreateOrUpdateCustomerRequestBean;
 import com.beans.CreateOrUpdateCustomerResponseBean;
+import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.util.ObjectMapperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
 public class CustomerService {
+
+
+
+
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
@@ -54,6 +59,40 @@ public class CustomerService {
             logger.error("Note: Request headers are logged by WebClientLoggingFilter above");
             logger.error("===================================");
         }).block();
+    }
+
+
+    /**
+     * Get all items for a combobox based on the lookup type.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param typeId The type ID for the lookup items.
+     * @param selectedItemId The selected item ID (optional, can be null).
+     * @param includeInActive Whether to include inactive items.
+     * @param includeNotAssign Whether to include not assigned items.
+     * @return The response containing all combobox items.
+     */
+    public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
+            Integer typeId,
+            Integer selectedItemId,
+            Boolean includeInActive,
+            Boolean includeNotAssign) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return webClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Lookups/GetAllItemsComboboxItems")
+                            .queryParam("typeId", typeId)
+                            .queryParam("includeInActive", includeInActive)
+                            .queryParam("includeNotAssign", includeNotAssign);
+                    if (selectedItemId != null) {
+                        builder.queryParam("selectedItemId", selectedItemId);
+                    }
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
     }
 }
 
