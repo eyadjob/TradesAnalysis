@@ -30,6 +30,10 @@ public class ImportCustomerService {
     @Autowired
     private  LookupsService lookupsService;
 
+    @Autowired
+    private SettingsService settingsService;
+
+
     private GetAllItemsComboboxItemsResponseBean genderLookupValues;
 
 
@@ -259,5 +263,8 @@ public class ImportCustomerService {
         return null;
     }
 
+    private List<Integer> getOperationalCountries() {
+        return settingsService.getOperationalCountries();
+    }
 }
 
