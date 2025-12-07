@@ -1,5 +1,7 @@
 package com.controllers;
 
+import com.annotation.LogExecutionTime;
+import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.CreateOrUpdateCustomerRequestBean;
 import com.beans.CreateOrUpdateCustomerResponseBean;
 import com.services.ImportCustomerService;
@@ -11,13 +13,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
-import static com.controllers.ApiPaths.BASE_PATH;
+import static com.controllers.ApiPaths.*;
 
 /**
  * Controller for importing customer data.
  * This controller provides REST endpoints to create or update customer records
  * by calling the CustomerService directly (since it's in the same service).
  */
+
 @RestController
 @RequestMapping(path = BASE_PATH)
 public class ImportCustomerController {
@@ -32,35 +35,16 @@ public class ImportCustomerController {
      * This endpoint accepts a CreateOrUpdateCustomerRequestBean payload and calls
      * the CustomerService directly to create or update the customer record.
      *
-     * @param request The request containing customer information.
      * @return ResponseEntity containing the response from the createOrUpdateCustomer API
      */
-    @PostMapping(
-            path = "/import-customer", 
-            consumes = "application/json", 
-            produces = "application/json"
+    @GetMapping(
+            path = IMPORT_CUSTOMER_FROM_CSV_FILE
     )
-    public ResponseEntity<Object> importCustomer(
-            @RequestBody(required = true) CreateOrUpdateCustomerRequestBean request) {
-
-        // Validate request
-        if (request == null) {
-            logger.warn("Request body is null");
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Request body is required and cannot be null.");
-        }
-
-        if (request.customer() == null) {
-            logger.warn("Customer data is null");
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body("Customer data is required and cannot be null.");
-        }
+    public ResponseEntity<Object> importCustomer() {
 
         try {
             // Call the service directly to create or update customer
-            CreateOrUpdateCustomerResponseBean response = importCustomerService.importCustomer(request);
+            CreateOrUpdateCustomerResponseBean response = importCustomerService.importCustomerRecordsToSystemFromCsvFile();
             logger.info("Successfully created/updated customer");
             return ResponseEntity
                     .status(HttpStatus.OK)
@@ -75,15 +59,5 @@ public class ImportCustomerController {
         }
     }
 
-    /**
-     * Exception handler for JSON parsing errors.
-     */
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        logger.error("JSON parsing error: {}", ex.getMessage(), ex);
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Invalid JSON format: " + ex.getMessage());
-    }
 }
 

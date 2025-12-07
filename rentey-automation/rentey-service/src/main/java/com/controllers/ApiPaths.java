@@ -29,6 +29,7 @@ public final class ApiPaths {
     // Country endpoints
     public static final String COUNTRY_GET_OPERATIONAL_COUNTRIES = "/Country/GetOperationalCountries";
     public static final String COUNTRY_GET_COUNTRIES_PHONE = "/Country/GetCountriesPhone";
+    public static final String COUNTRY_GET_COUNTRIES_FOR_COMBOBOX = "/Country/GetCountriesForCombobox";
     
     // Currency endpoints
     public static final String CURRENCY_GET_COUNTRY_CURRENCY_INFO = "/Currency/GetCountryCurrencyInfo";
@@ -39,7 +40,10 @@ public final class ApiPaths {
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
     public static final String CUSTOMER_GET_ALL_ITEMS_COMBOBOX = "/Customer/GetAllItemsComboboxItems";
-    
+
+    //Import Customer endpoints
+    public static final String IMPORT_CUSTOMER_FROM_CSV_FILE = "/import-customer-from-csv-file";
+
     // File Upload endpoints
     public static final String FILE_UPLOAD_BASE64 = "/FileUpload/UploadBase64File";
     

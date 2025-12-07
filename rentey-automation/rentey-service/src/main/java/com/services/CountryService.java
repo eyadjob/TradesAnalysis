@@ -1,5 +1,6 @@
 package com.services;
 
+import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.beans.GetCountryCurrencyInfoResponseBean;
 import com.beans.GetUserBranchesForComboboxResponseBean;
 import java.util.List;
@@ -78,6 +79,37 @@ public class CountryService {
                 })
                 .retrieve()
                 .bodyToMono(GetUserBranchesForComboboxResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get countries for combobox.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param includeInActive Whether to include inactive countries (default: false).
+     * @param includeNotAssign Whether to include "Not assigned" option (default: true).
+     * @return The response containing all countries for combobox.
+     */
+    public GetAllItemsComboboxItemsResponseBean getCountriesForCombobox(
+            Boolean includeInActive,
+            Boolean includeNotAssign) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Country/GetCountriesForCombobox");
+                    
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    if (includeNotAssign != null) {
+                        builder.queryParam("includeNotAssign", includeNotAssign);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
                 .block();
     }
 }

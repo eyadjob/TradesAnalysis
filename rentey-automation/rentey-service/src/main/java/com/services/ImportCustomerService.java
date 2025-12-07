@@ -1,5 +1,7 @@
 package com.services;
 
+import com.annotation.LogExecutionTime;
+import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.CreateOrUpdateCustomerRequestBean;
 import com.beans.CreateOrUpdateCustomerResponseBean;
 import com.beans.GetAllItemsComboboxItemsResponseBean;
@@ -31,20 +33,25 @@ public class ImportCustomerService {
     private LookupsService lookupsService;
 
     @Autowired
+    private CountryService countryService;
+
+    @Autowired
     private SettingsService settingsService;
 
     private GetAllItemsComboboxItemsResponseBean lookupTypes;
     private GetAllItemsComboboxItemsResponseBean genderLookupValues;
     private GetOperationalCountriesResponseBean countriesResponseBean;
     private GetAllItemsComboboxItemsResponseBean customerDocumentTypes;
+    private GetAllItemsComboboxItemsResponseBean nationalities;
 
 
     public ImportCustomerService() {
 
     }
-
-    public CreateOrUpdateCustomerResponseBean importCustomerRecordsToSystemFromCsvFile(CreateOrUpdateCustomerRequestBean request) {
-        List<CustomerCsvData> customerCsvDataList = customerCsvImportUtil.importCsvFiles();
+    @LogRequestAndResponseOnDesk
+    @LogExecutionTime
+    public CreateOrUpdateCustomerResponseBean importCustomerRecordsToSystemFromCsvFile() {
+        List<CustomerCsvData> customerCsvDataList = customerCsvImportUtil.getCsvFiles();
         List<CreateOrUpdateCustomerResponseBean> responses = new ArrayList<>();
 
         logger.info("Starting import of {} customer records from CSV", customerCsvDataList.size());
@@ -94,7 +101,7 @@ public class ImportCustomerService {
 
         // Map Basic Information
         builder.withBasicInformation(
-                getValueOrEmpty(csvData.nationality()),
+                String. valueOf(getNationalityIdByName(csvData.nationality())),
                 getComboboxItemsValueByDisplayText(csvData.gender(),6),
                 formatDateOfBirth(csvData.birthDate())
         );
@@ -209,24 +216,75 @@ public class ImportCustomerService {
     }
 
     /**
-     * Formats date of birth to ISO format.
-     * If the date is already in ISO format, returns as is.
-     * Otherwise, attempts to parse common date formats.
+     * Formats date of birth to ISO format: YYYY-MM-DDTHH:mm:ss+03:00
+     * If the date already includes time, returns it with timezone +03:00.
+     * If only date is provided (without time), appends T00:00:00+03:00.
+     * 
+     * @param dateStr The date string to format
+     * @return Formatted date string in ISO format with timezone +03:00
      */
     private String formatDateOfBirth(String dateStr) {
         if (!isNotEmpty(dateStr)) {
-            return "1999-08-26T16:14:05+03:00"; // Default date
+            return "1999-08-26T00:00:00+03:00"; // Default date with time
         }
-        // If already in ISO format, return as is
-        if (dateStr.contains("T") || dateStr.contains("+") || dateStr.contains("Z")) {
-            return dateStr;
+        
+        String trimmed = dateStr.trim();
+        
+        // If already in ISO format with time (contains T)
+        if (trimmed.contains("T")) {
+            // Extract date and time part (before timezone if exists)
+            String dateTimePart;
+            if (trimmed.contains("+")) {
+                dateTimePart = trimmed.substring(0, trimmed.indexOf("+"));
+            } else if (trimmed.endsWith("Z")) {
+                dateTimePart = trimmed.substring(0, trimmed.length() - 1);
+            } else {
+                dateTimePart = trimmed;
+            }
+            
+            // Ensure format is YYYY-MM-DDTHH:mm:ss, then add timezone
+            if (dateTimePart.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}")) {
+                return dateTimePart + "+03:00";
+            }
+            // If format is close but missing seconds, add them
+            if (dateTimePart.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}")) {
+                return dateTimePart + ":00+03:00";
+            }
+            // Return as is if format is already correct
+            return trimmed;
         }
-        // Try to format common date formats (YYYY-MM-DD, DD/MM/YYYY, etc.)
-        // For now, append default time if just date is provided
-        if (dateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            return dateStr + "T00:00:00+03:00";
+        
+        // If only date is provided (YYYY-MM-DD format)
+        if (trimmed.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return trimmed + "T00:00:00+03:00";
         }
-        return dateStr; // Return as is if format is unknown
+        
+        // YYYY/MM/DD format (e.g., 1989/02/28)
+        if (trimmed.matches("\\d{4}/\\d{1,2}/\\d{1,2}")) {
+            String[] parts = trimmed.split("/");
+            if (parts.length == 3) {
+                String year = parts[0];
+                String month = String.format("%02d", Integer.parseInt(parts[1]));
+                String day = String.format("%02d", Integer.parseInt(parts[2]));
+                return year + "-" + month + "-" + day + "T00:00:00+03:00";
+            }
+        }
+        
+        // Try other common date formats
+        // DD/MM/YYYY format
+        if (trimmed.matches("\\d{1,2}/\\d{1,2}/\\d{4}")) {
+            String[] parts = trimmed.split("/");
+            if (parts.length == 3) {
+                String year = parts[2];
+                String month = String.format("%02d", Integer.parseInt(parts[1]));
+                String day = String.format("%02d", Integer.parseInt(parts[0]));
+                return year + "-" + month + "-" + day + "T00:00:00+03:00";
+            }
+        }
+        
+        // If format is unknown, log warning and return default
+        logger.warn("Unknown date format: {}, using default", dateStr);
+        return "1999-08-26T00:00:00+03:00";
     }
 
     /**
@@ -280,6 +338,19 @@ public class ImportCustomerService {
         for (GetAllItemsComboboxItemsResponseBean.ComboboxItem lookupType : lookupTypes.result().items()) {
             if (lookupType.equals(lookupTypeName.trim())){
                 return Integer.parseInt(lookupType.value());
+            }
+        }
+        return -1;
+    }
+
+
+    public int getNationalityIdByName(String nationalityByName) {
+        if ( this.nationalities==null) {
+            this.nationalities = countryService.getCountriesForCombobox(false,false);
+        }
+        for (GetAllItemsComboboxItemsResponseBean.ComboboxItem nationality : nationalities.result().items()) {
+            if (nationality.equals(nationalityByName.trim())){
+                return Integer.parseInt(nationality.value());
             }
         }
         return -1;

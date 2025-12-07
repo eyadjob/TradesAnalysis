@@ -1,5 +1,6 @@
 package com.controllers;
 
+import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.beans.GetCountryCurrencyInfoResponseBean;
 import com.beans.GetUserBranchesForComboboxResponseBean;
 import com.services.CountryService;
@@ -58,6 +59,23 @@ public class CountryController {
         }
 
         return countryService.getUserBranchesForCombobox(includeInActive, countryId, includeAll, filterTypes);
+    }
+
+    /**
+     * Get countries for combobox.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param includeInActive Whether to include inactive countries (default: false).
+     * @param includeNotAssign Whether to include "Not assigned" option (default: true).
+     * @return The response containing all countries for combobox.
+     */
+    @GetMapping(path = COUNTRY_GET_COUNTRIES_FOR_COMBOBOX, produces = "application/json")
+    public GetAllItemsComboboxItemsResponseBean getCountriesForCombobox(
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive,
+            @RequestParam(required = false, defaultValue = "true") Boolean includeNotAssign) {
+
+        return countryService.getCountriesForCombobox(includeInActive, includeNotAssign);
     }
 }
 

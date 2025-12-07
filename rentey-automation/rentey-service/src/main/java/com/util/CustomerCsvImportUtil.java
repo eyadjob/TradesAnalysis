@@ -3,6 +3,7 @@ package com.util;
 import com.pojo.CustomerCsvData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -22,30 +23,32 @@ import java.util.*;
 public class CustomerCsvImportUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(CustomerCsvImportUtil.class);
-    private static final String CSV_DIRECTORY = "rentey-service/customersToImport";
+    
+    @Value("${csv.import.directory}")
+    private String csvDirectory;
 
     /**
      * Imports all CSV files from the customersToImport directory and returns a list of CustomerCsvData objects.
      * 
      * @return List of CustomerCsvData objects containing customer data from all CSV files
      */
-    public List<CustomerCsvData> importCsvFiles() {
+    public List<CustomerCsvData> getCsvFiles() {
         List<CustomerCsvData> customerDataList = new ArrayList<>();
-        Path csvDirectory = Paths.get(CSV_DIRECTORY);
+        Path csvDirectoryPath = Paths.get(System.getProperty("user.dir") +"\\"+ csvDirectory);
 
         try {
             // Check if directory exists
-            if (!Files.exists(csvDirectory) || !Files.isDirectory(csvDirectory)) {
-                logger.warn("CSV directory does not exist: {}", csvDirectory.toAbsolutePath());
+            if (!Files.exists(csvDirectoryPath) || !Files.isDirectory(csvDirectoryPath)) {
+                logger.warn("CSV directory does not exist: {}", csvDirectoryPath.toAbsolutePath());
                 return customerDataList;
             }
 
             // Get all CSV files in the directory
-            File[] csvFiles = csvDirectory.toFile().listFiles((dir, name) -> 
+            File[] csvFiles = csvDirectoryPath.toFile().listFiles((dir, name) -> 
                     name.toLowerCase().endsWith(".csv"));
 
             if (csvFiles == null || csvFiles.length == 0) {
-                logger.warn("No CSV files found in directory: {}", csvDirectory.toAbsolutePath());
+                logger.warn("No CSV files found in directory: {}", csvDirectoryPath.toAbsolutePath());
                 return customerDataList;
             }
 
@@ -63,7 +66,7 @@ public class CustomerCsvImportUtil {
             return customerDataList;
 
         } catch (Exception e) {
-            logger.error("Error importing CSV files from directory: {}", csvDirectory.toAbsolutePath(), e);
+            logger.error("Error importing CSV files from directory: {}", csvDirectoryPath.toAbsolutePath(), e);
             return customerDataList;
         }
     }
@@ -216,19 +219,19 @@ public class CustomerCsvImportUtil {
      */
     public Map<String, Map<String, String>> importCsvFilesGroupedByFile() {
         Map<String, Map<String, String>> groupedData = new HashMap<>();
-        Path csvDirectory = Paths.get(CSV_DIRECTORY);
+        Path csvDirectoryPath = Paths.get(csvDirectory);
 
         try {
-            if (!Files.exists(csvDirectory) || !Files.isDirectory(csvDirectory)) {
-                logger.warn("CSV directory does not exist: {}", csvDirectory.toAbsolutePath());
+            if (!Files.exists(csvDirectoryPath) || !Files.isDirectory(csvDirectoryPath)) {
+                logger.warn("CSV directory does not exist: {}", csvDirectoryPath.toAbsolutePath());
                 return groupedData;
             }
 
-            File[] csvFiles = csvDirectory.toFile().listFiles((dir, name) -> 
+            File[] csvFiles = csvDirectoryPath.toFile().listFiles((dir, name) -> 
                     name.toLowerCase().endsWith(".csv"));
 
             if (csvFiles == null || csvFiles.length == 0) {
-                logger.warn("No CSV files found in directory: {}", csvDirectory.toAbsolutePath());
+                logger.warn("No CSV files found in directory: {}", csvDirectoryPath.toAbsolutePath());
                 return groupedData;
             }
 
@@ -239,7 +242,7 @@ public class CustomerCsvImportUtil {
             }
 
         } catch (Exception e) {
-            logger.error("Error importing CSV files from directory: {}", csvDirectory.toAbsolutePath(), e);
+            logger.error("Error importing CSV files from directory: {}", csvDirectoryPath.toAbsolutePath(), e);
         }
 
         return groupedData;
@@ -252,7 +255,7 @@ public class CustomerCsvImportUtil {
      * @return HashMap with keys in format: rowNumber_columnName
      */
     public Map<String, String> importCsvFile(String fileName) {
-        Path csvFile = Paths.get(CSV_DIRECTORY, fileName + ".csv");
+        Path csvFile = Paths.get(csvDirectory, fileName + ".csv");
         return importCsvFile(csvFile.toFile());
     }
 }
