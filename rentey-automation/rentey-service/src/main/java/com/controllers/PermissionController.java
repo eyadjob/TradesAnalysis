@@ -4,6 +4,7 @@ import com.beans.AbpResponseBean;
 import com.beans.CreateOrUpdateRoleRequestBean;
 import com.beans.GetAllPermissionsResponseBean;
 import com.services.PermissionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;
@@ -12,11 +13,8 @@ import static com.controllers.ApiPaths.*;
 @RequestMapping(path = BASE_PATH)
 public class PermissionController {
 
-    private final PermissionService permissionService;
-
-    public PermissionController(PermissionService permissionService) {
-        this.permissionService = permissionService;
-    }
+    @Autowired
+    private PermissionService permissionService;
 
     /**
      * Get all permissions.

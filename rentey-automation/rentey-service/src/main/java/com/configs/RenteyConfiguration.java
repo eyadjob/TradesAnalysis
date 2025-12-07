@@ -1,6 +1,5 @@
 package com.configs;
 
-import com.clients.AuthorizationServiceClient;
 import com.filters.AuthorizationHeaderFilter;
 import com.filters.WebClientLoggingFilter;
 import com.services.AuthorizationTokenService;
@@ -82,7 +81,7 @@ public class RenteyConfiguration {
     }
 
     @Bean
-    public AuthorizationServiceClient authorizationServiceClient(
+    public com.clients.AuthorizationServiceClient authorizationServiceClient(
             @Value("${authorization.service.base-url}") String baseUrl,
             @Value("${authorization.service.response-timeout-seconds}") int responseTimeoutSeconds,
             @Value("${authorization.service.connect-timeout-millis}") int connectTimeoutMillis) {
@@ -102,7 +101,7 @@ public class RenteyConfiguration {
         return HttpServiceProxyFactory
                 .builder(WebClientAdapter.forClient(webClient))
                 .build()
-                .createClient(AuthorizationServiceClient.class);
+                .createClient(com.clients.AuthorizationServiceClient.class);
     }
 
 }

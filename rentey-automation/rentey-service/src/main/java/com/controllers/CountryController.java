@@ -1,8 +1,11 @@
 package com.controllers;
 
+import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.beans.GetCountryCurrencyInfoResponseBean;
+import com.beans.GetCurrenciesForComboboxResponseBean;
 import com.beans.GetUserBranchesForComboboxResponseBean;
 import com.services.CountryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -12,11 +15,8 @@ import static com.controllers.ApiPaths.*;
 @RequestMapping(path = BASE_PATH)
 public class CountryController {
 
-    private final CountryService countryService;
-
-    public CountryController(CountryService countryService) {
-        this.countryService = countryService;
-    }
+    @Autowired
+    private CountryService countryService;
 
     /**
      * Get country currency information by country ID.
@@ -60,6 +60,38 @@ public class CountryController {
         }
 
         return countryService.getUserBranchesForCombobox(includeInActive, countryId, includeAll, filterTypes);
+    }
+
+    /**
+     * Get countries for combobox.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param includeInActive Whether to include inactive countries (default: false).
+     * @param includeNotAssign Whether to include "Not assigned" option (default: true).
+     * @return The response containing all countries for combobox.
+     */
+    @GetMapping(path = COUNTRY_GET_COUNTRIES_FOR_COMBOBOX, produces = "application/json")
+    public GetAllItemsComboboxItemsResponseBean getCountriesForCombobox(
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive,
+            @RequestParam(required = false, defaultValue = "true") Boolean includeNotAssign) {
+
+        return countryService.getCountriesForCombobox(includeInActive, includeNotAssign);
+    }
+
+    /**
+     * Get currencies for combobox.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param includeInActive Whether to include inactive currencies (default: false).
+     * @return The response containing all currencies for combobox.
+     */
+    @GetMapping(path = CURRENCY_GET_CURRENCIES_FOR_COMBOBOX, produces = "application/json")
+    public GetCurrenciesForComboboxResponseBean getCurrenciesForCombobox(
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive) {
+
+        return countryService.getCurrenciesForCombobox(includeInActive);
     }
 }
 

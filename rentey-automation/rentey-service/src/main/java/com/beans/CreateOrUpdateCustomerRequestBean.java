@@ -1,6 +1,7 @@
 package com.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -122,6 +123,7 @@ public record CreateOrUpdateCustomerRequestBean(
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(JsonInclude.Include.ALWAYS)
     public record CustomerPolicyVerification(
             @JsonProperty("isTermsConditionsAndPrivacyPolicyApproved") Boolean isTermsConditionsAndPrivacyPolicyApproved,
             @JsonProperty("isMarketingMaterialsApproved") Boolean isMarketingMaterialsApproved,

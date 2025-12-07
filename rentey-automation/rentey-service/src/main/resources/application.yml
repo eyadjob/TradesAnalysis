@@ -65,4 +65,8 @@ settings:
       origin: "https://ejar-jor-test.iyelo.com:9900/"
       referer: "https://ejar-jor-test.iyelo.com:9900/"
 
+csv:
+  import:
+    directory: rentey-service/customersToImport
+
 

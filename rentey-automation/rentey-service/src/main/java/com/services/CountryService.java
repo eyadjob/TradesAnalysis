@@ -1,8 +1,11 @@
 package com.services;
 
+import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.beans.GetCountryCurrencyInfoResponseBean;
+import com.beans.GetCurrenciesForComboboxResponseBean;
 import com.beans.GetUserBranchesForComboboxResponseBean;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -10,15 +13,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class CountryService {
 
-    private final WebClient settingsWebClient;
-    private final String apiBasePath;
+    @Autowired
+    @Qualifier("settingsWebClient")
+    private WebClient settingsWebClient;
 
-    public CountryService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient,
-            @Qualifier("apiBasePath") String apiBasePath) {
-        this.settingsWebClient = settingsWebClient;
-        this.apiBasePath = apiBasePath;
-    }
+    @Autowired
+    @Qualifier("apiBasePath")
+    private String apiBasePath;
 
     /**
      * Get country currency information by country ID.
@@ -79,6 +80,62 @@ public class CountryService {
                 })
                 .retrieve()
                 .bodyToMono(GetUserBranchesForComboboxResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get countries for combobox.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param includeInActive Whether to include inactive countries (default: false).
+     * @param includeNotAssign Whether to include "Not assigned" option (default: true).
+     * @return The response containing all countries for combobox.
+     */
+    public GetAllItemsComboboxItemsResponseBean getCountriesForCombobox(
+            Boolean includeInActive,
+            Boolean includeNotAssign) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Country/GetCountriesForCombobox");
+                    
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    if (includeNotAssign != null) {
+                        builder.queryParam("includeNotAssign", includeNotAssign);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get currencies for combobox.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param includeInActive Whether to include inactive currencies (default: false).
+     * @return The response containing all currencies for combobox.
+     */
+    public GetCurrenciesForComboboxResponseBean getCurrenciesForCombobox(Boolean includeInActive) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Currency/GetCurrenciesForCombobox");
+                    
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetCurrenciesForComboboxResponseBean.class)
                 .block();
     }
 }

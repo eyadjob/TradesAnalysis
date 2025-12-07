@@ -3,6 +3,7 @@ package com.services;
 import com.beans.AbpResponseBean;
 import com.beans.TenantAndCountrySettingsRequestBean;
 import com.beans.UpdateAllSettingsRequestBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -11,15 +12,13 @@ import com.beans.GetOperationalCountriesResponseBean;
 @Service
 public class SettingsService {
 
-    private final WebClient settingsWebClient;
-    private final String apiBasePath;
+    @Autowired
+    @Qualifier("settingsWebClient")
+    private WebClient settingsWebClient;
 
-    public SettingsService(
-            @Qualifier("settingsWebClient") WebClient settingsWebClient,
-            @Qualifier("apiBasePath") String apiBasePath) {
-        this.settingsWebClient = settingsWebClient;
-        this.apiBasePath = apiBasePath;
-    }
+    @Autowired
+    @Qualifier("apiBasePath")
+    private String apiBasePath;
 
     public AbpResponseBean updateAllSettings(UpdateAllSettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
