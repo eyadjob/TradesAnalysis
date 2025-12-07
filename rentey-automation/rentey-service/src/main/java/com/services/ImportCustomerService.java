@@ -3,6 +3,7 @@ package com.services;
 import com.beans.CreateOrUpdateCustomerRequestBean;
 import com.beans.CreateOrUpdateCustomerResponseBean;
 import com.beans.GetAllItemsComboboxItemsResponseBean;
+import com.beans.GetOperationalCountriesResponseBean;
 import com.builders.CustomerDataBuilder;
 import com.pojo.CustomerCsvData;
 import com.util.CustomerCsvImportUtil;
@@ -12,9 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ImportCustomerService {
@@ -28,14 +27,15 @@ public class ImportCustomerService {
     private CustomerCsvImportUtil customerCsvImportUtil;
 
     @Autowired
-    private  LookupsService lookupsService;
+    private LookupsService lookupsService;
 
     @Autowired
     private SettingsService settingsService;
 
 
     private GetAllItemsComboboxItemsResponseBean genderLookupValues;
-
+    private GetOperationalCountriesResponseBean countriesResponseBean;
+    private GetAllItemsComboboxItemsResponseBean customerDocumentTypes;
 
     public CreateOrUpdateCustomerResponseBean importCustomerRecordsToSystemFromCsvFile(CreateOrUpdateCustomerRequestBean request) {
         List<CustomerCsvData> customerCsvDataList = customerCsvImportUtil.importCsvFiles();
@@ -49,16 +49,16 @@ public class ImportCustomerService {
                 CreateOrUpdateCustomerResponseBean response = customerService.createOrUpdateCustomer(createOrUpdateCustomerRequestBean);
                 responses.add(response);
                 logger.info("Successfully imported customer: {} {} {}",
-                    customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName());
+                        customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName());
             } catch (Exception e) {
                 logger.error("Failed to import customer: {} {} {} - Error: {}",
-                    customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName(),
-                    e.getMessage(), e);
+                        customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName(),
+                        e.getMessage(), e);
             }
         }
 
         logger.info("Completed import process. Successfully imported {}/{} customers",
-            responses.size(), customerCsvDataList.size());
+                responses.size(), customerCsvDataList.size());
 
         // Return the last response or null if no records were processed
         return responses.isEmpty() ? null : responses.get(responses.size() - 1);
@@ -75,29 +75,26 @@ public class ImportCustomerService {
 
         // Map Full Name
         builder.withFullName(
-            getValueOrEmpty(csvData.firstName()),
-            getValueOrEmpty(csvData.secondName()),
-            getValueOrEmpty(csvData.familyName())
+                getValueOrEmpty(csvData.firstName()),
+                getValueOrEmpty(csvData.secondName()),
+                getValueOrEmpty(csvData.familyName())
         );
 
         // Map Contact Information
         builder.withContactInformation(
-            getValueOrEmpty(csvData.primaryPhone()),
-            getValueOrEmpty("")
+                getValueOrEmpty(csvData.primaryPhone()),
+                getValueOrEmpty("")
         );
 
         // Map Basic Information
         builder.withBasicInformation(
-            getValueOrEmpty(csvData.nationality()),
-            getGenderId(csvData.gender()),
-            formatDateOfBirth(csvData.birthDate())
+                getValueOrEmpty(csvData.nationality()),
+                getComboboxItemsValueFromDisplayText(csvData.gender(),6),
+                formatDateOfBirth(csvData.birthDate())
         );
 
         // Map Address (using DocumentIssueCountry as default, or "1" if not available)
-        String countryId = getValueOrEmpty(csvData.documentIssueCountry());
-        if (countryId.isEmpty()) {
-            countryId = "1"; // Default country ID
-        }
+        String countryId = getOperationalCountryIdFromName(csvData.documentIssueCountry());
         builder.withAddress(countryId, -1); // -1 for cityId as default
 
         // Clear default documents and build from CSV data
@@ -122,34 +119,27 @@ public class ImportCustomerService {
      * Builds an Identity Document from CSV data.
      */
     private CreateOrUpdateCustomerRequestBean.DocumentDto buildIdentityDocument(CustomerCsvData csvData) {
-        String issueCountryId = getValueOrEmpty(csvData.documentIssueCountry());
-        if (issueCountryId.isEmpty()) {
-            issueCountryId = "1"; // Default country ID
-        }
-
-        String typeId = getValueOrEmpty(csvData.documentType());
-        if (typeId.isEmpty()) {
-            typeId = "250"; // Default document type ID for Identity
-        }
+        String issueCountryId = getOperationalCountryIdFromName(csvData.documentIssueCountry());
+        String documentTypeId = getComboboxItemsValueFromDisplayText(csvData.documentType(),17);
 
         CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
-            "", // URL - empty for CSV import
-            0,  // Size
-            ""  // Type
+                "", // URL - empty for CSV import
+                0,  // Size
+                ""  // Type
         );
 
         return new CreateOrUpdateCustomerRequestBean.DocumentDto(
-            "IdentityDto",
-            issueCountryId,
-            typeId,
-            getValueOrEmpty(csvData.documentNumber()),
-            1, // Default copyNumber
-            formatDate(csvData.birthDate()), // Use birthDate as issueDate if available
-            formatDate(csvData.documentExpireDate()),
-            "Identity",
-            getValueOrEmpty(csvData.documentIssueCountry()),
-            attachment,
-            null // licenseCategoryId not applicable for IdentityDto
+                "IdentityDto",
+                issueCountryId,
+                documentTypeId,
+                getValueOrEmpty(csvData.documentNumber()),
+                1, // Default copyNumber
+                formatDate(csvData.birthDate()), // Use birthDate as issueDate if available
+                formatDate(csvData.documentExpireDate()),
+                "Identity",
+                getValueOrEmpty(csvData.documentIssueCountry()),
+                attachment,
+                null // licenseCategoryId not applicable for IdentityDto
         );
     }
 
@@ -166,23 +156,23 @@ public class ImportCustomerService {
         }
 
         CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
-            "", // URL - empty for CSV import
-            0,  // Size
-            ""  // Type
+                "", // URL - empty for CSV import
+                0,  // Size
+                ""  // Type
         );
 
         return new CreateOrUpdateCustomerRequestBean.DocumentDto(
-            "DriverLicenseDto",
-            issueCountryId,
-            "253", // Default document type ID for Driver License
-            getValueOrEmpty(csvData.licenseNo()),
-            null, // copyNumber not applicable for DriverLicense
-            formatDate(csvData.birthDate()), // Use birthDate as issueDate if available
-            formatDate(csvData.licenseExpiryDate()),
-            "Driver License",
-            getValueOrEmpty(csvData.licenseIssueCountry()),
-            attachment,
-            "-1" // Default licenseCategoryId
+                "DriverLicenseDto",
+                issueCountryId,
+                "253", // Default document type ID for Driver License
+                getValueOrEmpty(csvData.licenseNo()),
+                null, // copyNumber not applicable for DriverLicense
+                formatDate(csvData.birthDate()), // Use birthDate as issueDate if available
+                formatDate(csvData.licenseExpiryDate()),
+                "Driver License",
+                getValueOrEmpty(csvData.licenseIssueCountry()),
+                attachment,
+                "-1" // Default licenseCategoryId
         );
     }
 
@@ -251,20 +241,30 @@ public class ImportCustomerService {
         return dateStr;
     }
 
-    private String getGenderId(String csvGenderData) {
-        if ( this.genderLookupValues == null) {
-            this.genderLookupValues = lookupsService.getAllItemsComboboxItems(6, false, false);
+    private String getComboboxItemsValueFromDisplayText(String csvDataDisplayText, int typeId) {
+        if (this.genderLookupValues == null) {
+            this.genderLookupValues = lookupsService.getAllItemsComboboxItems(typeId, false, false);
         }
-        for(GetAllItemsComboboxItemsResponseBean.ComboboxItem genderLookupValue :this.genderLookupValues.result().items()) {
-            if (csvGenderData.trim().equals(genderLookupValue.displayText())) {
-                    return genderLookupValue.value();
-                }
+        for (GetAllItemsComboboxItemsResponseBean.ComboboxItem genderLookupValue : this.genderLookupValues.result().items()) {
+            if (csvDataDisplayText.trim().equals(genderLookupValue.displayText())) {
+                return genderLookupValue.value();
+            }
         }
         return null;
     }
 
-    private List<Integer> getOperationalCountries() {
-        return settingsService.getOperationalCountries();
+    private String getOperationalCountryIdFromName(String documentIssueCountry) {
+        if (this.countriesResponseBean == null) {
+            this.countriesResponseBean = settingsService.getOperationalCountries();
+        } else {
+            List<Integer> countryIds = new ArrayList<>();
+            for (GetOperationalCountriesResponseBean.OperationalCountry country : countriesResponseBean.result()) {
+                if (country.name().equals(documentIssueCountry)) {
+                    return String.valueOf(country.id());
+                }
+            }
+        }
+        return "-1";
     }
 }
 
