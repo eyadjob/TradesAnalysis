@@ -5,6 +5,7 @@ import com.beans.CreateOrUpdateCustomerResponseBean;
 import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.beans.GetOperationalCountriesResponseBean;
 import com.builders.CustomerDataBuilder;
+import com.enums.LookupType;
 import com.pojo.CustomerCsvData;
 import com.util.CustomerCsvImportUtil;
 import org.slf4j.Logger;
@@ -32,10 +33,15 @@ public class ImportCustomerService {
     @Autowired
     private SettingsService settingsService;
 
-
+    private GetAllItemsComboboxItemsResponseBean lookupTypes;
     private GetAllItemsComboboxItemsResponseBean genderLookupValues;
     private GetOperationalCountriesResponseBean countriesResponseBean;
     private GetAllItemsComboboxItemsResponseBean customerDocumentTypes;
+
+
+    public ImportCustomerService() {
+
+    }
 
     public CreateOrUpdateCustomerResponseBean importCustomerRecordsToSystemFromCsvFile(CreateOrUpdateCustomerRequestBean request) {
         List<CustomerCsvData> customerCsvDataList = customerCsvImportUtil.importCsvFiles();
@@ -89,7 +95,7 @@ public class ImportCustomerService {
         // Map Basic Information
         builder.withBasicInformation(
                 getValueOrEmpty(csvData.nationality()),
-                getComboboxItemsValueFromDisplayText(csvData.gender(),6),
+                getComboboxItemsValueByDisplayText(csvData.gender(),6),
                 formatDateOfBirth(csvData.birthDate())
         );
 
@@ -120,7 +126,7 @@ public class ImportCustomerService {
      */
     private CreateOrUpdateCustomerRequestBean.DocumentDto buildIdentityDocument(CustomerCsvData csvData) {
         String issueCountryId = getOperationalCountryIdFromName(csvData.documentIssueCountry());
-        String documentTypeId = getComboboxItemsValueFromDisplayText(csvData.documentType(),17);
+        String documentTypeId = getComboboxItemsValueByDisplayText(csvData.documentType(),17);
 
         CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
                 "", // URL - empty for CSV import
@@ -137,9 +143,9 @@ public class ImportCustomerService {
                 formatDate(csvData.birthDate()), // Use birthDate as issueDate if available
                 formatDate(csvData.documentExpireDate()),
                 "Identity",
-                getValueOrEmpty(csvData.documentIssueCountry()),
+                getOperationalCountryIdFromName(csvData.documentIssueCountry()),
                 attachment,
-                null // licenseCategoryId not applicable for IdentityDto
+                null
         );
     }
 
@@ -164,7 +170,7 @@ public class ImportCustomerService {
         return new CreateOrUpdateCustomerRequestBean.DocumentDto(
                 "DriverLicenseDto",
                 issueCountryId,
-                "253", // Default document type ID for Driver License
+                getComboboxItemsValueByDisplayText("Driver License",getLookupTypeIdByName(LookupType.DRIVER_LICENSE_CATEGORY.getDisplayText())), // Default document type ID for Driver License
                 getValueOrEmpty(csvData.licenseNo()),
                 null, // copyNumber not applicable for DriverLicense
                 formatDate(csvData.birthDate()), // Use birthDate as issueDate if available
@@ -241,7 +247,7 @@ public class ImportCustomerService {
         return dateStr;
     }
 
-    private String getComboboxItemsValueFromDisplayText(String csvDataDisplayText, int typeId) {
+    private String getComboboxItemsValueByDisplayText(String csvDataDisplayText, int typeId) {
         if (this.genderLookupValues == null) {
             this.genderLookupValues = lookupsService.getAllItemsComboboxItems(typeId, false, false);
         }
@@ -265,6 +271,18 @@ public class ImportCustomerService {
             }
         }
         return "-1";
+    }
+
+    public int getLookupTypeIdByName(String lookupTypeName) {
+        if ( this.lookupTypes==null) {
+            this.lookupTypes = lookupsService.getTypesComboboxItems();
+        }
+        for (GetAllItemsComboboxItemsResponseBean.ComboboxItem lookupType : lookupTypes.result().items()) {
+            if (lookupType.equals(lookupTypeName.trim())){
+                return Integer.parseInt(lookupType.value());
+            }
+        }
+        return -1;
     }
 }
 
