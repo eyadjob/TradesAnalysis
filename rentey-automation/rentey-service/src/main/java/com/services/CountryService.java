@@ -2,6 +2,7 @@ package com.services;
 
 import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.beans.GetCountryCurrencyInfoResponseBean;
+import com.beans.GetCurrenciesForComboboxResponseBean;
 import com.beans.GetUserBranchesForComboboxResponseBean;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +111,31 @@ public class CountryService {
                 })
                 .retrieve()
                 .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get currencies for combobox.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param includeInActive Whether to include inactive currencies (default: false).
+     * @return The response containing all currencies for combobox.
+     */
+    public GetCurrenciesForComboboxResponseBean getCurrenciesForCombobox(Boolean includeInActive) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Currency/GetCurrenciesForCombobox");
+                    
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetCurrenciesForComboboxResponseBean.class)
                 .block();
     }
 }

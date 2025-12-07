@@ -2,6 +2,7 @@ package com.controllers;
 
 import com.beans.GetAllItemsComboboxItemsResponseBean;
 import com.beans.GetCountryCurrencyInfoResponseBean;
+import com.beans.GetCurrenciesForComboboxResponseBean;
 import com.beans.GetUserBranchesForComboboxResponseBean;
 import com.services.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +77,21 @@ public class CountryController {
             @RequestParam(required = false, defaultValue = "true") Boolean includeNotAssign) {
 
         return countryService.getCountriesForCombobox(includeInActive, includeNotAssign);
+    }
+
+    /**
+     * Get currencies for combobox.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param includeInActive Whether to include inactive currencies (default: false).
+     * @return The response containing all currencies for combobox.
+     */
+    @GetMapping(path = CURRENCY_GET_CURRENCIES_FOR_COMBOBOX, produces = "application/json")
+    public GetCurrenciesForComboboxResponseBean getCurrenciesForCombobox(
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive) {
+
+        return countryService.getCurrenciesForCombobox(includeInActive);
     }
 }
 

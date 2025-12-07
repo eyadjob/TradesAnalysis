@@ -33,6 +33,7 @@ public final class ApiPaths {
     
     // Currency endpoints
     public static final String CURRENCY_GET_COUNTRY_CURRENCY_INFO = "/Currency/GetCountryCurrencyInfo";
+    public static final String CURRENCY_GET_CURRENCIES_FOR_COMBOBOX = "/Currency/GetCurrenciesForCombobox";
     
     // Branch endpoints
     public static final String BRANCH_GET_USER_BRANCHES_FOR_COMBOBOX = "/Branch/GetUserBranchesForCombobox";
