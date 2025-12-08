@@ -10,9 +10,12 @@ import com.builders.CustomerDataBuilder;
 import com.enums.LookupType;
 import com.pojo.CustomerCsvData;
 import com.util.CustomerCsvImportUtil;
+import com.util.DateUtil;
+import com.util.XlsxWriterUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -42,6 +45,12 @@ public class ImportCustomerService {
 
     @Autowired
     private SettingsService settingsService;
+
+    @Autowired
+    private XlsxWriterUtil xlsxWriterUtil;
+
+    @Value("${csv.export.directory}")
+    private String exportDirectory;
 
     private GetAllItemsComboboxItemsResponseBean lookupTypes;
     private GetAllItemsComboboxItemsResponseBean genderLookupValues;
@@ -89,6 +98,8 @@ public class ImportCustomerService {
     public CreateOrUpdateCustomerResponseBean importCustomerRecordsToSystemFromCsvFile() {
         List<CustomerCsvData> customerCsvDataList = customerCsvImportUtil.getCsvFiles();
         List<CreateOrUpdateCustomerResponseBean> responses = new ArrayList<>();
+        List<String> responseCodes = new ArrayList<>();
+        List<String> responseMessages = new ArrayList<>();
 
         logger.info("Starting import of {} customer records from CSV", customerCsvDataList.size());
 
@@ -97,17 +108,61 @@ public class ImportCustomerService {
                 CreateOrUpdateCustomerRequestBean createOrUpdateCustomerRequestBean = buildRequestFromCsvData(customerCsvData);
                 CreateOrUpdateCustomerResponseBean response = customerService.createOrUpdateCustomer(createOrUpdateCustomerRequestBean);
                 responses.add(response);
-                logger.info("Successfully imported customer: {} {} {}",
-                        customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName());
+                
+                // Extract response code and message
+                String responseCode = extractResponseCode(response);
+                String responseMessage = extractResponseMessage(response);
+                responseCodes.add(responseCode);
+                responseMessages.add(responseMessage);
+                
+                logger.info("Successfully imported customer: {} {} {} - Code: {}, Message: {}",
+                        customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName(),
+                        responseCode, responseMessage);
+            } catch (org.springframework.web.reactive.function.client.WebClientResponseException e) {
+                // Handle WebClient response exceptions
+                String errorCode = String.valueOf(e.getStatusCode().value());
+                String errorMessage = extractErrorMessageFromException(e);
+                responseCodes.add(errorCode);
+                responseMessages.add(errorMessage);
+                responses.add(null); // Add null to maintain list alignment
+                
+                logger.error("Failed to import customer: {} {} {} - Status: {}, Error: {}",
+                        customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName(),
+                        errorCode, errorMessage, e);
             } catch (Exception e) {
+                // Handle other exceptions
+                String errorCode = "ERROR";
+                String errorMessage = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+                responseCodes.add(errorCode);
+                responseMessages.add(errorMessage);
+                responses.add(null); // Add null to maintain list alignment
+                
                 logger.error("Failed to import customer: {} {} {} - Error: {}",
                         customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName(),
-                        e.getMessage(), e);
+                        errorMessage, e);
             }
         }
 
         logger.info("Completed import process. Successfully imported {}/{} customers",
                 responses.size(), customerCsvDataList.size());
+
+        // Write results to XLSX file
+        try {
+            // Resolve export directory path relative to project root
+            String exportDirPath = System.getProperty("user.dir") + "\\" + exportDirectory;
+            String xlsxFilePath = xlsxWriterUtil.writeImportResultsToXlsx(
+                    customerCsvDataList,
+                    responseCodes,
+                    responseMessages,
+                    exportDirPath);
+            if (xlsxFilePath != null) {
+                logger.info("Import results written to XLSX file: {}", xlsxFilePath);
+            } else {
+                logger.warn("Failed to write import results to XLSX file");
+            }
+        } catch (Exception e) {
+            logger.error("Error writing import results to XLSX file", e);
+        }
 
         // Return the last response or null if no records were processed
         return responses.isEmpty() ? null : responses.get(responses.size() - 1);
@@ -139,11 +194,11 @@ public class ImportCustomerService {
         builder.withBasicInformation(
                 String. valueOf(getNationalityIdByName(csvData.nationality())),
                 getComboboxItemsValueByDisplayText(csvData.gender(),6),
-                formatDateOfBirth(csvData.birthDate())
+                DateUtil.formatDateToRenteyFormat(csvData.birthDate())
         );
 
         // Map Address (using DocumentIssueCountry as default, or "1" if not available)
-        String countryId = getOperationalCountryIdFromName(csvData.documentIssueCountry());
+        String countryId = String.valueOf(getNationalityIdByName(csvData.documentIssueCountry()));
         builder.withAddress(countryId, -1); // -1 for cityId as default
 
         // Clear default documents and build from CSV data
@@ -168,7 +223,7 @@ public class ImportCustomerService {
      * Builds an Identity Document from CSV data.
      */
     private CreateOrUpdateCustomerRequestBean.DocumentDto buildIdentityDocument(CustomerCsvData csvData) {
-        String issueCountryId = getOperationalCountryIdFromName(csvData.documentIssueCountry());
+        String issueCountryId = String.valueOf(getNationalityIdByName(csvData.documentIssueCountry()));
         String documentTypeId = getComboboxItemsValueByDisplayText(csvData.documentType(),17);
 
         CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
@@ -183,10 +238,10 @@ public class ImportCustomerService {
                 documentTypeId,
                 getValueOrEmpty(csvData.documentNumber()),
                 1, // Default copyNumber
-                formatDate(csvData.birthDate()), // Use birthDate as issueDate if available
-                formatDate(csvData.documentExpireDate()),
+                DateUtil.formatDateToRenteyFormat(csvData.birthDate()), // Use birthDate as issueDate if available
+                DateUtil.formatDateToRenteyFormat(csvData.documentExpireDate()),
                 "Identity",
-                getOperationalCountryIdFromName(csvData.documentIssueCountry()),
+                countryIso.get(csvData.documentIssueCountry()),
                 attachment,
                 null
         );
@@ -196,14 +251,7 @@ public class ImportCustomerService {
      * Builds a Driver License Document from CSV data.
      */
     private CreateOrUpdateCustomerRequestBean.DocumentDto buildDriverLicenseDocument(CustomerCsvData csvData) {
-        String issueCountryId = getValueOrEmpty(csvData.licenseIssueCountry());
-        if (issueCountryId.isEmpty()) {
-            issueCountryId = getValueOrEmpty(csvData.documentIssueCountry());
-            if (issueCountryId.isEmpty()) {
-                issueCountryId = "1"; // Default country ID
-            }
-        }
-
+        String issueCountryId = String.valueOf(getNationalityIdByName(csvData.licenseIssueCountry()));
         CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
                 "", // URL - empty for CSV import
                 0,  // Size
@@ -216,10 +264,10 @@ public class ImportCustomerService {
                 getComboboxItemsValueByDisplayText("Driver License",getLookupTypeIdByName(LookupType.DRIVER_LICENSE_CATEGORY.getDisplayText())), // Default document type ID for Driver License
                 getValueOrEmpty(csvData.licenseNo()),
                 null, // copyNumber not applicable for DriverLicense
-                formatDate(csvData.birthDate()), // Use birthDate as issueDate if available
-                formatDate(csvData.licenseExpiryDate()),
+                DateUtil.formatDateToRenteyFormat(csvData.birthDate()), // Use birthDate as issueDate if available
+                DateUtil.formatDateToRenteyFormat(csvData.licenseExpiryDate()),
                 "Driver License",
-                getValueOrEmpty(csvData.licenseIssueCountry()),
+                countryIso.get(csvData.licenseIssueCountry()),
                 attachment,
                 "-1" // Default licenseCategoryId
         );
@@ -230,6 +278,94 @@ public class ImportCustomerService {
      */
     private String getValueOrEmpty(String value) {
         return value != null && !value.trim().isEmpty() ? value.trim() : "";
+    }
+
+    /**
+     * Extracts response code from CreateOrUpdateCustomerResponseBean.
+     */
+    private String extractResponseCode(CreateOrUpdateCustomerResponseBean response) {
+        if (response == null) {
+            return "NULL";
+        }
+        if (Boolean.TRUE.equals(response.success())) {
+            return "200"; // Success
+        } else {
+            // Try to extract error code from error field
+            if (response.error() != null) {
+                // Error might be a JSON string, try to parse it
+                try {
+                    com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                    com.fasterxml.jackson.databind.JsonNode errorNode = mapper.readTree(response.error());
+                    if (errorNode.has("code")) {
+                        return String.valueOf(errorNode.get("code").asInt());
+                    }
+                } catch (Exception e) {
+                    // If parsing fails, return generic error code
+                }
+            }
+            return "ERROR";
+        }
+    }
+
+    /**
+     * Extracts response message from CreateOrUpdateCustomerResponseBean.
+     */
+    private String extractResponseMessage(CreateOrUpdateCustomerResponseBean response) {
+        if (response == null) {
+            return "No response received";
+        }
+        if (Boolean.TRUE.equals(response.success())) {
+            return "Customer imported successfully";
+        } else {
+            // Try to extract error message from error field
+            if (response.error() != null) {
+                try {
+                    com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                    com.fasterxml.jackson.databind.JsonNode errorNode = mapper.readTree(response.error());
+                    if (errorNode.has("message")) {
+                        return errorNode.get("message").asText();
+                    }
+                    // If no message field, return the error string as is
+                    return response.error();
+                } catch (Exception e) {
+                    // If parsing fails, return the error string as is
+                    return response.error() != null ? response.error() : "Unknown error";
+                }
+            }
+            return "Unknown error";
+        }
+    }
+
+    /**
+     * Extracts error message from WebClientResponseException.
+     */
+    private String extractErrorMessageFromException(org.springframework.web.reactive.function.client.WebClientResponseException e) {
+        try {
+            String responseBody = e.getResponseBodyAsString();
+            if (responseBody != null && !responseBody.trim().isEmpty()) {
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                com.fasterxml.jackson.databind.JsonNode rootNode = mapper.readTree(responseBody);
+                
+                // Try to extract error message from ABP response structure
+                if (rootNode.has("error")) {
+                    com.fasterxml.jackson.databind.JsonNode errorNode = rootNode.get("error");
+                    if (errorNode.has("message")) {
+                        return errorNode.get("message").asText();
+                    }
+                    if (errorNode.isTextual()) {
+                        return errorNode.asText();
+                    }
+                }
+                
+                // If no error field, return the full response body (truncated if too long)
+                return responseBody.length() > 500 ? responseBody.substring(0, 500) + "..." : responseBody;
+            }
+        } catch (Exception ex) {
+            logger.warn("Error parsing exception response body: {}", ex.getMessage());
+        }
+        
+        // Fallback to exception message
+        return e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
     }
 
     /**
@@ -251,77 +387,6 @@ public class ImportCustomerService {
         return (first + family + "@iyelo.com").toLowerCase();
     }
 
-    /**
-     * Formats date of birth to ISO format: YYYY-MM-DDTHH:mm:ss+03:00
-     * If the date already includes time, returns it with timezone +03:00.
-     * If only date is provided (without time), appends T00:00:00+03:00.
-     * 
-     * @param dateStr The date string to format
-     * @return Formatted date string in ISO format with timezone +03:00
-     */
-    private String formatDateOfBirth(String dateStr) {
-        if (!isNotEmpty(dateStr)) {
-            return "1999-08-26T00:00:00+03:00"; // Default date with time
-        }
-        
-        String trimmed = dateStr.trim();
-        
-        // If already in ISO format with time (contains T)
-        if (trimmed.contains("T")) {
-            // Extract date and time part (before timezone if exists)
-            String dateTimePart;
-            if (trimmed.contains("+")) {
-                dateTimePart = trimmed.substring(0, trimmed.indexOf("+"));
-            } else if (trimmed.endsWith("Z")) {
-                dateTimePart = trimmed.substring(0, trimmed.length() - 1);
-            } else {
-                dateTimePart = trimmed;
-            }
-            
-            // Ensure format is YYYY-MM-DDTHH:mm:ss, then add timezone
-            if (dateTimePart.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}")) {
-                return dateTimePart + "+03:00";
-            }
-            // If format is close but missing seconds, add them
-            if (dateTimePart.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}")) {
-                return dateTimePart + ":00+03:00";
-            }
-            // Return as is if format is already correct
-            return trimmed;
-        }
-        
-        // If only date is provided (YYYY-MM-DD format)
-        if (trimmed.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            return trimmed + "T00:00:00+03:00";
-        }
-        
-        // YYYY/MM/DD format (e.g., 1989/02/28)
-        if (trimmed.matches("\\d{4}/\\d{1,2}/\\d{1,2}")) {
-            String[] parts = trimmed.split("/");
-            if (parts.length == 3) {
-                String year = parts[0];
-                String month = String.format("%02d", Integer.parseInt(parts[1]));
-                String day = String.format("%02d", Integer.parseInt(parts[2]));
-                return year + "-" + month + "-" + day + "T00:00:00+03:00";
-            }
-        }
-        
-        // Try other common date formats
-        // DD/MM/YYYY format
-        if (trimmed.matches("\\d{1,2}/\\d{1,2}/\\d{4}")) {
-            String[] parts = trimmed.split("/");
-            if (parts.length == 3) {
-                String year = parts[2];
-                String month = String.format("%02d", Integer.parseInt(parts[1]));
-                String day = String.format("%02d", Integer.parseInt(parts[0]));
-                return year + "-" + month + "-" + day + "T00:00:00+03:00";
-            }
-        }
-        
-        // If format is unknown, log warning and return default
-        logger.warn("Unknown date format: {}, using default", dateStr);
-        return "1999-08-26T00:00:00+03:00";
-    }
 
     /**
      * Formats a date string. Returns empty string if null/empty, otherwise returns as is.
@@ -380,15 +445,14 @@ public class ImportCustomerService {
     }
 
 
-    public int getNationalityIdByName(String nationalityByName) {
+    public int getNationalityIdByName(String nationalityIsoCode) {
         if ( this.nationalities==null) {
             this.nationalities = countryService.getCountriesForCombobox(false,false);
         }
         for (GetAllItemsComboboxItemsResponseBean.ComboboxItem nationality : nationalities.result().items()) {
-            if (nationality.equals(nationalityByName.trim())){
+            if ( countryIso.get(nationalityIsoCode).equals(nationality.displayText()))
                 return Integer.parseInt(nationality.value());
             }
-        }
         return -1;
     }
 }

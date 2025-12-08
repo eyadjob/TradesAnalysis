@@ -2,11 +2,15 @@ package com.filters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.stream.Collectors;
@@ -28,7 +32,8 @@ public class WebClientLoggingFilter {
             return Mono.just(request);
         }).andThen(ExchangeFilterFunction.ofResponseProcessor(response -> {
             if (logger.isInfoEnabled()) {
-                logResponseDetails(response);
+                // Log response details including body
+                return logResponseDetailsWithBody(response);
             }
             return Mono.just(response);
         }));
@@ -48,11 +53,43 @@ public class WebClientLoggingFilter {
         logger.info("==============================================");
     }
 
-    private static void logResponseDetails(ClientResponse response) {
+    /**
+     * Logs response details including the body.
+     * Uses ClientResponse.from() to create a cached version that can be read multiple times.
+     */
+    private static Mono<ClientResponse> logResponseDetailsWithBody(ClientResponse response) {
         logger.info("=== Response from External API ===");
         logger.info("Status: {}", response.statusCode());
         logger.info("Headers: {}", formatHeaders(response.headers().asHttpHeaders()));
-        logger.info("==================================");
+        
+        // Read the body, log it, and recreate the response using ClientResponse.from()
+        return response.bodyToMono(String.class)
+                .defaultIfEmpty("")
+                .flatMap(body -> {
+                    // Log the response body
+                    if (body != null && !body.trim().isEmpty()) {
+                        logger.info("Response Body: {}", body);
+                    } else {
+                        logger.info("Response Body: (empty)");
+                    }
+                    logger.info("==================================");
+                    
+                    // Recreate the ClientResponse with the cached body
+                    // Convert string body to DataBuffer for the response
+                    DataBufferFactory bufferFactory = new DefaultDataBufferFactory();
+                    DataBuffer dataBuffer = bufferFactory.wrap((body != null ? body : "").getBytes());
+                    
+                    return Mono.just(ClientResponse.create(response.statusCode())
+                            .headers(headers -> headers.addAll(response.headers().asHttpHeaders()))
+                            .body(flux -> Flux.just(dataBuffer))
+                            .build());
+                })
+                .onErrorResume(error -> {
+                    logger.warn("Error reading response body: {}", error.getMessage());
+                    logger.info("==================================");
+                    // Return original response if body reading fails
+                    return Mono.just(response);
+                });
     }
 
     private static String formatHeaders(HttpHeaders headers) {
