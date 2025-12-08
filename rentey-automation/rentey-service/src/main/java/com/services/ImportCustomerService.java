@@ -169,7 +169,7 @@ public class ImportCustomerService {
      * Builds an Identity Document from CSV data.
      */
     private CreateOrUpdateCustomerRequestBean.DocumentDto buildIdentityDocument(CustomerCsvData csvData) {
-        String issueCountryId = getOperationalCountryIdFromName(csvData.documentIssueCountry());
+        String issueCountryId = String.valueOf(getNationalityIdByName(csvData.documentIssueCountry()));
         String documentTypeId = getComboboxItemsValueByDisplayText(csvData.documentType(),17);
 
         CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(

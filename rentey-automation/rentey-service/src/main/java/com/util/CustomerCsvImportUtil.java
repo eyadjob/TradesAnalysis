@@ -93,9 +93,10 @@ public class CustomerCsvImportUtil {
                 List<String> values = parseCsvLine(line);
 
                 if (rowNumber == 0) {
-                    // First row contains headers
-                    headers = values;
+                    // First row contains headers - clean them of non-printing characters
+                    headers = cleanHeaders(values);
                     logger.debug("Found {} columns in file: {}", headers.size(), csvFile.getName());
+                    logger.debug("Headers after cleaning: {}", headers);
                 } else {
                     // Data rows - create CustomerCsvData object
                     if (headers != null) {
@@ -149,8 +150,8 @@ public class CustomerCsvImportUtil {
                 List<String> values = parseCsvLine(line);
 
                 if (rowNumber == 0) {
-                    // First row contains headers
-                    headers = values;
+                    // First row contains headers - clean them of non-printing characters
+                    headers = cleanHeaders(values);
                     logger.debug("Found {} columns in file: {}", headers.size(), csvFile.getName());
                 } else {
                     // Data rows
@@ -172,6 +173,66 @@ public class CustomerCsvImportUtil {
         }
 
         return csvData;
+    }
+
+    /**
+     * Cleans headers by removing non-printing control characters, especially Zero Width No-Break Space (U+FEFF).
+     * 
+     * @param headers List of header strings to clean
+     * @return List of cleaned header strings
+     */
+    private List<String> cleanHeaders(List<String> headers) {
+        List<String> cleanedHeaders = new ArrayList<>();
+        for (String header : headers) {
+            String cleaned = cleanNonPrintingCharacters(header);
+            cleanedHeaders.add(cleaned);
+        }
+        return cleanedHeaders;
+    }
+
+    /**
+     * Removes non-printing control characters from a string, including:
+     * - Zero Width No-Break Space (U+FEFF / BOM)
+     * - Other Unicode control characters
+     * - Non-printable characters
+     * 
+     * @param str The string to clean
+     * @return Cleaned string with non-printing characters removed
+     */
+    private String cleanNonPrintingCharacters(String str) {
+        if (str == null) {
+            return null;
+        }
+        
+        // Remove Zero Width No-Break Space (BOM) and other non-printing characters
+        // This includes: U+FEFF (BOM), U+200B (Zero Width Space), U+200C (Zero Width Non-Joiner), etc.
+        String cleaned = str.trim()
+                .replace("\uFEFF", "")  // Zero Width No-Break Space (BOM)
+                .replace("\u200B", "")  // Zero Width Space
+                .replace("\u200C", "")  // Zero Width Non-Joiner
+                .replace("\u200D", "")  // Zero Width Joiner
+                .replace("\u2060", "")  // Word Joiner
+                .replace("\u00AD", "")  // Soft Hyphen
+                .trim();
+        
+        // Remove any remaining control characters (Unicode category Cc) except common whitespace
+        StringBuilder result = new StringBuilder();
+        for (char c : cleaned.toCharArray()) {
+            // Keep printable characters, whitespace, and common punctuation
+            if (Character.isLetterOrDigit(c) || 
+                Character.isWhitespace(c) || 
+                c == '_' || c == '-' || 
+                Character.getType(c) == Character.DASH_PUNCTUATION ||
+                Character.getType(c) == Character.CONNECTOR_PUNCTUATION) {
+                result.append(c);
+            }
+            // Skip control characters (category Cc) except common ones like tab, newline
+            else if (Character.getType(c) != Character.CONTROL) {
+                result.append(c);
+            }
+        }
+        
+        return result.toString().trim();
     }
 
     /**

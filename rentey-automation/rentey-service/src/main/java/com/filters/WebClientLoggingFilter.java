@@ -28,7 +28,8 @@ public class WebClientLoggingFilter {
             return Mono.just(request);
         }).andThen(ExchangeFilterFunction.ofResponseProcessor(response -> {
             if (logger.isInfoEnabled()) {
-                logResponseDetails(response);
+                // Log response details including body
+                return logResponseDetailsWithBody(response);
             }
             return Mono.just(response);
         }));
@@ -48,11 +49,39 @@ public class WebClientLoggingFilter {
         logger.info("==============================================");
     }
 
-    private static void logResponseDetails(ClientResponse response) {
+    /**
+     * Logs response details including the body.
+     * Uses ClientResponse.from() to create a cached version that can be read multiple times.
+     */
+    private static Mono<ClientResponse> logResponseDetailsWithBody(ClientResponse response) {
         logger.info("=== Response from External API ===");
         logger.info("Status: {}", response.statusCode());
         logger.info("Headers: {}", formatHeaders(response.headers().asHttpHeaders()));
-        logger.info("==================================");
+        
+        // Read the body and log it, then recreate the response
+        return response.bodyToMono(String.class)
+                .defaultIfEmpty("")
+                .flatMap(body -> {
+                    // Log the response body
+                    if (body != null && !body.trim().isEmpty()) {
+                        logger.info("Response Body: {}", body);
+                    } else {
+                        logger.info("Response Body: (empty)");
+                    }
+                    logger.info("==================================");
+                    
+                    // Recreate the ClientResponse with the body so it can be consumed by the service layer
+                    return Mono.just(ClientResponse.create(response.statusCode())
+                            .headers(headers -> headers.addAll(response.headers().asHttpHeaders()))
+                            .body(body)
+                            .build());
+                })
+                .onErrorResume(error -> {
+                    logger.warn("Error reading response body: {}", error.getMessage());
+                    logger.info("==================================");
+                    // Return original response if body reading fails
+                    return Mono.just(response);
+                });
     }
 
     private static String formatHeaders(HttpHeaders headers) {
