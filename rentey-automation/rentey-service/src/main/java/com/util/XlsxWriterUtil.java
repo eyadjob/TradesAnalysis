@@ -14,7 +14,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.poi.xddf.usermodel.chart.*;
+import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
 
 /**
  * Utility class for writing customer import results to XLSX files.
@@ -80,6 +84,9 @@ public class XlsxWriterUtil {
             createHeaderRow(headerRow, headerStyle);
 
             // Create data rows with conditional styling based on response code
+            int successCount = 0;
+            int failedCount = 0;
+            
             for (int i = 0; i < customerDataList.size(); i++) {
                 CustomerCsvData customerData = customerDataList.get(i);
                 String responseCode = (i < responseCodes.size()) ? responseCodes.get(i) : "";
@@ -91,13 +98,29 @@ public class XlsxWriterUtil {
                 CellStyle rowStyle;
                 if ("200".equals(responseCode)) {
                     rowStyle = successDataStyle;
+                    successCount++;
                 } else if (responseCode != null && !responseCode.isEmpty() && !"200".equals(responseCode)) {
                     rowStyle = errorDataStyle;
+                    failedCount++;
                 } else {
                     rowStyle = defaultDataStyle;
+                    failedCount++; // Count empty/null as failed
                 }
                 
                 createDataRow(dataRow, customerData, responseCode, responseMessage, rowStyle);
+            }
+
+            // Add summary rows
+            CellStyle summaryStyle = createSummaryStyle(workbook);
+            int summaryEndRow = addSummaryRows(sheet, rowNum, customerDataList.size(), successCount, failedCount, summaryStyle);
+
+            // Group failed records by response message for chart
+            Map<String, Long> failureMessageCounts = groupFailuresByMessage(
+                    customerDataList, responseCodes, responseMessages);
+
+            // Add pie chart for failure distribution
+            if (!failureMessageCounts.isEmpty() && failedCount > 0) {
+                createFailurePieChart((XSSFSheet) sheet, summaryEndRow + 2, failureMessageCounts);
             }
 
             // Auto-size columns
@@ -255,6 +278,191 @@ public class XlsxWriterUtil {
         style.setAlignment(HorizontalAlignment.CENTER);
         style.setVerticalAlignment(VerticalAlignment.CENTER);
         return style;
+    }
+
+    /**
+     * Groups failed records by their response messages.
+     * Normalizes duplicate identity number errors into a single category.
+     */
+    private Map<String, Long> groupFailuresByMessage(
+            List<CustomerCsvData> customerDataList,
+            List<String> responseCodes,
+            List<String> responseMessages) {
+        
+        Map<String, Long> messageCounts = new LinkedHashMap<>();
+        
+        for (int i = 0; i < customerDataList.size(); i++) {
+            String responseCode = (i < responseCodes.size()) ? responseCodes.get(i) : "";
+            String responseMessage = (i < responseMessages.size()) ? responseMessages.get(i) : "";
+            
+            // Only count failed records (not 200)
+            if (responseCode == null || responseCode.isEmpty() || !"200".equals(responseCode)) {
+                String message = (responseMessage != null && !responseMessage.isEmpty()) 
+                    ? responseMessage 
+                    : "Unknown Error";
+                
+                // Normalize duplicate identity number errors
+                message = normalizeErrorMessage(message);
+                
+                messageCounts.put(message, messageCounts.getOrDefault(message, 0L) + 1);
+            }
+        }
+        
+        return messageCounts;
+    }
+
+    /**
+     * Normalizes error messages to group similar errors together.
+     * Specifically, normalizes "Identity number X is duplicate" to "Identity number is duplicate".
+     */
+    private String normalizeErrorMessage(String message) {
+        if (message == null || message.isEmpty()) {
+            return message;
+        }
+        
+        // Normalize duplicate identity number errors
+        // Pattern: "Identity number <number> is duplicate" -> "Identity number is duplicate"
+        String normalized = message.replaceAll(
+            "(?i)Identity number\\s+\\d+\\s+is duplicate", 
+            "Identity number is duplicate"
+        );
+        
+        return normalized;
+    }
+
+    /**
+     * Adds summary rows at the end of the sheet.
+     * @return The row number after the last summary row
+     */
+    private int addSummaryRows(Sheet sheet, int startRowNum, int totalRecords, 
+                               int successCount, int failedCount, CellStyle style) {
+        int rowNum = startRowNum;
+        
+        // Add empty row for spacing
+        sheet.createRow(rowNum++);
+        
+        // Total Customer Records Processed
+        Row totalRow = sheet.createRow(rowNum++);
+        Cell totalLabelCell = totalRow.createCell(0);
+        totalLabelCell.setCellValue("Total Customer Records Processed");
+        totalLabelCell.setCellStyle(style);
+        Cell totalValueCell = totalRow.createCell(1);
+        totalValueCell.setCellValue(totalRecords);
+        totalValueCell.setCellStyle(style);
+        
+        // Failed Customer Records To Import
+        Row failedRow = sheet.createRow(rowNum++);
+        Cell failedLabelCell = failedRow.createCell(0);
+        failedLabelCell.setCellValue("Failed Customer Records To Import");
+        failedLabelCell.setCellStyle(style);
+        Cell failedValueCell = failedRow.createCell(1);
+        failedValueCell.setCellValue(failedCount);
+        failedValueCell.setCellStyle(style);
+        
+        // Successfully Imported Customer Records
+        Row successRow = sheet.createRow(rowNum++);
+        Cell successLabelCell = successRow.createCell(0);
+        successLabelCell.setCellValue("Successfully Imported Customer Records");
+        successLabelCell.setCellStyle(style);
+        Cell successValueCell = successRow.createCell(1);
+        successValueCell.setCellValue(successCount);
+        successValueCell.setCellStyle(style);
+        
+        return rowNum;
+    }
+
+    /**
+     * Creates a summary style for summary rows (bold font, light gray background).
+     */
+    private CellStyle createSummaryStyle(Workbook workbook) {
+        CellStyle style = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 11);
+        style.setFont(font);
+        
+        // Set light gray background color
+        org.apache.poi.xssf.usermodel.XSSFColor summaryColor = new org.apache.poi.xssf.usermodel.XSSFColor(
+                new byte[]{(byte) 0xE0, (byte) 0xE0, (byte) 0xE0}, null);
+        ((org.apache.poi.xssf.usermodel.XSSFCellStyle) style).setFillForegroundColor(summaryColor);
+        
+        style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        style.setBorderBottom(BorderStyle.THIN);
+        style.setBorderTop(BorderStyle.THIN);
+        style.setBorderLeft(BorderStyle.THIN);
+        style.setBorderRight(BorderStyle.THIN);
+        style.setAlignment(HorizontalAlignment.CENTER);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        return style;
+    }
+
+    /**
+     * Creates a pie chart showing failure distribution by response message.
+     */
+    private void createFailurePieChart(XSSFSheet sheet, int startRow, Map<String, Long> failureMessageCounts) {
+        try {
+            // Create data table for chart (Response Message and Count)
+            int chartDataStartRow = startRow;
+            int chartDataRow = chartDataStartRow;
+            
+            // Create header row for chart data
+            Row headerRow = sheet.createRow(chartDataRow++);
+            CellStyle headerStyle = createHeaderStyle(sheet.getWorkbook());
+            Cell messageHeader = headerRow.createCell(0);
+            messageHeader.setCellValue("Response Message");
+            messageHeader.setCellStyle(headerStyle);
+            Cell countHeader = headerRow.createCell(1);
+            countHeader.setCellValue("Count");
+            countHeader.setCellStyle(headerStyle);
+            
+            // Create data rows
+            int dataStartRow = chartDataRow;
+            for (Map.Entry<String, Long> entry : failureMessageCounts.entrySet()) {
+                Row dataRow = sheet.createRow(chartDataRow++);
+                Cell messageCell = dataRow.createCell(0);
+                messageCell.setCellValue(entry.getKey());
+                Cell countCell = dataRow.createCell(1);
+                countCell.setCellValue(entry.getValue());
+            }
+            int dataEndRow = chartDataRow - 1;
+            
+            // Create drawing and chart
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            
+            // Position chart to the right of the data (starting at column 3, row startRow)
+            XSSFClientAnchor anchor = drawing.createAnchor(
+                    0, 0, 0, 0,
+                    3, startRow,
+                    11, startRow + 15);
+            
+            XSSFChart chart = drawing.createChart(anchor);
+            chart.setTitleText("Failed Records by Response Message");
+            chart.setTitleOverlay(false);
+            
+            // Define chart data sources
+            XDDFDataSource<String> categories = XDDFDataSourcesFactory.fromStringCellRange(
+                    sheet, new CellRangeAddress(dataStartRow, dataEndRow, 0, 0));
+            XDDFNumericalDataSource<Double> values = XDDFDataSourcesFactory.fromNumericCellRange(
+                    sheet, new CellRangeAddress(dataStartRow, dataEndRow, 1, 1));
+            
+            // Create the pie chart data
+            XDDFChartData data = chart.createData(ChartTypes.PIE, null, null);
+            XDDFChartData.Series series = data.addSeries(categories, values);
+            series.setTitle("Failure Distribution", null);
+            
+            // Plot the chart with the data
+            chart.plot(data);
+            
+            // Set legend position
+            XDDFChartLegend legend = chart.getOrAddLegend();
+            legend.setPosition(LegendPosition.BOTTOM);
+            
+            logger.info("Created pie chart for failure distribution with {} distinct error messages", 
+                    failureMessageCounts.size());
+            
+        } catch (Exception e) {
+            logger.error("Error creating pie chart", e);
+        }
     }
 
     /**
