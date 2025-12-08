@@ -35,3 +35,6 @@ build/
 ### Import Results ###
 rentey-service/importResults/
 rentey-service/customersToImport/
+
+### Logs ###
+logs/
