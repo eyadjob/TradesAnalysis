@@ -2,12 +2,15 @@ package com.filters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.stream.Collectors;
@@ -59,7 +62,7 @@ public class WebClientLoggingFilter {
         logger.info("Status: {}", response.statusCode());
         logger.info("Headers: {}", formatHeaders(response.headers().asHttpHeaders()));
         
-        // Read the body and log it, then recreate the response
+        // Read the body, log it, and recreate the response using ClientResponse.from()
         return response.bodyToMono(String.class)
                 .defaultIfEmpty("")
                 .flatMap(body -> {
@@ -71,10 +74,14 @@ public class WebClientLoggingFilter {
                     }
                     logger.info("==================================");
                     
-                    // Recreate the ClientResponse with the body so it can be consumed by the service layer
+                    // Recreate the ClientResponse with the cached body
+                    // Convert string body to DataBuffer for the response
+                    DataBufferFactory bufferFactory = new DefaultDataBufferFactory();
+                    DataBuffer dataBuffer = bufferFactory.wrap((body != null ? body : "").getBytes());
+                    
                     return Mono.just(ClientResponse.create(response.statusCode())
                             .headers(headers -> headers.addAll(response.headers().asHttpHeaders()))
-                            .body(BodyInserters.fromValue(body != null ? body : ""))
+                            .body(flux -> Flux.just(dataBuffer))
                             .build());
                 })
                 .onErrorResume(error -> {

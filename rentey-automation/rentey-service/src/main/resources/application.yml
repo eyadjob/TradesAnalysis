@@ -68,5 +68,7 @@ settings:
 csv:
   import:
     directory: rentey-service/customersToImport
+  export:
+    directory: rentey-service/importResults
 
 
