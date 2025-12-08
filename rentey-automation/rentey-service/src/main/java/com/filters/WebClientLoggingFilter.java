@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
@@ -73,7 +74,7 @@ public class WebClientLoggingFilter {
                     // Recreate the ClientResponse with the body so it can be consumed by the service layer
                     return Mono.just(ClientResponse.create(response.statusCode())
                             .headers(headers -> headers.addAll(response.headers().asHttpHeaders()))
-                            .body(body)
+                            .body(BodyInserters.fromValue(body != null ? body : ""))
                             .build());
                 })
                 .onErrorResume(error -> {
