@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Import Results ###
+rentey-service/importResults/
+rentey-service/customersToImport/
