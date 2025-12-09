@@ -153,13 +153,12 @@ public class VehicleService {
      * @param carModelName The name of the car model to find.
      * @return The ID of the car model, or "-1" if not found.
      */
-    public String getCarModelIdByName(GetAllCarModelsResponseBean carModelsResponseBean,String carModelName){
-        for (GetAllCarModelsResponseBean.CarModel carModel : carModelsResponseBean.result().items()) {
-            if (carModel.name().equals(carModelName)) {
-                return String.valueOf(carModel.id());
-            }
-        }
-        return "-1";
+    public String getCarModelIdByName(GetAllCarModelsResponseBean carModelsResponseBean, String carModelName) {
+        return carModelsResponseBean.result().items().stream()
+                .filter(carModel -> carModel.name() != null && carModel.name().equals(carModelName))
+                .findFirst()
+                .map(carModel -> String.valueOf(carModel.id()))
+                .orElse("-1");
     }
 
     /**
@@ -270,6 +269,14 @@ public class VehicleService {
                 .block();
     }
 
+    public String getVendorIdByName(GetVendorComboboxItemsResponseBean vendorComboboxItemsResponseBean, String vendorName) {
+        return vendorComboboxItemsResponseBean.result().items().stream()
+                .filter(vendorComboboxItem -> vendorComboboxItem.displayText().equals(vendorName))
+                .findFirst()
+                .map(vehicleVendor -> String.valueOf(vehicleVendor.value()))
+                .orElse("-1");
+    }
+
     /**
      * Create vehicles.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
@@ -308,13 +315,13 @@ public class VehicleService {
         );
 
         String  vehicleFuelTypeId = lookupsService.getComboboxItemValueByDisplayText(getFuelTypesForCombobox(countryId), userDefinedVariables.get("automationFuelTypeName"));
-        String vehicleFuelLevelsId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(12),"100%");
+        String vehicleFuelLevelId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(12),"100%");
         String vehicleColorId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(13),userDefinedVariables.get("automationColourName"));
-        String  vehicleUsageTypeId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(11),"Rental");
+        String vehicleUsageTypeId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(11),"Rental");
         String vehicleLicenseTypeId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(10),"Private");
         String vehicleTrimLevelId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(14),userDefinedVariables.get("automationTrimLevel"));
-        GetVendorComboboxItemsResponseBean vendors = getVendorComboboxItems();
-        GetAllCarModelsResponseBean carModels = getAllCarModels();
+        String vehicleVendorId = getVendorIdByName(getVendorComboboxItems(),userDefinedVariables.get("automationVendorName"));
+        String carModelId = getCarModelIdByName(getAllCarModels(),userDefinedVariables.get("automationCarModelName"));
 
         // Extract values from responses (get first non-"Not Assigned" item, or first item if all are "Not Assigned")
         String insuranceCompanyId = getFirstValidValue(insuranceCompanies, "-1");
@@ -323,21 +330,8 @@ public class VehicleService {
                 !accidentPolicies.result().data().isEmpty()
                 ? accidentPolicies.result().data().get(0).id()
                 : null;
-        String modelId = carModels != null &&
-                carModels.result() != null &&
-                !carModels.result().items().isEmpty()
-                ? String.valueOf(carModels.result().items().get(0).id())
-                : null;
-        String fuelTypeId = lookupsService.getComboboxItemValueByDisplayText(fuelTypes, userDefinedVariables.get("automationFuelTypeName"));
-        String licenseTypeId = getFirstValidValue(licenseTypes, "-1");
-        String usageTypeId = getFirstValidValue(usageTypes, "-1");
-        String vendorId = getFirstValidVendorValue(vendors, "-1");
-        String colorId = getFirstValidValue(colors, "-1");
-        String trimLevelId = getFirstValidValue(licenseTypes, "-1");
 
-        // Generate random plate number (format: 3 letters + 4 digits)
         String randomPlateNumber = generateRandomPlateNumber();
-
         // Generate random chassis number (17 digits)
         String chassisNo = generateRandomChassisNumber();
 
@@ -345,16 +339,16 @@ public class VehicleService {
         CreateVehiclesRequestBean.VehicleDto vehicleDto = new CreateVehiclesRequestBean.VehicleDto(
                 null, // isBulkUploaded
                 "0", // odometer
-                Integer.parseInt(fuelTypeId), // fuelId
+                Integer.parseInt(vehicleFuelLevelId), // fuelLevelId
                 branchId != null ? branchId : "1012", // branchId (default if not provided)
                 new CreateVehiclesRequestBean.VehicleManufacturingInfo(
-                        modelId != null ? modelId : "1507", // modelId
+                        carModelId, // modelId
                         2020 + random.nextInt(5), // year (2020-2024)
                         chassisNo // chassisNo
                 ),
                 new CreateVehiclesRequestBean.VehicleLicenseInfo(
-                        licenseTypeId, // licenseTypeId
-                        usageTypeId, // usageTypeId
+                        vehicleLicenseTypeId, // licenseTypeId
+                        vehicleUsageTypeId, // usageTypeId
                         randomPlateNumber // plateNo
                 ),
                 new CreateVehiclesRequestBean.VehicleInsuranceInfo(
@@ -367,14 +361,14 @@ public class VehicleService {
                         branchId != null ? branchId : "1012" // currentLocationId
                 ),
                 new CreateVehiclesRequestBean.PurchaseInfo(
-                        vendorId, // vendorId
+                        vehicleVendorId, // vendorId
                         OffsetDateTime.now(), // date
                         String.valueOf(35000 + random.nextInt(50000)) // price (35000-84999)
                 ),
                 new CreateVehiclesRequestBean.VehicleSpecs(
-                        colorId, // colorId
-                        trimLevelId, // trimLevelId
-                        fuelTypeId, // fuelTypeId
+                        vehicleColorId, // colorId
+                        vehicleTrimLevelId, // trimLevelId
+                        vehicleFuelTypeId, // fuelTypeId
                         50 + random.nextInt(30), // fuelTankSize (50-79)
                         1000 + random.nextInt(2000) // engineSize (1000-2999)
                 ),
@@ -437,7 +431,7 @@ public class VehicleService {
         // Generate 3 random letters
         for (int i = 0; i < 3; i++) {
             char letter = (char) ('A' + random.nextInt(26));
-            plate.append(letter);
+            plate.append(letter).append(" ");
         }
 
         plate.append(" ");

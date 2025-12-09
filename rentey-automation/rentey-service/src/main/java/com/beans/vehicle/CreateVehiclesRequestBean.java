@@ -18,7 +18,7 @@ public record CreateVehiclesRequestBean(
     public record VehicleDto(
             @JsonProperty("isBulkUploaded") Boolean isBulkUploaded,
             @JsonProperty("odometer") String odometer,
-            @JsonProperty("fuelId") Integer fuelId,
+            @JsonProperty("fuelLevelId") Integer fuelLevelId,
             @JsonProperty("branchId") String branchId,
             @JsonProperty("vehicleManufacturingInfo") VehicleManufacturingInfo vehicleManufacturingInfo,
             @JsonProperty("vehicleLicenseInfo") VehicleLicenseInfo vehicleLicenseInfo,
