@@ -55,7 +55,6 @@ public class ImportCustomerService {
     private GetAllItemsComboboxItemsResponseBean lookupTypes;
     private GetAllItemsComboboxItemsResponseBean genderLookupValues;
     private GetOperationalCountriesResponseBean countriesResponseBean;
-    private GetAllItemsComboboxItemsResponseBean customerDocumentTypes;
     private GetAllItemsComboboxItemsResponseBean nationalities;
 
     private static final Map<String, String> countryIso = loadCountryIsoMap();
