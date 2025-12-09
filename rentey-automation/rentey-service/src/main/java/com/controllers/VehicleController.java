@@ -40,7 +40,7 @@ public class VehicleController {
             throw new IllegalArgumentException("countryId parameter is required.");
         }
 
-        return vehicleService.getInsuranceCompanyComboboxItems(includeInActive, countryId);
+        return vehicleService.getInsuranceCompanyComboboxItems(countryId, includeInActive);
     }
 
     /**

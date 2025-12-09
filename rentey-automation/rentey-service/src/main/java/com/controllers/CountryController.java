@@ -59,7 +59,7 @@ public class CountryController {
             throw new IllegalArgumentException("countryId parameter is required.");
         }
 
-        return countryService.getUserBranchesForCombobox(includeInActive, countryId, includeAll, filterTypes);
+        return countryService.getUserBranchesForCombobox(countryId, includeInActive, includeAll, filterTypes);
     }
 
     /**
