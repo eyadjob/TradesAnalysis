@@ -1,5 +1,6 @@
-package com.beans;
+package com.beans.general;
 
+import com.beans.interfaces.ResponsePayload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.http.HttpStatus;
 import java.time.Instant;

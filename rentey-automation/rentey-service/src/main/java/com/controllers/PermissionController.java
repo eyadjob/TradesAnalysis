@@ -1,8 +1,8 @@
 package com.controllers;
 
-import com.beans.AbpResponseBean;
-import com.beans.CreateOrUpdateRoleRequestBean;
-import com.beans.GetAllPermissionsResponseBean;
+import com.beans.general.AbpResponseBean;
+import com.beans.customer.CreateOrUpdateRoleRequestBean;
+import com.beans.user.GetAllPermissionsResponseBean;
 import com.services.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

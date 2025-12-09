@@ -1,4 +1,4 @@
-package com.beans;
+package com.beans.interfaces;
 
 /**
  * Marker interface for all response payload beans in rentey-service.

@@ -52,6 +52,9 @@ public final class ApiPaths {
     public static final String LOOKUPS_GET_ALL_ITEMS_COMBOBOX = "/Lookups/GetAllItemsComboboxItems";
     public static final String LOOKUPS_GET_TYPES_COMBOBOX = "/Lookups/GetTypesComboboxItems";
     
+    // Insurance Company endpoints
+    public static final String INSURANCE_COMPANY_GET_COMBOBOX_ITEMS = "/InsuranceCompany/GetInsuranceCompanyComboboxItems";
+    
     // Private constructor to prevent instantiation
     private ApiPaths() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");

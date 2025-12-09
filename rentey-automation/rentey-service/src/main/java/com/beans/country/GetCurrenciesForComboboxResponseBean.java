@@ -1,25 +1,27 @@
-package com.beans;
+package com.beans.country;
 
+import com.beans.interfaces.ResponsePayload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
- * Response bean for GetAllItemsComboboxItems API.
+ * Response bean for GetCurrenciesForCombobox API.
  */
-public record GetAllItemsComboboxItemsResponseBean(
-        @JsonProperty("result") ComboboxItemsResult result,
+public record GetCurrenciesForComboboxResponseBean(
+        @JsonProperty("result") CurrenciesResult result,
         @JsonProperty("targetUrl") String targetUrl,
         @JsonProperty("success") Boolean success,
         @JsonProperty("error") Object error,
         @JsonProperty("unAuthorizedRequest") Boolean unAuthorizedRequest,
         @JsonProperty("__abp") Boolean abp
 ) implements ResponsePayload {
-    public record ComboboxItemsResult(
-            @JsonProperty("items") List<ComboboxItem> items
+    public record CurrenciesResult(
+            @JsonProperty("items") List<CurrencyItem> items
     ) {
     }
 
-    public record ComboboxItem(
+    public record CurrencyItem(
+            @JsonProperty("isoCode") String isoCode,
             @JsonProperty("value") String value,
             @JsonProperty("displayText") String displayText,
             @JsonProperty("isSelected") Boolean isSelected

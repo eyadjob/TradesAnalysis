@@ -1,9 +1,9 @@
 package com.controllers;
 
-import com.beans.GetAllItemsComboboxItemsResponseBean;
-import com.beans.GetCountryCurrencyInfoResponseBean;
-import com.beans.GetCurrenciesForComboboxResponseBean;
-import com.beans.GetUserBranchesForComboboxResponseBean;
+import com.beans.general.GetAllItemsComboboxItemsResponseBean;
+import com.beans.country.GetCountryCurrencyInfoResponseBean;
+import com.beans.country.GetCurrenciesForComboboxResponseBean;
+import com.beans.user.GetUserBranchesForComboboxResponseBean;
 import com.services.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

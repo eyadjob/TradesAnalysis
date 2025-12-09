@@ -1,6 +1,6 @@
 package com.builders;
 
-import com.beans.CreateOrUpdateCustomerRequestBean;
+import com.beans.customer.CreateOrUpdateCustomerRequestBean;
 
 import java.util.ArrayList;
 import java.util.List;

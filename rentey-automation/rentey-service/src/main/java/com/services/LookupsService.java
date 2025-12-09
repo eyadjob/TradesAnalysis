@@ -2,7 +2,7 @@ package com.services;
 
 import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
-import com.beans.GetAllItemsComboboxItemsResponseBean;
+import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

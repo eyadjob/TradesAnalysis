@@ -1,15 +1,15 @@
 package com.controllers;
 
-import com.beans.AbpResponseBean;
+import com.beans.general.AbpResponseBean;
 
-import com.beans.UpdateAllSettingsRequestBean;
+import com.beans.setting.UpdateAllSettingsRequestBean;
 import com.services.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;
-import com.beans.GetOperationalCountriesResponseBean;
-import com.beans.TenantAndCountrySettingsRequestBean;
+import com.beans.setting.GetOperationalCountriesResponseBean;
+import com.beans.setting.TenantAndCountrySettingsRequestBean;
 
 @RestController
 @RequestMapping(path = BASE_PATH)

@@ -1,16 +1,12 @@
 package com.controllers;
 
-import com.annotation.LogExecutionTime;
-import com.annotation.LogRequestAndResponseOnDesk;
-import com.beans.CreateOrUpdateCustomerRequestBean;
-import com.beans.CreateOrUpdateCustomerResponseBean;
+import com.beans.customer.CreateOrUpdateCustomerResponseBean;
 import com.services.ImportCustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;

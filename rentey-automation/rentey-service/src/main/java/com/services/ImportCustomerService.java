@@ -2,10 +2,10 @@ package com.services;
 
 import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
-import com.beans.CreateOrUpdateCustomerRequestBean;
-import com.beans.CreateOrUpdateCustomerResponseBean;
-import com.beans.GetAllItemsComboboxItemsResponseBean;
-import com.beans.GetOperationalCountriesResponseBean;
+import com.beans.customer.CreateOrUpdateCustomerRequestBean;
+import com.beans.customer.CreateOrUpdateCustomerResponseBean;
+import com.beans.general.GetAllItemsComboboxItemsResponseBean;
+import com.beans.setting.GetOperationalCountriesResponseBean;
 import com.builders.CustomerDataBuilder;
 import com.enums.LookupType;
 import com.pojo.CustomerCsvData;

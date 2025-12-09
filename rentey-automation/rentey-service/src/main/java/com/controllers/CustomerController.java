@@ -1,8 +1,7 @@
 package com.controllers;
 
-import com.beans.CreateOrUpdateCustomerRequestBean;
-import com.beans.CreateOrUpdateCustomerResponseBean;
-import com.beans.GetAllItemsComboboxItemsResponseBean;
+import com.beans.customer.CreateOrUpdateCustomerRequestBean;
+import com.beans.customer.CreateOrUpdateCustomerResponseBean;
 import com.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

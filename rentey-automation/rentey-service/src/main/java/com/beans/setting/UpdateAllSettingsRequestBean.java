@@ -1,5 +1,6 @@
-package com.beans;
+package com.beans.setting;
 
+import com.beans.interfaces.RequestPayload;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

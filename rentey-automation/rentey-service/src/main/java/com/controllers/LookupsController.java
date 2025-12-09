@@ -1,6 +1,6 @@
 package com.controllers;
 
-import com.beans.GetAllItemsComboboxItemsResponseBean;
+import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.services.LookupsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

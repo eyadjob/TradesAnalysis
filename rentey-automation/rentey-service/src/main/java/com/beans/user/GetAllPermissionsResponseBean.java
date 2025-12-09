@@ -1,5 +1,6 @@
-package com.beans;
+package com.beans.user;
 
+import com.beans.interfaces.ResponsePayload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;

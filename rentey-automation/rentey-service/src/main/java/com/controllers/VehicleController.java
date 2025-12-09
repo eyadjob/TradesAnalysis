@@ -1,13 +1,15 @@
 package com.controllers;
 
-import com.beans.UploadBase64FileRequestBean;
-import com.beans.UploadBase64FileResponseBean;
+import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.services.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import static com.controllers.ApiPaths.*;
 
+/**
+ * REST controller for vehicle-related operations.
+ */
 @RestController
 @RequestMapping(path = BASE_PATH)
 public class VehicleController {
@@ -16,26 +18,23 @@ public class VehicleController {
     private VehicleService vehicleService;
 
     /**
-     * Upload a base64 encoded file.
+     * Get insurance company combobox items.
      * This endpoint automatically calls the authorization-service to get the refreshToken
      * and uses it in the Authorization header when calling the external API.
      *
-     * @param request The request containing the base64 encoded file data.
-     * @return The response containing the uploaded file information.
+     * @param includeInActive Whether to include inactive insurance companies (default: false).
+     * @param countryId The country ID for which to get the insurance companies (required).
+     * @return The response containing all insurance company combobox items.
      */
-    @PostMapping(path = FILE_UPLOAD_BASE64, consumes = "application/json", produces = "application/json")
-    public UploadBase64FileResponseBean uploadBase64File(
-            @RequestBody(required = true) UploadBase64FileRequestBean request) {
+    @GetMapping(path = INSURANCE_COMPANY_GET_COMBOBOX_ITEMS, produces = "application/json")
+    public GetAllItemsComboboxItemsResponseBean getInsuranceCompanyComboboxItems(
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive,
+            @RequestParam(required = true) Integer countryId) {
 
-        if (request == null) {
-            throw new IllegalArgumentException("Request body is required and cannot be null.");
+        if (countryId == null) {
+            throw new IllegalArgumentException("countryId parameter is required.");
         }
 
-        if (request.data() == null || request.data().trim().isEmpty()) {
-            throw new IllegalArgumentException("File data is required and cannot be null or empty.");
-        }
-
-        return vehicleService.uploadBase64File(request);
+        return vehicleService.getInsuranceCompanyComboboxItems(includeInActive, countryId);
     }
 }
-

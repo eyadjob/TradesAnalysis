@@ -1,5 +1,6 @@
-package com.beans;
+package com.beans.country;
 
+import com.beans.interfaces.ResponsePayload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**

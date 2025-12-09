@@ -1,13 +1,13 @@
 package com.services;
 
-import com.beans.AbpResponseBean;
-import com.beans.TenantAndCountrySettingsRequestBean;
-import com.beans.UpdateAllSettingsRequestBean;
+import com.beans.general.AbpResponseBean;
+import com.beans.setting.TenantAndCountrySettingsRequestBean;
+import com.beans.setting.UpdateAllSettingsRequestBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import com.beans.GetOperationalCountriesResponseBean;
+import com.beans.setting.GetOperationalCountriesResponseBean;
 
 @Service
 public class SettingsService {

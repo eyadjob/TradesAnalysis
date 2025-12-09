@@ -1,5 +1,6 @@
-package com.beans;
+package com.beans.authentication;
 
+import com.beans.interfaces.RequestPayload;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public record AuthenticateRequestBean(

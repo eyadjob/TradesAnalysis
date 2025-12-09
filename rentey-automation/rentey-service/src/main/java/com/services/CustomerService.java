@@ -2,9 +2,8 @@ package com.services;
 
 import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
-import com.beans.CreateOrUpdateCustomerRequestBean;
-import com.beans.CreateOrUpdateCustomerResponseBean;
-import com.beans.GetAllItemsComboboxItemsResponseBean;
+import com.beans.customer.CreateOrUpdateCustomerRequestBean;
+import com.beans.customer.CreateOrUpdateCustomerResponseBean;
 import com.util.ObjectMapperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
