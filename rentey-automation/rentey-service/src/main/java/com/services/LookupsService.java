@@ -72,6 +72,31 @@ public class LookupsService {
                 .block();
     }
 
+    /**
+     * Get all items for a combobox based on the lookup type.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param typeId The type ID for the lookup items.
+     * @return The response containing all combobox items.
+     */
+    @Cacheable(cacheNames="allItemsComboboxItems",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
+            Integer typeId) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Lookups/GetAllItemsComboboxItems")
+                            .queryParam("typeId", typeId)
+                            .queryParam("includeInActive", false)
+                            .queryParam("includeNotAssign", false);
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
+    }
+
 
     public String getComboboxItemValueByDisplayText(GetAllItemsComboboxItemsResponseBean comboboxItemsResponseBean,String displayText) {
         for (GetAllItemsComboboxItemsResponseBean.ComboboxItem comboboxItem : comboboxItemsResponseBean.result().items()) {

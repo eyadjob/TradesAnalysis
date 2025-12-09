@@ -1,11 +1,7 @@
 package com.services;
 
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
-import com.beans.vehicle.CreateVehiclesRequestBean;
-import com.beans.vehicle.CreateVehiclesResponseBean;
-import com.beans.vehicle.GetAllAccidentPoliciesResponseBean;
-import com.beans.vehicle.GetAllCarModelsResponseBean;
-import com.beans.vehicle.GetVendorComboboxItemsResponseBean;
+import com.beans.vehicle.*;
 import com.util.PropertyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * Service for interacting with vehicle-related APIs.
@@ -26,25 +25,22 @@ public class VehicleService {
 
     private static final Logger logger = LoggerFactory.getLogger(VehicleService.class);
     private static final Random random = new Random();
-
+    private static final Map<String, String> userDefinedVariables = PropertyManager.loadPropertyFileIntoMap("user-defined-variables.properties");
     @Autowired
     @Qualifier("settingsWebClient")
     private WebClient settingsWebClient;
-
     @Autowired
     @Qualifier("apiBasePath")
     private String apiBasePath;
-
     @Autowired
     private LookupsService lookupsService;
 
-    private static final Map<String, String> userDefinedVariables = PropertyManager.loadPropertyFileIntoMap("user-defined-variables.properties");
     /**
      * Get insurance company combobox items.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
      * @param includeInActive Whether to include inactive insurance companies (default: false).
-     * @param countryId The country ID for which to get the insurance companies (required).
+     * @param countryId       The country ID for which to get the insurance companies (required).
      * @return The response containing all insurance company combobox items.
      */
     public GetAllItemsComboboxItemsResponseBean getInsuranceCompanyComboboxItems(
@@ -55,14 +51,14 @@ public class VehicleService {
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
                             .path(apiBasePath + "/InsuranceCompany/GetInsuranceCompanyComboboxItems");
-                    
+
                     if (includeInActive != null) {
                         builder.queryParam("includeInActive", includeInActive);
                     }
                     if (countryId != null) {
                         builder.queryParam("countryId", countryId);
                     }
-                    
+
                     return builder.build();
                 })
                 .retrieve()
@@ -74,10 +70,10 @@ public class VehicleService {
      * Get all accident policies.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param countryId The country ID for which to get the accident policies (required).
+     * @param countryId       The country ID for which to get the accident policies (required).
      * @param includeInactive Whether to include inactive policies (default: false).
-     * @param request The request query string containing pagination, filter, and sort parameters (optional).
-     *                Example: "page=1&pageSize=15&filter=(isActive~eq~true~and~isExpired~eq~false)&sort=lastUpdateTime-desc"
+     * @param request         The request query string containing pagination, filter, and sort parameters (optional).
+     *                        Example: "page=1&pageSize=15&filter=(isActive~eq~true~and~isExpired~eq~false)&sort=lastUpdateTime-desc"
      * @return The response containing all accident policies.
      */
     public GetAllAccidentPoliciesResponseBean getAllAccidentPolicies(
@@ -89,7 +85,7 @@ public class VehicleService {
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
                             .path(apiBasePath + "/AccidentPolicy/GetAllAccidentPolicies");
-                    
+
                     if (countryId != null) {
                         builder.queryParam("CountryId", countryId);
                     }
@@ -99,7 +95,33 @@ public class VehicleService {
                     if (request != null && !request.isEmpty()) {
                         builder.queryParam("Request", request);
                     }
-                    
+
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllAccidentPoliciesResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get all accident policies.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param countryId       The country ID for which to get the accident policies (required).
+     * @return The response containing all accident policies.
+     */
+    public GetAllAccidentPoliciesResponseBean getAllAccidentPolicies(
+            Integer countryId
+            ) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/AccidentPolicy/GetAllAccidentPolicies");
+                        builder.queryParam("CountryId", countryId);
+                        builder.queryParam("IncludeInactive", false);
+                        builder.queryParam("Request", "page=1&pageSize=15&filter=(isActive~eq~true~and~isExpired~eq~false)&sort=lastUpdateTime-desc");
+
                     return builder.build();
                 })
                 .retrieve()
@@ -113,6 +135,7 @@ public class VehicleService {
      *
      * @return The response containing all car models.
      */
+    @Cacheable(cacheNames = "allCarsModelsCache", value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetAllCarModelsResponseBean getAllCarModels() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
@@ -123,15 +146,32 @@ public class VehicleService {
     }
 
     /**
+     * Get car model ID by name.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param carModelsResponseBean The response containing all car models.
+     * @param carModelName The name of the car model to find.
+     * @return The ID of the car model, or "-1" if not found.
+     */
+    public String getCarModelIdByName(GetAllCarModelsResponseBean carModelsResponseBean,String carModelName){
+        for (GetAllCarModelsResponseBean.CarModel carModel : carModelsResponseBean.result().items()) {
+            if (carModel.name().equals(carModelName)) {
+                return String.valueOf(carModel.id());
+            }
+        }
+        return "-1";
+    }
+
+    /**
      * Get fuel types for combobox.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
      * @param includeInActive Whether to include inactive fuel types (default: false).
-     * @param countryId The country ID for which to get the fuel types (required).
-     * @param selectedId The selected fuel type ID (default: -1).
+     * @param countryId       The country ID for which to get the fuel types (required).
+     * @param selectedId      The selected fuel type ID (default: -1).
      * @return The response containing all fuel types for combobox.
      */
-    @Cacheable(cacheNames="fuelTypesForCombobox",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "fuelTypesForCombobox", value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getFuelTypesForCombobox(
             Boolean includeInActive,
             Integer countryId,
@@ -141,7 +181,7 @@ public class VehicleService {
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
                             .path(apiBasePath + "/FuelType/GetFuelTypesForCombobox");
-                    
+
                     if (includeInActive != null) {
                         builder.queryParam("includeInActive", includeInActive);
                     }
@@ -151,7 +191,33 @@ public class VehicleService {
                     if (selectedId != null) {
                         builder.queryParam("selectedId", selectedId);
                     }
-                    
+
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get fuel types for combobox.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param countryId The country ID for which to get the fuel types (required).
+     *                  * @return The response containing all fuel types for combobox.
+     */
+    @Cacheable(cacheNames = "fuelTypesForCombobox", value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    public GetAllItemsComboboxItemsResponseBean getFuelTypesForCombobox(
+            Integer countryId
+    ) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/FuelType/GetFuelTypesForCombobox");
+                    builder.queryParam("includeInActive", false);
+                    builder.queryParam("countryId", countryId);
+                    builder.queryParam("selectedId", -1);
                     return builder.build();
                 })
                 .retrieve()
@@ -172,11 +238,31 @@ public class VehicleService {
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
                             .path(apiBasePath + "/Vendor/GetVendorComboboxItems");
-                    
+
                     if (includeInactive != null) {
                         builder.queryParam("IncludeInactive", includeInactive);
                     }
-                    
+
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetVendorComboboxItemsResponseBean.class)
+                .block();
+    }
+
+
+    /**
+     * Get vendor combobox items.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * @return The response containing all vendor combobox items.
+     */
+    public GetVendorComboboxItemsResponseBean getVendorComboboxItems() {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Vendor/GetVendorComboboxItems");
+                        builder.queryParam("IncludeInactive", false);
                     return builder.build();
                 })
                 .retrieve()
@@ -206,46 +292,43 @@ public class VehicleService {
      * This method calls various lookup APIs and uses their responses to build a complete vehicle creation request.
      *
      * @param countryId The country ID for the vehicle (required, default: 1).
-     * @param branchId The branch ID for the vehicle (optional, will use first available if not provided).
+     * @param branchId  The branch ID for the vehicle (optional, will use first available if not provided).
      * @return The response containing the result of the vehicle creation operation.
      */
     public CreateVehiclesResponseBean createVehicleWithRandomPlateNumber(Integer countryId, String branchId) {
         if (countryId == null) {
             countryId = 1; // Default to country 1
         }
-
         logger.info("Creating vehicle with random plate number for countryId: {}", countryId);
 
         // Call all required methods to gather data
         GetAllItemsComboboxItemsResponseBean insuranceCompanies = getInsuranceCompanyComboboxItems(false, countryId);
         GetAllAccidentPoliciesResponseBean accidentPolicies = getAllAccidentPolicies(
-                countryId, 
-                false, 
-                "page=1&pageSize=1&filter=(isActive~eq~true~and~isExpired~eq~false)&sort=lastUpdateTime-desc"
+                countryId
         );
+
+        String  vehicleFuelTypeId = lookupsService.getComboboxItemValueByDisplayText(getFuelTypesForCombobox(countryId), userDefinedVariables.get("automationFuelTypeName"));
+        String vehicleFuelLevelsId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(12),"100%");
+        String vehicleColorId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(13),userDefinedVariables.get("automationColourName"));
+        String  vehicleUsageTypeId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(11),"Rental");
+        String vehicleLicenseTypeId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(10),"Private");
+        String vehicleTrimLevelId = lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(14),userDefinedVariables.get("automationTrimLevel"));
+        GetVendorComboboxItemsResponseBean vendors = getVendorComboboxItems();
         GetAllCarModelsResponseBean carModels = getAllCarModels();
-        GetAllItemsComboboxItemsResponseBean fuelTypes = getFuelTypesForCombobox(false, countryId, -1);
-        GetAllItemsComboboxItemsResponseBean fuelLevels = lookupsService.getAllItemsComboboxItems(12, false, false);
-        GetAllItemsComboboxItemsResponseBean colors = lookupsService.getAllItemsComboboxItems(13, false, false);
-        GetVendorComboboxItemsResponseBean vendors = getVendorComboboxItems(false);
-        GetAllItemsComboboxItemsResponseBean usageTypes = lookupsService.getAllItemsComboboxItems(11, false, false);
-        GetAllItemsComboboxItemsResponseBean licenseTypes = lookupsService.getAllItemsComboboxItems(10, false, false);
-        // Lookup type 14 is called but not currently used in the payload structure
-        GetAllItemsComboboxItemsResponseBean trimLevels = lookupsService.getAllItemsComboboxItems(14, false, false);
 
         // Extract values from responses (get first non-"Not Assigned" item, or first item if all are "Not Assigned")
         String insuranceCompanyId = getFirstValidValue(insuranceCompanies, "-1");
-        Integer accidentPolicyId = accidentPolicies != null && 
-                accidentPolicies.result() != null && 
-                !accidentPolicies.result().data().isEmpty() 
-                ? accidentPolicies.result().data().get(0).id() 
+        Integer accidentPolicyId = accidentPolicies != null &&
+                accidentPolicies.result() != null &&
+                !accidentPolicies.result().data().isEmpty()
+                ? accidentPolicies.result().data().get(0).id()
                 : null;
-        String modelId = carModels != null && 
-                carModels.result() != null && 
-                !carModels.result().items().isEmpty() 
-                ? String.valueOf(carModels.result().items().get(0).id()) 
+        String modelId = carModels != null &&
+                carModels.result() != null &&
+                !carModels.result().items().isEmpty()
+                ? String.valueOf(carModels.result().items().get(0).id())
                 : null;
-        String fuelTypeId = lookupsService.getComboboxItemValueByDisplayText(fuelTypes, pRO);
+        String fuelTypeId = lookupsService.getComboboxItemValueByDisplayText(fuelTypes, userDefinedVariables.get("automationFuelTypeName"));
         String licenseTypeId = getFirstValidValue(licenseTypes, "-1");
         String usageTypeId = getFirstValidValue(usageTypes, "-1");
         String vendorId = getFirstValidVendorValue(vendors, "-1");
@@ -304,7 +387,7 @@ public class VehicleService {
         CreateVehiclesRequestBean request = new CreateVehiclesRequestBean(vehicleDtos);
 
         logger.info("Created vehicle request with plate number: {}", randomPlateNumber);
-        
+
         // Call createVehicles
         return createVehicles(request);
     }
@@ -316,13 +399,13 @@ public class VehicleService {
         if (response == null || response.result() == null || response.result().items() == null || response.result().items().isEmpty()) {
             return defaultValue;
         }
-        
+
         for (GetAllItemsComboboxItemsResponseBean.ComboboxItem item : response.result().items()) {
             if (item.value() != null && !item.value().equals("-1") && !"Not Assigned".equals(item.displayText())) {
                 return item.value();
             }
         }
-        
+
         // If all are "Not Assigned", return first value
         return response.result().items().get(0).value();
     }
@@ -334,13 +417,13 @@ public class VehicleService {
         if (response == null || response.result() == null || response.result().items() == null || response.result().items().isEmpty()) {
             return defaultValue;
         }
-        
+
         for (GetVendorComboboxItemsResponseBean.VendorComboboxItem item : response.result().items()) {
             if (item.value() != null && !item.value().equals("-1") && !"Not Assigned".equals(item.displayText())) {
                 return item.value();
             }
         }
-        
+
         // If all are "Not Assigned", return first value
         return response.result().items().get(0).value();
     }
@@ -350,20 +433,20 @@ public class VehicleService {
      */
     private String generateRandomPlateNumber() {
         StringBuilder plate = new StringBuilder();
-        
+
         // Generate 3 random letters
         for (int i = 0; i < 3; i++) {
             char letter = (char) ('A' + random.nextInt(26));
             plate.append(letter);
         }
-        
+
         plate.append(" ");
-        
+
         // Generate 4 random digits
         for (int i = 0; i < 4; i++) {
             plate.append(random.nextInt(10));
         }
-        
+
         return plate.toString();
     }
 
