@@ -6,6 +6,7 @@ import com.beans.vehicle.CreateVehiclesResponseBean;
 import com.beans.vehicle.GetAllAccidentPoliciesResponseBean;
 import com.beans.vehicle.GetAllCarModelsResponseBean;
 import com.beans.vehicle.GetVendorComboboxItemsResponseBean;
+import com.util.PropertyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Service for interacting with vehicle-related APIs.
@@ -39,6 +38,7 @@ public class VehicleService {
     @Autowired
     private LookupsService lookupsService;
 
+    private static final Map<String, String> userDefinedVariables = PropertyManager.loadPropertyFileIntoMap("user-defined-variables.properties");
     /**
      * Get insurance company combobox items.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
@@ -245,7 +245,7 @@ public class VehicleService {
                 !carModels.result().items().isEmpty() 
                 ? String.valueOf(carModels.result().items().get(0).id()) 
                 : null;
-        String fuelTypeId = getFirstValidValue(fuelTypes, "-1");
+        String fuelTypeId = lookupsService.getComboboxItemValueByDisplayText(fuelTypes, pRO);
         String licenseTypeId = getFirstValidValue(licenseTypes, "-1");
         String usageTypeId = getFirstValidValue(usageTypes, "-1");
         String vendorId = getFirstValidVendorValue(vendors, "-1");

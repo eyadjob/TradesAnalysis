@@ -11,6 +11,7 @@ import com.enums.LookupType;
 import com.pojo.CustomerCsvData;
 import com.util.CustomerCsvImportUtil;
 import com.util.DateUtil;
+import com.util.PropertyManager;
 import com.util.XlsxWriterUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,37 +58,13 @@ public class ImportCustomerService {
     private GetOperationalCountriesResponseBean countriesResponseBean;
     private GetAllItemsComboboxItemsResponseBean nationalities;
 
-    private static final Map<String, String> countryIso = loadCountryIsoMap();
+    private static final Map<String, String> countryIso = PropertyManager.loadPropertyFileIntoMap("country-iso.properties");
 
     /**
      * Loads the country ISO code to country name mapping from the properties file.
      *
      * @return Map of country ISO codes to country names
      */
-    private static Map<String, String> loadCountryIsoMap() {
-        Map<String, String> map = new HashMap<>();
-        Properties properties = new Properties();
-        
-        try (InputStream inputStream = ImportCustomerService.class.getClassLoader()
-                .getResourceAsStream("country-iso.properties")) {
-            if (inputStream == null) {
-                logger.error("country-iso.properties file not found in classpath");
-                return map;
-            }
-            
-            properties.load(inputStream);
-            
-            for (String key : properties.stringPropertyNames()) {
-                map.put(key, properties.getProperty(key));
-            }
-            
-            logger.info("Loaded {} country ISO mappings from properties file", map.size());
-        } catch (IOException e) {
-            logger.error("Error loading country-iso.properties file", e);
-        }
-        
-        return map;
-    }
 
     public ImportCustomerService() {
 
