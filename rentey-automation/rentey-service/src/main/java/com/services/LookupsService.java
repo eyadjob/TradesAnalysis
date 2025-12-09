@@ -2,9 +2,10 @@ package com.services;
 
 import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
-import com.beans.GetAllItemsComboboxItemsResponseBean;
+import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -31,6 +32,7 @@ public class LookupsService {
      */
     @LogRequestAndResponseOnDesk
     @LogExecutionTime
+    @Cacheable(cacheNames="typesComboboxItems",value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getTypesComboboxItems() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
@@ -50,6 +52,7 @@ public class LookupsService {
      * @param includeNotAssign Whether to include not assigned items.
      * @return The response containing all combobox items.
      */
+    @Cacheable(cacheNames="allItemsComboboxItems",value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
             Integer typeId,
             Boolean includeInActive,
@@ -68,4 +71,41 @@ public class LookupsService {
                 .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
                 .block();
     }
+
+    /**
+     * Get all items for a combobox based on the lookup type.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param typeId The type ID for the lookup items.
+     * @return The response containing all combobox items.
+     */
+    @Cacheable(cacheNames="allItemsComboboxItems",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
+            Integer typeId) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Lookups/GetAllItemsComboboxItems")
+                            .queryParam("typeId", typeId)
+                            .queryParam("includeInActive", false)
+                            .queryParam("includeNotAssign", false);
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
+    }
+
+
+    public String getComboboxItemValueByDisplayText(GetAllItemsComboboxItemsResponseBean comboboxItemsResponseBean,String displayText) {
+        for (GetAllItemsComboboxItemsResponseBean.ComboboxItem comboboxItem : comboboxItemsResponseBean.result().items()) {
+            if (comboboxItem.displayText().equals(displayText)) {
+                return comboboxItem.value();
+            }
+        }
+        return "-1";
+    }
+
+
 }

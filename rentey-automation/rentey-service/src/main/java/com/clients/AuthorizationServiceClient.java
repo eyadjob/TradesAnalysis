@@ -1,7 +1,7 @@
 package com.clients;
 
-import com.beans.AuthenticateRequestBean;
-import com.beans.AuthenticateResponseBean;
+import com.beans.authentication.AuthenticateRequestBean;
+import com.beans.authentication.AuthenticateResponseBean;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.service.annotation.PostExchange;
 

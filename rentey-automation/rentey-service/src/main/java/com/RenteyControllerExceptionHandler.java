@@ -1,6 +1,6 @@
 package com;
 
-import com.beans.ErrorResponseBean;
+import com.beans.general.ErrorResponseBean;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,16 +1,20 @@
 package com.services;
 
-import com.beans.GetAllItemsComboboxItemsResponseBean;
-import com.beans.GetCountryCurrencyInfoResponseBean;
-import com.beans.GetCurrenciesForComboboxResponseBean;
-import com.beans.GetUserBranchesForComboboxResponseBean;
+import com.beans.general.GetAllItemsComboboxItemsResponseBean;
+import com.beans.country.GetCountryCurrencyInfoResponseBean;
+import com.beans.country.GetCurrenciesForComboboxResponseBean;
+import com.beans.user.GetUserBranchesForComboboxResponseBean;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.config.CacheNamespaceHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
+@CacheConfig
 public class CountryService {
 
     @Autowired
@@ -28,6 +32,7 @@ public class CountryService {
      * @param countryId The country ID for which to get the currency information.
      * @return The response containing the country currency information.
      */
+    @Cacheable(cacheNames="countryCurrencyInfo",value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetCountryCurrencyInfoResponseBean getCountryCurrencyInfo(Integer countryId) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
@@ -50,6 +55,7 @@ public class CountryService {
      * @param filterTypes List of filter types to apply.
      * @return The response containing all user branches for combobox.
      */
+    @Cacheable(cacheNames="userBranchesForCombobox",value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetUserBranchesForComboboxResponseBean getUserBranchesForCombobox(
             Boolean includeInActive,
             Integer countryId,
@@ -86,11 +92,13 @@ public class CountryService {
     /**
      * Get countries for combobox.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * Results are cached for 2 hours.
      *
      * @param includeInActive Whether to include inactive countries (default: false).
      * @param includeNotAssign Whether to include "Not assigned" option (default: true).
      * @return The response containing all countries for combobox.
      */
+    @Cacheable(cacheNames="countriesForCombobox",value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getCountriesForCombobox(
             Boolean includeInActive,
             Boolean includeNotAssign) {
@@ -121,6 +129,7 @@ public class CountryService {
      * @param includeInActive Whether to include inactive currencies (default: false).
      * @return The response containing all currencies for combobox.
      */
+    @Cacheable(cacheNames="currenciesForCombobox",value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetCurrenciesForComboboxResponseBean getCurrenciesForCombobox(Boolean includeInActive) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()

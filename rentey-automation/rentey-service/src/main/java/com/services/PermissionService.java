@@ -1,8 +1,8 @@
 package com.services;
 
-import com.beans.AbpResponseBean;
-import com.beans.CreateOrUpdateRoleRequestBean;
-import com.beans.GetAllPermissionsResponseBean;
+import com.beans.general.AbpResponseBean;
+import com.beans.customer.CreateOrUpdateRoleRequestBean;
+import com.beans.user.GetAllPermissionsResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;

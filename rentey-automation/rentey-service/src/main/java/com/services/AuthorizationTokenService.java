@@ -1,6 +1,6 @@
 package com.services;
 
-import com.beans.AuthenticateRequestBean;
+import com.beans.authentication.AuthenticateRequestBean;
 import com.clients.AuthorizationServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

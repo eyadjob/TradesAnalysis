@@ -1,6 +1,6 @@
 package com.controllers;
 
-import com.beans.GetCountriesPhoneResponseBean;
+import com.beans.customer.GetCountriesPhoneResponseBean;
 import com.services.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

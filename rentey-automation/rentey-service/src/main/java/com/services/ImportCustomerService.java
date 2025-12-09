@@ -2,15 +2,16 @@ package com.services;
 
 import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
-import com.beans.CreateOrUpdateCustomerRequestBean;
-import com.beans.CreateOrUpdateCustomerResponseBean;
-import com.beans.GetAllItemsComboboxItemsResponseBean;
-import com.beans.GetOperationalCountriesResponseBean;
+import com.beans.customer.CreateOrUpdateCustomerRequestBean;
+import com.beans.customer.CreateOrUpdateCustomerResponseBean;
+import com.beans.general.GetAllItemsComboboxItemsResponseBean;
+import com.beans.setting.GetOperationalCountriesResponseBean;
 import com.builders.CustomerDataBuilder;
 import com.enums.LookupType;
 import com.pojo.CustomerCsvData;
 import com.util.CustomerCsvImportUtil;
 import com.util.DateUtil;
+import com.util.PropertyManager;
 import com.util.XlsxWriterUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,40 +56,15 @@ public class ImportCustomerService {
     private GetAllItemsComboboxItemsResponseBean lookupTypes;
     private GetAllItemsComboboxItemsResponseBean genderLookupValues;
     private GetOperationalCountriesResponseBean countriesResponseBean;
-    private GetAllItemsComboboxItemsResponseBean customerDocumentTypes;
     private GetAllItemsComboboxItemsResponseBean nationalities;
 
-    private static final Map<String, String> countryIso = loadCountryIsoMap();
+    private static final Map<String, String> countryIso = PropertyManager.loadPropertyFileIntoMap("country-iso.properties");
 
     /**
      * Loads the country ISO code to country name mapping from the properties file.
      *
      * @return Map of country ISO codes to country names
      */
-    private static Map<String, String> loadCountryIsoMap() {
-        Map<String, String> map = new HashMap<>();
-        Properties properties = new Properties();
-        
-        try (InputStream inputStream = ImportCustomerService.class.getClassLoader()
-                .getResourceAsStream("country-iso.properties")) {
-            if (inputStream == null) {
-                logger.error("country-iso.properties file not found in classpath");
-                return map;
-            }
-            
-            properties.load(inputStream);
-            
-            for (String key : properties.stringPropertyNames()) {
-                map.put(key, properties.getProperty(key));
-            }
-            
-            logger.info("Loaded {} country ISO mappings from properties file", map.size());
-        } catch (IOException e) {
-            logger.error("Error loading country-iso.properties file", e);
-        }
-        
-        return map;
-    }
 
     public ImportCustomerService() {
 
