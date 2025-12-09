@@ -82,19 +82,7 @@ public class LookupsService {
     @Cacheable(cacheNames="allItemsComboboxItems",value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
             Integer typeId) {
-        // Authorization header and all headers from RenteyConfiguration are automatically included
-        return settingsWebClient.get()
-                .uri(uriBuilder -> {
-                    var builder = uriBuilder
-                            .path(apiBasePath + "/Lookups/GetAllItemsComboboxItems")
-                            .queryParam("typeId", typeId)
-                            .queryParam("includeInActive", false)
-                            .queryParam("includeNotAssign", false);
-                    return builder.build();
-                })
-                .retrieve()
-                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
-                .block();
+        return getAllItemsComboboxItems(typeId,false,false);
     }
 
 
