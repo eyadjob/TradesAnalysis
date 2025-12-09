@@ -165,15 +165,14 @@ public class VehicleService {
      * Get fuel types for combobox.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param includeInActive Whether to include inactive fuel types (default: false).
      * @param countryId       The country ID for which to get the fuel types (required).
+     * @param includeInActive Whether to include inactive fuel types (default: false).
      * @param selectedId      The selected fuel type ID (default: -1).
      * @return The response containing all fuel types for combobox.
      */
     @Cacheable(cacheNames = "fuelTypesForCombobox", value = "2Hours", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getFuelTypesForCombobox(
-            Boolean includeInActive,
-            Integer countryId,
+            Integer countryId, Boolean includeInActive,
             Integer selectedId) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
@@ -209,19 +208,7 @@ public class VehicleService {
     public GetAllItemsComboboxItemsResponseBean getFuelTypesForCombobox(
             Integer countryId
     ) {
-        // Authorization header and all headers from RenteyConfiguration are automatically included
-        return settingsWebClient.get()
-                .uri(uriBuilder -> {
-                    var builder = uriBuilder
-                            .path(apiBasePath + "/FuelType/GetFuelTypesForCombobox");
-                    builder.queryParam("includeInActive", false);
-                    builder.queryParam("countryId", countryId);
-                    builder.queryParam("selectedId", -1);
-                    return builder.build();
-                })
-                .retrieve()
-                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
-                .block();
+       return getFuelTypesForCombobox(countryId,false , -1);
     }
 
     /**
@@ -257,16 +244,7 @@ public class VehicleService {
      */
     public GetVendorComboboxItemsResponseBean getVendorComboboxItems() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
-        return settingsWebClient.get()
-                .uri(uriBuilder -> {
-                    var builder = uriBuilder
-                            .path(apiBasePath + "/Vendor/GetVendorComboboxItems");
-                        builder.queryParam("IncludeInactive", false);
-                    return builder.build();
-                })
-                .retrieve()
-                .bodyToMono(GetVendorComboboxItemsResponseBean.class)
-                .block();
+        return getVendorComboboxItems(false);
     }
 
     public String getVendorIdByName(GetVendorComboboxItemsResponseBean vendorComboboxItemsResponseBean, String vendorName) {
