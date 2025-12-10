@@ -46,16 +46,15 @@ public class CountryService {
      * Get user branches for combobox.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param includeInActive Whether to include inactive branches.
      * @param countryId The country ID for which to get the branches.
+     * @param includeInActive Whether to include inactive branches.
      * @param includeAll Whether to include all branches.
      * @param filterTypes List of filter types to apply.
      * @return The response containing all user branches for combobox.
      */
     @Cacheable(cacheNames = "userBranchesForCombobox", keyGenerator = "AutoKeyGenerator")
     public GetUserBranchesForComboboxResponseBean getUserBranchesForCombobox(
-            Boolean includeInActive,
-            Integer countryId,
+            Integer countryId, Boolean includeInActive,
             Boolean includeAll,
             List<Integer> filterTypes) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
@@ -84,6 +83,15 @@ public class CountryService {
                 .retrieve()
                 .bodyToMono(GetUserBranchesForComboboxResponseBean.class)
                 .block();
+    }
+
+    public GetUserBranchesForComboboxResponseBean getUserBranchesForCombobox(int countryId,List<Integer> filterTypes) {
+        return getUserBranchesForCombobox(countryId,false,false,filterTypes);
+    }
+
+    public String getBranchIdByName(GetUserBranchesForComboboxResponseBean userBranchesForComboboxResponseBean, String branchName) {
+        return userBranchesForComboboxResponseBean.result().items().stream().filter(userBranches -> userBranches.displayText().equals(branchName))
+                .findFirst().map(userBranches -> String.valueOf(userBranches.value())).orElse("-1");
     }
 
     /**
