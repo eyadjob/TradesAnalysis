@@ -31,8 +31,17 @@ public class CacheConfiguration implements CachingConfigurer {
     @Override
     public CacheManager cacheManager() {
         ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
-        // Register cache names
-        cacheManager.setCacheNames(Arrays.asList("2Hours"));
+        // Register cache names - caches will be created dynamically if not listed here
+        cacheManager.setCacheNames(Arrays.asList(
+                "countryCurrencyInfo",
+                "userBranchesForCombobox",
+                "countriesForCombobox",
+                "currenciesForCombobox",
+                "allCarsModelsCache",
+                "fuelTypesForCombobox"
+        ));
+        // Allow dynamic cache creation for any cache name not listed above
+        cacheManager.setAllowNullValues(false);
         return cacheManager;
     }
 
