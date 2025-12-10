@@ -29,9 +29,7 @@ public class AuthorizationServiceManager {
     public AuthorizationServiceManager(
             @Value("${authorization.service.base-url}") String authorizationServiceBaseUrl) {
         this.authorizationServiceBaseUrl = authorizationServiceBaseUrl;
-        // Extract port from URL (e.g., http://localhost:8088 -> 8088)
         this.authorizationServicePort = extractPort(authorizationServiceBaseUrl);
-        // Get project root - try to find it relative to current working directory
         this.projectRootPath = findProjectRoot();
     }
 

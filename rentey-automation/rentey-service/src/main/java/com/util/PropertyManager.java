@@ -17,7 +17,7 @@ public class PropertyManager {
     private static final Logger logger = LoggerFactory.getLogger(PropertyManager.class);
 
     @LogExecutionTime
-    @Cacheable(cacheNames = "propertiesCache", value = "6Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "propertiesCache", keyGenerator = "AutoKeyGenerator")
     public static Map<String, String> loadPropertyFileIntoMap(String propertiesFileName) {
         Map<String, String> map = new HashMap<>();
         Properties properties = new Properties();

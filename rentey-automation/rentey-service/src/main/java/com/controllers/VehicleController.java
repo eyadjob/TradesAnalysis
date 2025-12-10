@@ -139,4 +139,23 @@ public class VehicleController {
 
         return vehicleService.createVehicles(request);
     }
+
+    /**
+     * Create a vehicle with a random plate number.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     * This method orchestrates multiple API calls to gather required data and creates a vehicle
+     * with randomly generated plate number and chassis number.
+     *
+     * @param countryName The country ID for the vehicle (optional, default: 1).
+     * @param branchName The branch name for the vehicle (optional, will use first available if not provided).
+     * @return The response containing the result of the vehicle creation operation.
+     */
+    @GetMapping(path = VEHICLE_CREATE_WITH_RANDOM_PLATE, produces = "application/json")
+    public CreateVehiclesResponseBean createVehicleWithRandomPlateNumber(
+            @RequestParam(required = false) String countryName,
+            @RequestParam(required = false) String branchName) {
+
+        return vehicleService.createVehicleWithRandomPlateNumber(countryName, branchName);
+    }
 }

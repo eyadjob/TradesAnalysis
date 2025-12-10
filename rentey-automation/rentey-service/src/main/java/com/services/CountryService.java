@@ -3,17 +3,18 @@ package com.services;
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.beans.country.GetCountryCurrencyInfoResponseBean;
 import com.beans.country.GetCurrenciesForComboboxResponseBean;
+import com.beans.setting.GetOperationalCountriesResponseBean;
 import com.beans.user.GetUserBranchesForComboboxResponseBean;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Service
-@CacheConfig
 public class CountryService {
 
     @Autowired
@@ -24,6 +25,11 @@ public class CountryService {
     @Qualifier("apiBasePath")
     private String apiBasePath;
 
+    @Autowired
+    SettingsService settingsService;
+
+    private GetOperationalCountriesResponseBean countriesResponseBean;
+
     /**
      * Get country currency information by country ID.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
@@ -31,7 +37,7 @@ public class CountryService {
      * @param countryId The country ID for which to get the currency information.
      * @return The response containing the country currency information.
      */
-    @Cacheable(cacheNames="countryCurrencyInfo",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "countryCurrencyInfo", keyGenerator = "AutoKeyGenerator")
     public GetCountryCurrencyInfoResponseBean getCountryCurrencyInfo(Integer countryId) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
@@ -54,7 +60,7 @@ public class CountryService {
      * @param filterTypes List of filter types to apply.
      * @return The response containing all user branches for combobox.
      */
-    @Cacheable(cacheNames="userBranchesForCombobox",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "userBranchesForCombobox", keyGenerator = "AutoKeyGenerator")
     public GetUserBranchesForComboboxResponseBean getUserBranchesForCombobox(
             Integer countryId, Boolean includeInActive,
             Boolean includeAll,
@@ -105,7 +111,7 @@ public class CountryService {
      * @param includeNotAssign Whether to include "Not assigned" option (default: true).
      * @return The response containing all countries for combobox.
      */
-    @Cacheable(cacheNames="countriesForCombobox",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "countriesForCombobox", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getCountriesForCombobox(
             Boolean includeInActive,
             Boolean includeNotAssign) {
@@ -136,7 +142,7 @@ public class CountryService {
      * @param includeInActive Whether to include inactive currencies (default: false).
      * @return The response containing all currencies for combobox.
      */
-    @Cacheable(cacheNames="currenciesForCombobox",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "currenciesForCombobox", keyGenerator = "AutoKeyGenerator")
     public GetCurrenciesForComboboxResponseBean getCurrenciesForCombobox(Boolean includeInActive) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
@@ -153,6 +159,18 @@ public class CountryService {
                 .retrieve()
                 .bodyToMono(GetCurrenciesForComboboxResponseBean.class)
                 .block();
+    }
+
+    public String getOperationalCountryIdFromName(String documentIssueCountry) {
+        if (this.countriesResponseBean == null) {
+            this.countriesResponseBean = settingsService.getOperationalCountries();
+        }
+            for (GetOperationalCountriesResponseBean.OperationalCountry country : countriesResponseBean.result()) {
+                if (country.name().equals(documentIssueCountry)) {
+                    return String.valueOf(country.id());
+                }
+        }
+        return "-1";
     }
 }
 

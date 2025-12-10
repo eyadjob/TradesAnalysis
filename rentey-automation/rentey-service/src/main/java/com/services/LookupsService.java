@@ -32,7 +32,7 @@ public class LookupsService {
      */
     @LogRequestAndResponseOnDesk
     @LogExecutionTime
-    @Cacheable(cacheNames="typesComboboxItems",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "typesComboboxItems", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getTypesComboboxItems() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
@@ -52,7 +52,7 @@ public class LookupsService {
      * @param includeNotAssign Whether to include not assigned items.
      * @return The response containing all combobox items.
      */
-    @Cacheable(cacheNames="allItemsComboboxItems",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "allItemsComboboxItems", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
             Integer typeId,
             Boolean includeInActive,
@@ -79,7 +79,7 @@ public class LookupsService {
      * @param typeId The type ID for the lookup items.
      * @return The response containing all combobox items.
      */
-    @Cacheable(cacheNames="allItemsComboboxItems",value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "allItemsComboboxItems", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
             Integer typeId) {
         return getAllItemsComboboxItems(typeId,false,false);
