@@ -2,6 +2,7 @@ package com.services;
 
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.beans.vehicle.*;
+import com.util.EncodingUtil;
 import com.util.NumberUtil;
 import com.util.PropertyManager;
 import org.slf4j.Logger;
@@ -48,6 +49,7 @@ public class VehicleService {
      * @param includeInActive Whether to include inactive insurance companies (default: false).
      * @return The response containing all insurance company combobox items.
      */
+    @Cacheable(cacheNames = "allInsuranceCompaniesCache", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getInsuranceCompanyComboboxItems(
             Integer countryId, Boolean includeInActive) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
@@ -89,7 +91,8 @@ public class VehicleService {
      *                        Example: "page=1&pageSize=15&filter=(isActive~eq~true~and~isExpired~eq~false)&sort=lastUpdateTime-desc"
      * @return The response containing all accident policies.
      */
-    public GetAllAccidentPoliciesResponseBean getAllAccidentPolicies(
+    @Cacheable(cacheNames = "allAccidentPoliciesCache", keyGenerator = "AutoKeyGenerator")
+        public GetAllAccidentPoliciesResponseBean getAllAccidentPolicies(
             Integer countryId,
             Boolean includeInactive,
             String request) {
@@ -106,7 +109,9 @@ public class VehicleService {
                         builder.queryParam("IncludeInactive", includeInactive);
                     }
                     if (request != null && !request.isEmpty()) {
-                        builder.queryParam("Request", request);
+                        // Decode the request parameter if it's already URL-encoded to prevent double encoding
+                        String decodedRequest = EncodingUtil.decodeIfEncoded(request);
+                        builder.queryParam("Request", decodedRequest);
                     }
 
                     return builder.build();
@@ -126,20 +131,7 @@ public class VehicleService {
     public GetAllAccidentPoliciesResponseBean getAllAccidentPolicies(
             Integer countryId
     ) {
-        // Authorization header and all headers from RenteyConfiguration are automatically included
-        return settingsWebClient.get()
-                .uri(uriBuilder -> {
-                    var builder = uriBuilder
-                            .path(apiBasePath + "/AccidentPolicy/GetAllAccidentPolicies");
-                    builder.queryParam("CountryId", countryId);
-                    builder.queryParam("IncludeInactive", false);
-                    builder.queryParam("Request", "page=1&pageSize=15&filter=(isActive~eq~true~and~isExpired~eq~false)&sort=lastUpdateTime-desc");
-
-                    return builder.build();
-                })
-                .retrieve()
-                .bodyToMono(GetAllAccidentPoliciesResponseBean.class)
-                .block();
+        return getAllAccidentPolicies(countryId, false,"page%3D1%26pageSize%3D15%26filter%3D(isActive~eq~true~and~isExpired~eq~false)%26sort%3DlastUpdateTime-desc");
     }
 
     public String getAccidentPolicyNumberByOrganizationName(GetAllAccidentPoliciesResponseBean accidentPoliciesResponseBean, String accidentPolicyInsuranceName) {
@@ -236,6 +228,7 @@ public class VehicleService {
      * @param includeInactive Whether to include inactive vendors (default: false).
      * @return The response containing all vendor combobox items.
      */
+    @Cacheable(cacheNames = "vendorComboboxCache", keyGenerator = "AutoKeyGenerator")
     public GetVendorComboboxItemsResponseBean getVendorComboboxItems(Boolean includeInactive) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
