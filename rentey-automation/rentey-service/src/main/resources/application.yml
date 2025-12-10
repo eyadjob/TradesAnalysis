@@ -37,8 +37,8 @@ logging:
 authorization:
   service:
     base-url: http://localhost:8088
-    response-timeout-seconds: 120
-    connect-timeout-millis: 100000
+    response-timeout-seconds: 240
+    connect-timeout-millis: 400000
     credentials:
       userNameOrEmailAddress: "ejaradmin"
       password: "123456"

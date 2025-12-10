@@ -6,3 +6,794 @@
 2025-12-10T21:38:37.856+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
 2025-12-10T21:38:37.856+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : ==================================
 2025-12-10T21:38:37.857+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:38:42.908+03:00 ERROR 37556 --- [http-nio-8088-exec-6] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS] with root cause
+
+java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS
+	at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:126) ~[reactor-core-3.5.7.jar:3.5.7]
+	at reactor.core.publisher.Mono.block(Mono.java:1738) ~[reactor-core-3.5.7.jar:3.5.7]
+	at org.springframework.web.service.invoker.HttpServiceMethod$ResponseFunction.execute(HttpServiceMethod.java:302) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceMethod.invoke(HttpServiceMethod.java:111) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceProxyFactory$HttpServiceMethodInterceptor.invoke(HttpServiceProxyFactory.java:278) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:244) ~[spring-aop-6.0.10.jar:6.0.10]
+	at jdk.proxy2/jdk.proxy2.$Proxy66.authenticate(Unknown Source) ~[na:na]
+	at com.authorization.services.AuthorizationService.authenticate(AuthorizationService.java:24) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.aspect.LoggingRequestAndResponseAspect.logRequestAndResponse(LoggingRequestAndResponseAspect.java:50) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.services.AuthorizationService$$SpringCGLIB$$0.authenticate(<generated>) ~[classes/:na]
+	at com.authorization.controllers.AuthorizationController.authenticate(AuthorizationController.java:25) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:207) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:152) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+
+2025-12-10T21:39:11.649+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T21:39:11.649+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T21:39:11.650+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T21:39:11.650+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T21:39:11.650+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T21:39:11.651+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T21:39:11.651+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T21:39:11.651+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:39:16.657+03:00 ERROR 37556 --- [http-nio-8088-exec-7] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS] with root cause
+
+java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS
+	at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:126) ~[reactor-core-3.5.7.jar:3.5.7]
+	at reactor.core.publisher.Mono.block(Mono.java:1738) ~[reactor-core-3.5.7.jar:3.5.7]
+	at org.springframework.web.service.invoker.HttpServiceMethod$ResponseFunction.execute(HttpServiceMethod.java:302) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceMethod.invoke(HttpServiceMethod.java:111) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceProxyFactory$HttpServiceMethodInterceptor.invoke(HttpServiceProxyFactory.java:278) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:244) ~[spring-aop-6.0.10.jar:6.0.10]
+	at jdk.proxy2/jdk.proxy2.$Proxy66.authenticate(Unknown Source) ~[na:na]
+	at com.authorization.services.AuthorizationService.authenticate(AuthorizationService.java:24) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.aspect.LoggingRequestAndResponseAspect.logRequestAndResponse(LoggingRequestAndResponseAspect.java:50) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.services.AuthorizationService$$SpringCGLIB$$0.authenticate(<generated>) ~[classes/:na]
+	at com.authorization.controllers.AuthorizationController.authenticate(AuthorizationController.java:25) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:207) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:152) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+
+2025-12-10T21:42:43.989+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T21:42:43.989+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T21:42:43.990+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T21:42:43.990+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T21:42:43.990+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T21:42:43.990+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T21:42:43.990+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T21:42:43.990+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:42:47.891+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T21:42:47.891+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T21:42:47.893+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T21:42:47.893+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiMDY3MjdlNGItYTZjMS00NWQzLTljNmYtOWE4Yjk0YWM1YzA0IiwiaWF0IjoxNzY1MzkyMTg3LCJ0b2tlbl92YWxpZGl0eV9rZXkiOiIwMWVjNmYxYi1lYTVhLTRlMGUtYTRmNi1iNTgyZWE1N2I5MGEiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5MjE4NywiZXhwIjoxNzY1NDc4NTg3LCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.gqgyEH3zvq62IHw9WBIct_8e3aCyKPPvibJQBi5jHts","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T21:42:47.894+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T21:49:32.365+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T21:49:32.365+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T21:49:32.365+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T21:49:32.365+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T21:49:32.365+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T21:49:32.365+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T21:49:32.365+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T21:49:32.365+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:49:33.296+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T21:49:33.296+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T21:49:33.296+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T21:49:33.296+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiZTFkODk1Y2ItNjk0Mi00Y2E4LWI3ODQtZTFmYzg1NzZjMTcwIiwiaWF0IjoxNzY1MzkyNTkzLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiJlZWUzNGE5YS1mN2E3LTRmNDQtYTI0Mi1mOTUxOTkyYzk0OWQiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5MjU5MywiZXhwIjoxNzY1NDc4OTkzLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.e9HP7HT3nOsxlxJvQLMgsKOJwGZV1-N-o461Y_u26jY","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T21:49:33.297+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T21:50:40.865+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T21:50:40.865+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T21:50:40.865+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T21:50:40.865+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T21:50:40.865+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T21:50:40.865+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T21:50:40.865+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T21:50:40.865+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:50:41.250+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T21:50:41.250+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T21:50:41.250+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T21:50:41.250+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiZjczODFkZmYtMzA0Mi00OTgyLTk5ZjYtODdkZjYxMmZiMmJlIiwiaWF0IjoxNzY1MzkyNjYxLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiI5Mjk1MzY2Yi1lMzZjLTQ2ZTEtODliMi1kNmQxYzUyNDJiZmEiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5MjY2MSwiZXhwIjoxNzY1NDc5MDYxLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.hfENo7kZN40CsSZ8GDv2hVql3QIHkrhAGCA6329QkS0","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T21:50:41.250+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T21:51:29.314+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T21:51:29.314+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T21:51:29.316+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T21:51:29.316+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T21:51:29.316+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T21:51:29.316+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T21:51:29.316+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T21:51:29.316+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:51:30.094+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T21:51:30.096+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T21:51:30.096+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T21:51:30.096+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiZDBlNjQ0OWItZmNlMC00N2Y3LTkyZTAtMmMwNWY2MTllYzMzIiwiaWF0IjoxNzY1MzkyNzA5LCJ0b2tlbl92YWxpZGl0eV9rZXkiOiI3MWZiNzAwNi01YzBiLTQ3ZjEtYjU4Mi1jOTZhZDVmNjY4ZDciLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5MjcwOSwiZXhwIjoxNzY1NDc5MTA5LCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.90JObusMoPmMILJdSADx04K5jZ2RiM88TuOSB3ltrGk","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T21:51:30.096+03:00  INFO 37556 --- [http-nio-8088-exec-5] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T21:52:01.556+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T21:52:01.556+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T21:52:01.556+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T21:52:01.556+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T21:52:01.557+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T21:52:01.557+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T21:52:01.557+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T21:52:01.557+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:52:01.952+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T21:52:01.961+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T21:52:01.961+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T21:52:01.961+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiZmMzZGUzNWEtOWEyZS00YzUyLTlkOGItYjA4NWYyZmQ0ZjcwIiwiaWF0IjoxNzY1MzkyNzQyLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiJmNTBlODJlNC1mNDIzLTQ4YmItYTU5ZS1lMDEyN2I1YTVmYzYiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5Mjc0MiwiZXhwIjoxNzY1NDc5MTQyLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.Eyvq4My1VAV39iTtAoWVuxk7aA_jmuan3ZzwyyPM1Xg","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T21:52:01.961+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T21:53:01.948+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T21:53:01.948+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T21:53:01.948+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T21:53:01.948+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T21:53:01.948+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T21:53:01.950+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T21:53:01.950+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T21:53:01.950+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:53:02.644+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T21:53:02.644+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T21:53:02.644+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T21:53:02.644+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiNTIxNzcyNzMtYzVjYi00Y2UwLTk3NTctYWMyNjFiZjY1MTBhIiwiaWF0IjoxNzY1MzkyODAyLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiJjMjYxOWYwNC03Yjc2LTQzYjktYWQ0NS0yNjc3YzNmZGQzM2YiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5MjgwMiwiZXhwIjoxNzY1NDc5MjAyLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.67Jt_4W9jcp1BZHSVTs_I45bQpqFlHGHj-mhQlYO7ig","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T21:53:02.644+03:00  INFO 37556 --- [http-nio-8088-exec-9] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T21:53:37.140+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T21:53:37.140+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T21:53:37.140+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T21:53:37.140+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T21:53:37.140+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T21:53:37.140+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T21:53:37.140+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T21:53:37.140+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:53:37.567+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T21:53:37.567+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T21:53:37.567+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T21:53:37.567+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiZjJhYmQyMzYtZGEzZi00NjBlLWE1OGYtZjQwNmU0MGNjZWJiIiwiaWF0IjoxNzY1MzkyODM3LCJ0b2tlbl92YWxpZGl0eV9rZXkiOiJiNmRjOTRkYS04OGYxLTRhYjgtYmQ1MC0wMWRjYjAzM2QxM2IiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5MjgzNywiZXhwIjoxNzY1NDc5MjM3LCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.rytCY2j54nvlJsVZA2y0eLmt-EYcmTN3gkKwQ8rWjyE","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T21:53:37.567+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T21:54:32.151+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T21:54:32.151+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T21:54:32.151+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T21:54:32.152+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T21:54:32.152+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T21:54:32.152+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T21:54:32.152+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T21:54:32.152+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T21:54:32.569+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T21:54:32.569+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T21:54:32.569+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T21:54:32.569+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiNmE2MmU5ZTgtMDc2MS00YjVmLWIxNDgtYjRjZjJlNzlkYjJkIiwiaWF0IjoxNzY1MzkyODkyLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiI3NjQ2YzVjMi04ZTk1LTQyZjYtYjBmMC04YWMzYmIyODk0ZGQiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5Mjg5MiwiZXhwIjoxNzY1NDc5MjkyLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.l5ZpMZeFT8Z17TwJWmpUvZpFwcwJ-Z_Pf0VjZQmWczI","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T21:54:32.569+03:00  INFO 37556 --- [http-nio-8088-exec-2] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T22:00:30.514+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T22:00:30.514+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T22:00:30.514+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T22:00:30.514+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T22:00:30.514+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T22:00:30.514+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T22:00:30.514+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T22:00:30.514+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T22:00:31.024+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T22:00:31.024+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T22:00:31.024+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T22:00:31.024+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiNDRlZDM0MTYtYmE4NS00NzJjLWIyZjktNTkyMWYzYzA2NGI3IiwiaWF0IjoxNzY1MzkzMjUxLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiI5ZWEwMTU0ZC1jZDBjLTRmYjUtOGNmMi05NTg4ZTU1NTQ3OGIiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5MzI1MSwiZXhwIjoxNzY1NDc5NjUxLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.X_eQGd5UF4oeP9c-4MAl-6vnd8HXhXHa7cBiXk1hWvA","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T22:00:31.024+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T22:05:40.213+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T22:05:40.213+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T22:05:40.213+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T22:05:40.213+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T22:05:40.213+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T22:05:40.213+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T22:05:40.213+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T22:05:40.213+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T22:05:42.054+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T22:05:42.054+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T22:05:42.054+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T22:05:42.054+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiYTM3Y2Q3NzQtNzcyYS00YjFiLTk1NDgtNWNkN2Y5NGMwOTBiIiwiaWF0IjoxNzY1MzkzNTYwLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiI2NGYyOTgzYy05MTMwLTQwZTYtYTRkOC0xZmUyZTZiNmRjNzkiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5MzU2MCwiZXhwIjoxNzY1NDc5OTYwLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.HVmtZZMnayV0M3z_ZHIYcr1eCtz6QPQPedyM6vwUuw8","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T22:05:42.054+03:00  INFO 37556 --- [http-nio-8088-exec-3] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T22:46:21.961+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T22:46:21.961+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T22:46:21.961+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T22:46:21.961+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T22:46:21.961+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T22:46:21.961+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T22:46:21.961+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T22:46:21.961+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T22:46:26.967+03:00 ERROR 37556 --- [http-nio-8088-exec-8] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS] with root cause
+
+java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS
+	at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:126) ~[reactor-core-3.5.7.jar:3.5.7]
+	at reactor.core.publisher.Mono.block(Mono.java:1738) ~[reactor-core-3.5.7.jar:3.5.7]
+	at org.springframework.web.service.invoker.HttpServiceMethod$ResponseFunction.execute(HttpServiceMethod.java:302) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceMethod.invoke(HttpServiceMethod.java:111) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceProxyFactory$HttpServiceMethodInterceptor.invoke(HttpServiceProxyFactory.java:278) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:244) ~[spring-aop-6.0.10.jar:6.0.10]
+	at jdk.proxy2/jdk.proxy2.$Proxy66.authenticate(Unknown Source) ~[na:na]
+	at com.authorization.services.AuthorizationService.authenticate(AuthorizationService.java:24) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.aspect.LoggingRequestAndResponseAspect.logRequestAndResponse(LoggingRequestAndResponseAspect.java:50) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.services.AuthorizationService$$SpringCGLIB$$0.authenticate(<generated>) ~[classes/:na]
+	at com.authorization.controllers.AuthorizationController.authenticate(AuthorizationController.java:25) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:207) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:152) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+
+2025-12-10T22:46:36.957+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T22:46:36.957+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T22:46:36.957+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T22:46:36.957+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T22:46:36.957+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T22:46:36.957+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T22:46:36.957+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T22:46:36.957+03:00  INFO 37556 --- [http-nio-8088-exec-4] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T22:46:41.973+03:00 ERROR 37556 --- [http-nio-8088-exec-4] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS] with root cause
+
+java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS
+	at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:126) ~[reactor-core-3.5.7.jar:3.5.7]
+	at reactor.core.publisher.Mono.block(Mono.java:1738) ~[reactor-core-3.5.7.jar:3.5.7]
+	at org.springframework.web.service.invoker.HttpServiceMethod$ResponseFunction.execute(HttpServiceMethod.java:302) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceMethod.invoke(HttpServiceMethod.java:111) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceProxyFactory$HttpServiceMethodInterceptor.invoke(HttpServiceProxyFactory.java:278) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:244) ~[spring-aop-6.0.10.jar:6.0.10]
+	at jdk.proxy2/jdk.proxy2.$Proxy66.authenticate(Unknown Source) ~[na:na]
+	at com.authorization.services.AuthorizationService.authenticate(AuthorizationService.java:24) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.aspect.LoggingRequestAndResponseAspect.logRequestAndResponse(LoggingRequestAndResponseAspect.java:50) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.services.AuthorizationService$$SpringCGLIB$$0.authenticate(<generated>) ~[classes/:na]
+	at com.authorization.controllers.AuthorizationController.authenticate(AuthorizationController.java:25) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:207) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:152) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+
+2025-12-10T22:46:48.795+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T22:46:48.795+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T22:46:48.795+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T22:46:48.795+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T22:46:48.796+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T22:46:48.796+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T22:46:48.796+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T22:46:48.796+03:00  INFO 37556 --- [http-nio-8088-exec-1] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T22:46:53.808+03:00 ERROR 37556 --- [http-nio-8088-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS] with root cause
+
+java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS
+	at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:126) ~[reactor-core-3.5.7.jar:3.5.7]
+	at reactor.core.publisher.Mono.block(Mono.java:1738) ~[reactor-core-3.5.7.jar:3.5.7]
+	at org.springframework.web.service.invoker.HttpServiceMethod$ResponseFunction.execute(HttpServiceMethod.java:302) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceMethod.invoke(HttpServiceMethod.java:111) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceProxyFactory$HttpServiceMethodInterceptor.invoke(HttpServiceProxyFactory.java:278) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:244) ~[spring-aop-6.0.10.jar:6.0.10]
+	at jdk.proxy2/jdk.proxy2.$Proxy66.authenticate(Unknown Source) ~[na:na]
+	at com.authorization.services.AuthorizationService.authenticate(AuthorizationService.java:24) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.aspect.LoggingRequestAndResponseAspect.logRequestAndResponse(LoggingRequestAndResponseAspect.java:50) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.services.AuthorizationService$$SpringCGLIB$$0.authenticate(<generated>) ~[classes/:na]
+	at com.authorization.controllers.AuthorizationController.authenticate(AuthorizationController.java:25) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:207) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:152) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+
+2025-12-10T22:47:01.157+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T22:47:01.157+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T22:47:01.158+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T22:47:01.158+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T22:47:01.158+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T22:47:01.158+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T22:47:01.158+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T22:47:01.158+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T22:47:06.172+03:00 ERROR 37556 --- [http-nio-8088-exec-6] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS] with root cause
+
+java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS
+	at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:126) ~[reactor-core-3.5.7.jar:3.5.7]
+	at reactor.core.publisher.Mono.block(Mono.java:1738) ~[reactor-core-3.5.7.jar:3.5.7]
+	at org.springframework.web.service.invoker.HttpServiceMethod$ResponseFunction.execute(HttpServiceMethod.java:302) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceMethod.invoke(HttpServiceMethod.java:111) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceProxyFactory$HttpServiceMethodInterceptor.invoke(HttpServiceProxyFactory.java:278) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:244) ~[spring-aop-6.0.10.jar:6.0.10]
+	at jdk.proxy2/jdk.proxy2.$Proxy66.authenticate(Unknown Source) ~[na:na]
+	at com.authorization.services.AuthorizationService.authenticate(AuthorizationService.java:24) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.aspect.LoggingRequestAndResponseAspect.logRequestAndResponse(LoggingRequestAndResponseAspect.java:50) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.services.AuthorizationService$$SpringCGLIB$$0.authenticate(<generated>) ~[classes/:na]
+	at com.authorization.controllers.AuthorizationController.authenticate(AuthorizationController.java:25) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:207) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:152) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+
+2025-12-10T22:47:31.448+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T22:47:31.448+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T22:47:31.448+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T22:47:31.448+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T22:47:31.448+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T22:47:31.448+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T22:47:31.448+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T22:47:31.448+03:00  INFO 37556 --- [http-nio-8088-exec-7] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T22:47:36.463+03:00 ERROR 37556 --- [http-nio-8088-exec-7] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS] with root cause
+
+java.lang.IllegalStateException: Timeout on blocking read for 5000000000 NANOSECONDS
+	at reactor.core.publisher.BlockingSingleSubscriber.blockingGet(BlockingSingleSubscriber.java:126) ~[reactor-core-3.5.7.jar:3.5.7]
+	at reactor.core.publisher.Mono.block(Mono.java:1738) ~[reactor-core-3.5.7.jar:3.5.7]
+	at org.springframework.web.service.invoker.HttpServiceMethod$ResponseFunction.execute(HttpServiceMethod.java:302) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceMethod.invoke(HttpServiceMethod.java:111) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.service.invoker.HttpServiceProxyFactory$HttpServiceMethodInterceptor.invoke(HttpServiceProxyFactory.java:278) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:244) ~[spring-aop-6.0.10.jar:6.0.10]
+	at jdk.proxy2/jdk.proxy2.$Proxy66.authenticate(Unknown Source) ~[na:na]
+	at com.authorization.services.AuthorizationService.authenticate(AuthorizationService.java:24) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:343) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.aspect.LoggingRequestAndResponseAspect.logRequestAndResponse(LoggingRequestAndResponseAspect.java:50) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:637) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:627) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:756) ~[spring-aop-6.0.10.jar:6.0.10]
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708) ~[spring-aop-6.0.10.jar:6.0.10]
+	at com.authorization.services.AuthorizationService$$SpringCGLIB$$0.authenticate(<generated>) ~[classes/:na]
+	at com.authorization.controllers.AuthorizationController.authenticate(AuthorizationController.java:25) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:207) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:152) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:884) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:797) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1081) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:974) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1011) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885) ~[spring-webmvc-6.0.10.jar:6.0.10]
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658) ~[tomcat-embed-core-10.1.10.jar:6.0]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:205) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51) ~[tomcat-embed-websocket-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116) ~[spring-web-6.0.10.jar:6.0.10]
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:174) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:149) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:166) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:115) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:391) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:894) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1741) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1191) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:659) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61) ~[tomcat-embed-core-10.1.10.jar:10.1.10]
+	at java.base/java.lang.Thread.run(Thread.java:1570) ~[na:na]
+
+2025-12-10T22:47:57.269+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T22:47:57.269+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T22:47:57.269+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T22:47:57.269+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T22:47:57.270+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T22:47:57.270+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T22:47:57.270+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T22:47:57.270+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T22:48:01.752+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T22:48:01.754+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T22:48:01.754+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T22:48:01.754+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiMGIyNDE3MmEtNGM2YS00YmYwLThiOTItYzM3NGQ1ZmUxNzVhIiwiaWF0IjoxNzY1Mzk2MTAxLCJ0b2tlbl92YWxpZGl0eV9rZXkiOiJjY2Y5NWVlZC0yNjIyLTQyMzUtODRiNy0wOTYxNjcxYmFmYTYiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5NjEwMSwiZXhwIjoxNzY1NDgyNTAxLCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.5WPHDxrCNTklatER-hC85NKMr_9-qv-JyvM6pIlTHu0","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T22:48:01.754+03:00  INFO 37556 --- [http-nio-8088-exec-8] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T22:55:22.973+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T22:55:22.973+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T22:55:22.973+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T22:55:22.973+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T22:55:22.974+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T22:55:22.974+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T22:55:22.974+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T22:55:22.974+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T22:55:23.840+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T22:55:23.840+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T22:55:23.840+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T22:55:23.840+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiMWUzYmIxOWUtMmFiOC00ZmYxLWJmYjYtZjNhNzIwYmMyZWE4IiwiaWF0IjoxNzY1Mzk2NTQ0LCJ0b2tlbl92YWxpZGl0eV9rZXkiOiJmNWQ0NGI1Yy0wZTA3LTQ2N2YtYjZjYy0wNTlmYjVkOGFiOWMiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5NjU0NCwiZXhwIjoxNzY1NDgyOTQ0LCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.A63ytgbK_DO5UxdLTy7s5VMJRQ_e2ubHdpfu4mRHHho","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T22:55:23.840+03:00  INFO 37556 --- [http-nio-8088-exec-10] c.a.a.LoggingRequestAndResponseAspect    : ===================================
+2025-12-10T23:01:58.163+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : === Incoming Request (Aspect) In Authorization Service Module ===
+2025-12-10T23:01:58.163+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Method: POST
+2025-12-10T23:01:58.163+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Full URI: http://localhost:8088/api/TokenAuth/Authenticate
+2025-12-10T23:01:58.164+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Controller Method: com.authorization.services.AuthorizationService.authenticate
+2025-12-10T23:01:58.164+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Headers: {"content-length": "155", "host": "localhost:8088", "content-type": "application/json", "user-agent": "ReactorNetty/1.1.8", "accept": "application/json"}
+2025-12-10T23:01:58.164+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Request Body: {"userNameOrEmailAddress":"ejaradmin","password":"123456","rememberClient":false,"singleSignIn":false}
+2025-12-10T23:01:58.164+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : ==================================
+2025-12-10T23:01:58.164+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.services.AuthorizationService        : authenticate service request: AuthenticateRequest[userNameOrEmailAddress=ejaradmin, password=123456, rememberClient=false, twoFactorRememberClientToken=null, singleSignIn=false, returnUrl=null]
+2025-12-10T23:01:59.019+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : === Outgoing Response (Aspect) In Authorization Service Module ===
+2025-12-10T23:01:59.019+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Status: 200
+2025-12-10T23:01:59.019+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Headers: {}
+2025-12-10T23:01:59.019+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : Response Body: {"result":{"accessToken":"","encryptedAccessToken":"","expireInSeconds":86400,"shouldResetPassword":false,"userId":1,"requiresTwoFactorVerification":false,"refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiZWphcmFkbWluIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoiZWphcmFkbWluQGFsd2VmYXEuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiI1TTdWREg2UUFYQjRFU1lEUEpXSDIzM0o3R05GSEJEMiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImxvY2F0aW9uSWQiOiIxNDYyIiwiY291bnRyeUlkIjoiMSIsImNvdW50cnlJc28iOiJTQSIsIkxvY2F0aW9uIjoiMiwzLDQsNiw3LDgsMTEsMTMsMTQsMTUsMTcsMTgsMTksMjAsMjEsMjIsMjMsMjQsMjUsMjYsMjcsMzAsMzMsMzQsMzUsMzYsMzgsMzksNDAsNDIsNDMsNDUsNDYsNTAsNTEsNTIsNTMsNTcsNTgsNTksNjAsNjEsNjMsNjQsNjUsNjYsNjcsNjgsNjksNzAsNzEsODUsODgsODksOTAsOTEsOTgsMTA3LDEwOCwxMTMsMTE2LDExOSwxMjAsMTIyLDEyMywxMjQsMTI1LDEyNywxMjgsMTMzLDEzNSwxMzYsMTM3LDEzOSwxNDEsMTQyLDE0MywxNDQsMTQ4LDE0OSwxNzQsMTc2LDE3NywxNzgsMTc5LDE4MCwxODIsMTgzLDE4NSwxODYsMTg3LDE4OCwxODksMTkyLDE5MywxOTQsMTk1LDE5NiwxOTcsMTk4LDE5OSwyMDAsMjAxLDIwMiwyMDcsMjA4LDIwOSwyMTAsMjExLDIxMiwyMTMsMjE0LDIxNiwyMTcsMjIxLDIyMiwyMjMsMjI0LDIyNSwyMjYsMjI3LDEwMTIsMTAzMiwxMDQyLDEwNTIsMTA2MiwxMDcyLDEwODIsMTA5MiwxMTEyLDExMjIsMTE3MywxMjEyLDEyMTMsMTIxNCwxMjIyLDEyMzIsMTI0MiwxMjUyLDEyODIsMTMwMiwxMzEyLDEzMjIsMTM0MiwxMzUyLDEzNjIsMTM4MiwxNDAyLDE0MjIsMTQzMiwxNDQyLDE0NjIsMTQ2NCwxNDY2LDE0NjgsMTQ2OSwxNDcwLDE0NzEsMTQ3MiwxNDczLDE0NzQsMTQ3NSwxNDc2LDE0NzcsMTQ3OCwxNDc5LDE0ODAsMTQ4MSwxNDgyLDE0ODMsMTQ4NCwxMDAyLDEwMDQsMTE0MiwxMDA1LDEwMTEsMTAxMCwxMDIyLDEwMDAsMTAwOSwxMDA4LDE0MTIsMTQ2MywxNDY1LDE0NjciLCJBY2Nlc3NBbGxMb2NhdGlvbnMiOiJUcnVlIiwiZnJhbmNoaXNlSWQiOiIiLCJsb2dnZWRJbkZyYW5jaGlzZUlkIjoiIiwiVmVuZG9ySWQiOiIiLCJzdWIiOiIxIiwianRpIjoiMTZjMmY4NWUtNzM1Ni00ZmYwLWI4MmEtYTU1YzYyYjQ1YzE1IiwiaWF0IjoxNzY1Mzk2OTM4LCJ0b2tlbl92YWxpZGl0eV9rZXkiOiI3ZjkwYWM4Yy00ODNlLTQxNTAtYTQyMC02ZmMwZTgxMWUyM2MiLCJ1c2VyX2lkZW50aWZpZXIiOiIxQDEiLCJ0b2tlbl90eXBlIjoiMSIsIm5iZiI6MTc2NTM5NjkzOCwiZXhwIjoxNzY1NDgzMzM4LCJpc3MiOiJlSmFyIiwiYXVkIjoiZWphcl9iYWNrZW5kIn0.lKV7v4PFFCFs1SqpinBr87YpnI5XhuFP457OJrB3x9Y","refreshTokenExpireInSeconds":86400},"success":true,"unAuthorizedRequest":false,"__abp":true}
+2025-12-10T23:01:59.019+03:00  INFO 37556 --- [http-nio-8088-exec-6] c.a.a.LoggingRequestAndResponseAspect    : ===================================
