@@ -55,7 +55,6 @@ public class ImportCustomerService {
 
     private GetAllItemsComboboxItemsResponseBean lookupTypes;
     private GetAllItemsComboboxItemsResponseBean genderLookupValues;
-    private GetOperationalCountriesResponseBean countriesResponseBean;
     private GetAllItemsComboboxItemsResponseBean nationalities;
 
     private static final Map<String, String> countryIso = PropertyManager.loadPropertyFileIntoMap("country-iso.properties");
@@ -394,19 +393,6 @@ public class ImportCustomerService {
         return null;
     }
 
-    private String getOperationalCountryIdFromName(String documentIssueCountry) {
-        if (this.countriesResponseBean == null) {
-            this.countriesResponseBean = settingsService.getOperationalCountries();
-        } else {
-            List<Integer> countryIds = new ArrayList<>();
-            for (GetOperationalCountriesResponseBean.OperationalCountry country : countriesResponseBean.result()) {
-                if (country.name().equals(documentIssueCountry)) {
-                    return String.valueOf(country.id());
-                }
-            }
-        }
-        return "-1";
-    }
 
     public int getLookupTypeIdByName(String lookupTypeName) {
         if ( this.lookupTypes==null) {

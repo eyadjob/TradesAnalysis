@@ -69,6 +69,7 @@ public final class ApiPaths {
     
     // Vehicle endpoints
     public static final String VEHICLE_CREATE = "/Vehicle/CreateVehicles";
+    public static final String VEHICLE_CREATE_WITH_RANDOM_PLATE = "/Vehicle/CreateVehicleWithRandomPlateNumber";
     
     // Private constructor to prevent instantiation
     private ApiPaths() {

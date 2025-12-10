@@ -1,6 +1,7 @@
 package com.beans.vehicle;
 
 import com.beans.interfaces.RequestPayload;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.OffsetDateTime;
@@ -18,7 +19,7 @@ public record CreateVehiclesRequestBean(
     public record VehicleDto(
             @JsonProperty("isBulkUploaded") Boolean isBulkUploaded,
             @JsonProperty("odometer") String odometer,
-            @JsonProperty("fuelLevelId") Integer fuelLevelId,
+            @JsonProperty("fuelId") Integer fuelLevelId,
             @JsonProperty("branchId") String branchId,
             @JsonProperty("vehicleManufacturingInfo") VehicleManufacturingInfo vehicleManufacturingInfo,
             @JsonProperty("vehicleLicenseInfo") VehicleLicenseInfo vehicleLicenseInfo,
@@ -64,7 +65,9 @@ public record CreateVehiclesRequestBean(
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record PurchaseInfo(
             @JsonProperty("vendorId") String vendorId,
-            @JsonProperty("date") OffsetDateTime date,
+            @JsonProperty("date") 
+            @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
+            OffsetDateTime date,
             @JsonProperty("price") String price
     ) {
     }

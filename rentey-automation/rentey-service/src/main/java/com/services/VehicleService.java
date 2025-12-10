@@ -12,7 +12,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -151,7 +153,7 @@ public class VehicleService {
      *
      * @return The response containing all car models.
      */
-    @Cacheable(cacheNames = "allCarsModelsCache", value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "allCarsModelsCache", keyGenerator = "AutoKeyGenerator")
     public GetAllCarModelsResponseBean getAllCarModels() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
@@ -186,7 +188,7 @@ public class VehicleService {
      * @param selectedId      The selected fuel type ID (default: -1).
      * @return The response containing all fuel types for combobox.
      */
-    @Cacheable(cacheNames = "fuelTypesForCombobox", value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "fuelTypesForCombobox", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getFuelTypesForCombobox(
             Integer countryId, Boolean includeInActive,
             Integer selectedId) {
@@ -220,7 +222,7 @@ public class VehicleService {
      * @param countryId The country ID for which to get the fuel types (required).
      *                  * @return The response containing all fuel types for combobox.
      */
-    @Cacheable(cacheNames = "fuelTypesForCombobox", value = "2Hours", keyGenerator = "AutoKeyGenerator")
+    @Cacheable(cacheNames = "fuelTypesForCombobox", keyGenerator = "AutoKeyGenerator")
     public GetAllItemsComboboxItemsResponseBean getFuelTypesForCombobox(
             Integer countryId
     ) {
@@ -293,14 +295,12 @@ public class VehicleService {
      * Create a vehicle with a random plate number by calling multiple APIs to gather required data.
      * This method calls various lookup APIs and uses their responses to build a complete vehicle creation request.
      *
-     * @param countryId The country ID for the vehicle (required, default: 1).
+     * @param countryName The country ID for the vehicle (required, default: 1).
      * @param branchName  The branch ID for the vehicle (optional, will use first available if not provided).
      * @return The response containing the result of the vehicle creation operation.
      */
-    public CreateVehiclesResponseBean createVehicleWithRandomPlateNumber(Integer countryId, String branchName) {
-        if (countryId == null) {
-            countryId = 1; // Default to country 1
-        }
+    public CreateVehiclesResponseBean createVehicleWithRandomPlateNumber(String countryName, String branchName) {
+        int countryId = Integer.parseInt(countryService.getOperationalCountryIdFromName(countryName));
         logger.info("Creating vehicle with random plate number for countryId: {}", countryId);
         String insuranceCompanyId = getInsuranceCompanyIdByName(getInsuranceCompanyComboboxItems(countryId),userDefinedVariables.get("automationOrganizationName"));
         String accidentPolicyId = getAccidentPolicyNumberByOrganizationName(getAllAccidentPolicies(countryId),userDefinedVariables.get("automationOrganizationName"));
@@ -343,7 +343,7 @@ public class VehicleService {
                 ),
                 new CreateVehiclesRequestBean.PurchaseInfo(
                         vehicleVendorId, // vendorId
-                        OffsetDateTime.now(), // date
+                        OffsetDateTime.of(LocalDateTime.now(), ZoneOffset.UTC), // date formatted as "2025-12-07T12:41:40"
                         String.valueOf(35000 + random.nextInt(50000))
                 ),
                 new CreateVehiclesRequestBean.VehicleSpecs(
@@ -379,6 +379,7 @@ public class VehicleService {
             plate.append(letter).append(" ");
         }
 
+
         plate.append(" ");
 
         // Generate 4 random digits
@@ -386,7 +387,7 @@ public class VehicleService {
             plate.append(random.nextInt(10));
         }
 
-        return plate.toString();
+        return plate.toString().replace("  ", " ");
     }
 
 }

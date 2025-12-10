@@ -7,12 +7,18 @@ import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.reactive.ClientHttpRequest;
+import org.springframework.http.HttpCookie;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserter;
+import java.net.URI;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 /**
@@ -25,10 +31,9 @@ public class WebClientLoggingFilter {
     public static ExchangeFilterFunction logRequestAndResponse() {
         return ExchangeFilterFunction.ofRequestProcessor(request -> {
             if (logger.isInfoEnabled()) {
-                logRequestDetails(request);
+                // Log request details including body
+                return logRequestDetailsWithBody(request);
             }
-            // For body logging, we need to handle it carefully to avoid consuming the stream
-            // We'll log it if it's a BodyInserter that we can inspect
             return Mono.just(request);
         }).andThen(ExchangeFilterFunction.ofResponseProcessor(response -> {
             if (logger.isInfoEnabled()) {
@@ -39,7 +44,11 @@ public class WebClientLoggingFilter {
         }));
     }
 
-    private static void logRequestDetails(ClientRequest request) {
+    /**
+     * Logs request details including the body.
+     * Uses ExchangeFilterFunction to intercept the body during the exchange.
+     */
+    private static Mono<ClientRequest> logRequestDetailsWithBody(ClientRequest request) {
         HttpMethod method = request.method();
         String uri = request.url().toString();
         HttpHeaders headers = request.headers();
@@ -48,9 +57,124 @@ public class WebClientLoggingFilter {
         logger.info("Method: {}", method);
         logger.info("URI: {}", uri);
         logger.info("Headers: {}", formatHeaders(headers));
-        // Note: Request body will be logged separately in the service layer
-        // to avoid consuming the reactive stream
-        logger.info("==============================================");
+
+        // Only try to log body for methods that typically have bodies
+        if (method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+            // Wrap the body inserter to intercept and log the body
+            @SuppressWarnings("unchecked")
+            BodyInserter<?, ClientHttpRequest> originalBody = (BodyInserter<?, ClientHttpRequest>) request.body();
+            BodyInserter<Object, ClientHttpRequest> loggingBody = (outputMessage, context) -> {
+                // Create a wrapper that captures the body as it's written
+                LoggingClientHttpRequest loggingRequest = new LoggingClientHttpRequest(outputMessage);
+                return originalBody.insert(loggingRequest, context);
+            };
+
+            ClientRequest newRequest = ClientRequest.from(request)
+                    .body((BodyInserter<?, ClientHttpRequest>) loggingBody)
+                    .build();
+
+            return Mono.just(newRequest);
+        } else {
+            // For GET, DELETE, etc., no body to log
+            logger.info("Request Body: (no body for {} method)", method);
+            logger.info("==============================================");
+            return Mono.just(request);
+        }
+    }
+
+    /**
+     * Wrapper for ClientHttpRequest that logs the body as it's being written.
+     */
+    private static class LoggingClientHttpRequest implements ClientHttpRequest {
+        private final ClientHttpRequest delegate;
+        private final StringBuilder bodyBuilder = new StringBuilder();
+        private boolean bodyLogged = false;
+
+        public LoggingClientHttpRequest(ClientHttpRequest delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public org.springframework.http.HttpMethod getMethod() {
+            return delegate.getMethod();
+        }
+
+        @Override
+        public URI getURI() {
+            return delegate.getURI();
+        }
+
+        @Override
+        public MultiValueMap<String, HttpCookie> getCookies() {
+            return delegate.getCookies();
+        }
+
+        @Override
+        public <T> T getNativeRequest() {
+            return delegate.getNativeRequest();
+        }
+
+        @Override
+        public DataBufferFactory bufferFactory() {
+            return delegate.bufferFactory();
+        }
+
+        @Override
+        public void beforeCommit(java.util.function.Supplier<? extends Mono<Void>> action) {
+            delegate.beforeCommit(action);
+        }
+
+        @Override
+        public boolean isCommitted() {
+            return delegate.isCommitted();
+        }
+
+        @Override
+        public Mono<Void> writeWith(org.reactivestreams.Publisher<? extends DataBuffer> body) {
+            // Capture and log the body
+            return Flux.from(body)
+                    .collectList()
+                    .flatMap(buffers -> {
+                        // Combine all buffers into a single string
+                        for (DataBuffer buffer : buffers) {
+                            byte[] bytes = new byte[buffer.readableByteCount()];
+                            int position = buffer.readPosition();
+                            buffer.read(bytes);
+                            buffer.readPosition(position); // Reset position for reuse
+                            bodyBuilder.append(new String(bytes, StandardCharsets.UTF_8));
+                        }
+                        
+                        // Log the body once
+                        if (!bodyLogged) {
+                            String bodyString = bodyBuilder.toString();
+                            if (bodyString != null && !bodyString.trim().isEmpty()) {
+                                logger.info("Request Body: {}", bodyString);
+                            } else {
+                                logger.info("Request Body: (empty)");
+                            }
+                            logger.info("==============================================");
+                            bodyLogged = true;
+                        }
+                        
+                        // Write the original buffers to the delegate
+                        return delegate.writeWith(Flux.fromIterable(buffers));
+                    });
+        }
+
+        @Override
+        public Mono<Void> writeAndFlushWith(org.reactivestreams.Publisher<? extends org.reactivestreams.Publisher<? extends DataBuffer>> body) {
+            return delegate.writeAndFlushWith(body);
+        }
+
+        @Override
+        public Mono<Void> setComplete() {
+            return delegate.setComplete();
+        }
+
+        @Override
+        public HttpHeaders getHeaders() {
+            return delegate.getHeaders();
+        }
     }
 
     /**

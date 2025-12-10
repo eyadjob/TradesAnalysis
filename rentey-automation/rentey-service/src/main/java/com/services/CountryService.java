@@ -3,7 +3,10 @@ package com.services;
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.beans.country.GetCountryCurrencyInfoResponseBean;
 import com.beans.country.GetCurrenciesForComboboxResponseBean;
+import com.beans.setting.GetOperationalCountriesResponseBean;
 import com.beans.user.GetUserBranchesForComboboxResponseBean;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,6 +24,11 @@ public class CountryService {
     @Autowired
     @Qualifier("apiBasePath")
     private String apiBasePath;
+
+    @Autowired
+    SettingsService settingsService;
+
+    private GetOperationalCountriesResponseBean countriesResponseBean;
 
     /**
      * Get country currency information by country ID.
@@ -151,6 +159,18 @@ public class CountryService {
                 .retrieve()
                 .bodyToMono(GetCurrenciesForComboboxResponseBean.class)
                 .block();
+    }
+
+    public String getOperationalCountryIdFromName(String documentIssueCountry) {
+        if (this.countriesResponseBean == null) {
+            this.countriesResponseBean = settingsService.getOperationalCountries();
+        }
+            for (GetOperationalCountriesResponseBean.OperationalCountry country : countriesResponseBean.result()) {
+                if (country.name().equals(documentIssueCountry)) {
+                    return String.valueOf(country.id());
+                }
+        }
+        return "-1";
     }
 }
 

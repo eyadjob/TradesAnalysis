@@ -38,7 +38,10 @@ public class CacheConfiguration implements CachingConfigurer {
                 "countriesForCombobox",
                 "currenciesForCombobox",
                 "allCarsModelsCache",
-                "fuelTypesForCombobox"
+                "fuelTypesForCombobox",
+                "typesComboboxItems",
+                "allItemsComboboxItems",
+                "propertiesCache"
         ));
         // Allow dynamic cache creation for any cache name not listed above
         cacheManager.setAllowNullValues(false);
