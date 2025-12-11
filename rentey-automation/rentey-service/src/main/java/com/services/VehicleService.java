@@ -1,5 +1,6 @@
 package com.services;
 
+import com.annotation.LogExecutionTime;
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.beans.vehicle.*;
 import com.util.EncodingUtil;
@@ -292,6 +293,7 @@ public class VehicleService {
      * @param branchName  The branch ID for the vehicle (optional, will use first available if not provided).
      * @return The response containing the result of the vehicle creation operation.
      */
+    @LogExecutionTime
     public CreateVehiclesResponseBean createVehicleWithRandomPlateNumber(String countryName, String branchName) {
         int countryId = Integer.parseInt(countryService.getOperationalCountryIdFromName(countryName));
         logger.info("Creating vehicle with random plate number for countryId: {}", countryId);
@@ -344,7 +346,7 @@ public class VehicleService {
                         vehicleTrimLevelId, // trimLevelId
                         vehicleFuelTypeId, // fuelTypeId
                         50 + random.nextInt(30),
-                        1000 + random.nextInt(2000)
+                        2000
                 ),
                 String.valueOf(countryId) // countryId
         );
