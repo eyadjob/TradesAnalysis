@@ -1,5 +1,6 @@
 package com.services;
 
+import com.annotation.LogExecutionTime;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +29,7 @@ public class ContractService {
      * @return The response containing all countries phone information.
      */
     @Cacheable(cacheNames = "countriesPhoneCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
     public GetCountriesPhoneResponseBean getCountriesPhone(
             Integer typeId,
             Boolean includeInActive,

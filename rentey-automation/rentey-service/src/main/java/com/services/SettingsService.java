@@ -1,5 +1,6 @@
 package com.services;
 
+import com.annotation.LogExecutionTime;
 import com.beans.general.AbpResponseBean;
 import com.beans.setting.TenantAndCountrySettingsRequestBean;
 import com.beans.setting.UpdateAllSettingsRequestBean;
@@ -21,6 +22,7 @@ public class SettingsService {
     @Qualifier("apiBasePath")
     private String apiBasePath;
 
+    @LogExecutionTime
     public AbpResponseBean updateAllSettings(UpdateAllSettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
@@ -31,7 +33,7 @@ public class SettingsService {
                 .block();
     }
 
-
+    @LogExecutionTime
     public AbpResponseBean changeTenantSettings(Integer countryId, TenantAndCountrySettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
@@ -45,6 +47,7 @@ public class SettingsService {
                 .block();
     }
 
+    @LogExecutionTime
     public AbpResponseBean updateCountrySettings(Integer countryId, TenantAndCountrySettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
@@ -58,6 +61,7 @@ public class SettingsService {
                 .block();
     }
 
+    @LogExecutionTime
     public AbpResponseBean changeBranchSettings(Integer countryId, Integer branchId, TenantAndCountrySettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
@@ -79,6 +83,7 @@ public class SettingsService {
      * @return The response containing all operational countries.
      */
     @Cacheable(cacheNames = "operationalCountriesCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
     public GetOperationalCountriesResponseBean getOperationalCountries() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()

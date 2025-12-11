@@ -1,5 +1,6 @@
 package com.services;
 
+import com.annotation.LogExecutionTime;
 import com.beans.general.AbpResponseBean;
 import com.beans.customer.CreateOrUpdateRoleRequestBean;
 import com.beans.user.GetAllPermissionsResponseBean;
@@ -20,6 +21,7 @@ public class PermissionService {
     @Qualifier("apiBasePath")
     private String apiBasePath;
 
+    @LogExecutionTime
     public GetAllPermissionsResponseBean getAllPermissions() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
@@ -29,6 +31,7 @@ public class PermissionService {
                 .block();
     }
 
+    @LogExecutionTime
     public AbpResponseBean createOrUpdateRole(CreateOrUpdateRoleRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()

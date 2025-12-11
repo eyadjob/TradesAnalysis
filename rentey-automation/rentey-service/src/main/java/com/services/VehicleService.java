@@ -221,6 +221,7 @@ public class VehicleService {
      * @return The response containing all fuel types for combobox.
      */
     @Cacheable(cacheNames = "fuelTypesForCombobox", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
     public GetAllItemsComboboxItemsResponseBean getFuelTypesForCombobox(
             Integer countryId
     ) {
