@@ -1,10 +1,12 @@
 package com.services;
 
+import com.annotation.LogExecutionTime;
 import com.beans.general.AbpResponseBean;
 import com.beans.setting.TenantAndCountrySettingsRequestBean;
 import com.beans.setting.UpdateAllSettingsRequestBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.beans.setting.GetOperationalCountriesResponseBean;
@@ -20,6 +22,7 @@ public class SettingsService {
     @Qualifier("apiBasePath")
     private String apiBasePath;
 
+    @LogExecutionTime
     public AbpResponseBean updateAllSettings(UpdateAllSettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
@@ -30,6 +33,7 @@ public class SettingsService {
                 .block();
     }
 
+    @LogExecutionTime
     public AbpResponseBean changeTenantSettings(Integer countryId, TenantAndCountrySettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
@@ -43,6 +47,7 @@ public class SettingsService {
                 .block();
     }
 
+    @LogExecutionTime
     public AbpResponseBean updateCountrySettings(Integer countryId, TenantAndCountrySettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
@@ -56,6 +61,7 @@ public class SettingsService {
                 .block();
     }
 
+    @LogExecutionTime
     public AbpResponseBean changeBranchSettings(Integer countryId, Integer branchId, TenantAndCountrySettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
@@ -76,6 +82,8 @@ public class SettingsService {
      *
      * @return The response containing all operational countries.
      */
+    @Cacheable(cacheNames = "operationalCountriesCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
     public GetOperationalCountriesResponseBean getOperationalCountries() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()

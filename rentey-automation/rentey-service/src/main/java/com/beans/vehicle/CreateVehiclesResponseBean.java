@@ -16,5 +16,6 @@ public record CreateVehiclesResponseBean(
         @JsonProperty("unAuthorizedRequest") Boolean unAuthorizedRequest,
         @JsonProperty("__abp") Boolean abp
 ) implements ResponsePayload {
+    public static String vehiclePlateNumber;
 }
 

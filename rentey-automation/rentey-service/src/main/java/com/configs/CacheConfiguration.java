@@ -1,15 +1,17 @@
 package com.configs;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 
 import java.lang.reflect.Method;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -23,14 +25,22 @@ public class CacheConfiguration implements CachingConfigurer {
 
     /**
      * Creates a cache manager with named caches.
-     * Uses ConcurrentMapCacheManager for in-memory caching.
+     * Uses CaffeineCacheManager for in-memory caching with 2-hour expiration.
+     * All methods annotated with @Cacheable will have their data cached for 2 hours.
      *
      * @return CacheManager instance
      */
     @Bean
     @Override
     public CacheManager cacheManager() {
-        ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager();
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+        
+        // Configure Caffeine cache with 2-hour expiration
+        cacheManager.setCaffeine(Caffeine.newBuilder()
+                .expireAfterWrite(Duration.ofHours(2))
+                .maximumSize(10_000) // Maximum number of entries in cache
+                .recordStats()); // Enable cache statistics
+        
         // Register cache names - caches will be created dynamically if not listed here
         cacheManager.setCacheNames(Arrays.asList(
                 "countryCurrencyInfo",
@@ -41,8 +51,24 @@ public class CacheConfiguration implements CachingConfigurer {
                 "fuelTypesForCombobox",
                 "typesComboboxItems",
                 "allItemsComboboxItems",
-                "propertiesCache"
+                "propertiesCache",
+                "allInsuranceCompaniesCache",
+                "allAccidentPoliciesCache",
+                "vendorComboboxCache",
+                "updateAllSettingsCache",
+                "changeTenantSettingsCache",
+                "updateCountrySettingsCache",
+                "changeBranchSettingsCache",
+                "operationalCountriesCache",
+                "countriesPhoneCache",
+                "allPermissionsCache",
+                "createOrUpdateRoleCache",
+                "createOrUpdateCustomerCache",
+                "createVehiclesCache",
+                "allBranchVehiclesCache",
+                "vehicleCheckPreparationDataCache"
         ));
+        
         // Allow dynamic cache creation for any cache name not listed above
         cacheManager.setAllowNullValues(false);
         return cacheManager;

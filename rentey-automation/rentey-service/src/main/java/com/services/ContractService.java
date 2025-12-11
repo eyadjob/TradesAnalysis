@@ -1,8 +1,10 @@
 package com.services;
 
+import com.annotation.LogExecutionTime;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -26,6 +28,8 @@ public class ContractService {
      * @param includeNotAssign Whether to include not assigned countries (default: false).
      * @return The response containing all countries phone information.
      */
+    @Cacheable(cacheNames = "countriesPhoneCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
     public GetCountriesPhoneResponseBean getCountriesPhone(
             Integer typeId,
             Boolean includeInActive,

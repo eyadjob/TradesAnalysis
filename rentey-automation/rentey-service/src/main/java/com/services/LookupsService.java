@@ -53,6 +53,7 @@ public class LookupsService {
      * @return The response containing all combobox items.
      */
     @Cacheable(cacheNames = "allItemsComboboxItems", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
     public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
             Integer typeId,
             Boolean includeInActive,
@@ -80,6 +81,7 @@ public class LookupsService {
      * @return The response containing all combobox items.
      */
     @Cacheable(cacheNames = "allItemsComboboxItems", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
     public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
             Integer typeId) {
         return getAllItemsComboboxItems(typeId,false,false);
