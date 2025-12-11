@@ -7,8 +7,6 @@ import com.beans.general.UploadBase64FileRequestBean;
 import com.beans.general.UploadBase64FileResponseBean;
 import com.beans.vehicle.*;
 import com.util.EncodingUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,8 +18,6 @@ import org.springframework.web.reactive.function.client.WebClient;
  */
 @Service
 public class VehicleService {
-
-    private static final Logger logger = LoggerFactory.getLogger(VehicleService.class);
     
     @Autowired
     @Qualifier("settingsWebClient")
@@ -43,7 +39,6 @@ public class VehicleService {
     @LogExecutionTime
     public GetAllItemsComboboxItemsResponseBean getInsuranceCompanyComboboxItems(
             Integer countryId, Boolean includeInActive) {
-        long startTime = System.currentTimeMillis();
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
@@ -61,7 +56,6 @@ public class VehicleService {
                 })
                 .retrieve()
                 .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
-                .doOnTerminate(() -> logger.info("getInsuranceCompanyComboboxItems() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
@@ -92,7 +86,6 @@ public class VehicleService {
             Integer countryId,
             Boolean includeInactive,
             String request) {
-        long startTime = System.currentTimeMillis();
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
@@ -115,7 +108,6 @@ public class VehicleService {
                 })
                 .retrieve()
                 .bodyToMono(GetAllAccidentPoliciesResponseBean.class)
-                .doOnTerminate(() -> logger.info("getAllAccidentPolicies() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
@@ -148,13 +140,11 @@ public class VehicleService {
     @Cacheable(cacheNames = "allCarsModelsCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
     public GetAllCarModelsResponseBean getAllCarModels() {
-        long startTime = System.currentTimeMillis();
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(apiBasePath + "/CarModel/GetAllCarModels")
                 .retrieve()
                 .bodyToMono(GetAllCarModelsResponseBean.class)
-                .doOnTerminate(() -> logger.info("getAllCarModels() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
@@ -188,7 +178,6 @@ public class VehicleService {
     public GetAllItemsComboboxItemsResponseBean getFuelTypesForCombobox(
             Integer countryId, Boolean includeInActive,
             Integer selectedId) {
-        long startTime = System.currentTimeMillis();
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
@@ -209,7 +198,6 @@ public class VehicleService {
                 })
                 .retrieve()
                 .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
-                .doOnTerminate(() -> logger.info("getFuelTypesForCombobox() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
@@ -239,7 +227,6 @@ public class VehicleService {
     @Cacheable(cacheNames = "vendorComboboxCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
     public GetVendorComboboxItemsResponseBean getVendorComboboxItems(Boolean includeInactive) {
-        long startTime = System.currentTimeMillis();
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
@@ -253,7 +240,6 @@ public class VehicleService {
                 })
                 .retrieve()
                 .bodyToMono(GetVendorComboboxItemsResponseBean.class)
-                .doOnTerminate(() -> logger.info("getVendorComboboxItems() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
@@ -290,7 +276,6 @@ public class VehicleService {
     @Cacheable(cacheNames = "allBranchVehiclesCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
     public GetAllBranchVehiclesResponseBean getAllBranchVehicles(String request) {
-        long startTime = System.currentTimeMillis();
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
@@ -307,7 +292,6 @@ public class VehicleService {
                 })
                 .retrieve()
                 .bodyToMono(GetAllBranchVehiclesResponseBean.class)
-                .doOnTerminate(() -> logger.info("getAllBranchVehicles() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
@@ -324,7 +308,6 @@ public class VehicleService {
     @LogExecutionTime
     public GetVehicleCheckPreparationDataResponseBean getVehicleCheckPreparationData(
             Integer vehicleId, Integer checkTypeId, Integer sourceId) {
-        long startTime = System.currentTimeMillis();
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
@@ -345,7 +328,6 @@ public class VehicleService {
                 })
                 .retrieve()
                 .bodyToMono(GetVehicleCheckPreparationDataResponseBean.class)
-                .doOnTerminate(() -> logger.info("getVehicleCheckPreparationData() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
@@ -358,14 +340,12 @@ public class VehicleService {
      */
     @LogExecutionTime
     public UploadBase64FileResponseBean uploadBase64File(UploadBase64FileRequestBean request) {
-        long startTime = System.currentTimeMillis();
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
                 .uri(apiBasePath + "/FileUpload/UploadBase64File")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(UploadBase64FileResponseBean.class)
-                .doOnTerminate(() -> logger.info("uploadBase64File() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
@@ -378,14 +358,12 @@ public class VehicleService {
      */
     @LogExecutionTime
     public AbpResponseBean receiveNewVehicle(ReceiveNewVehicleRequestBean request) {
-        long startTime = System.currentTimeMillis();
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
                 .uri(apiBasePath + "/RentalVehicle/ReceiveNewVehicle")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(AbpResponseBean.class)
-                .doOnTerminate(() -> logger.info("receiveNewVehicle() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
@@ -398,14 +376,12 @@ public class VehicleService {
      */
     @LogExecutionTime
     public CreateVehiclesResponseBean createVehicles(CreateVehiclesRequestBean request) {
-        long startTime = System.currentTimeMillis();
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
                 .uri(apiBasePath + "/Vehicle/CreateVehicles")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(CreateVehiclesResponseBean.class)
-                .doOnTerminate(() -> logger.info("createVehicles() method execution time: {} ms", System.currentTimeMillis() - startTime))
                 .block();
     }
 
