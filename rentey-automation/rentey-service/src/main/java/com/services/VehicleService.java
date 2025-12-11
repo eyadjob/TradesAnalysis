@@ -10,8 +10,12 @@ import com.util.EncodingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Service for interacting with vehicle-related APIs.
@@ -266,27 +270,31 @@ public class VehicleService {
     }
 
     /**
-     * Get all branch vehicles.
+     * Retrieves a paginated list of vehicles for a specific branch, filtered by country and plate number.
+     * The results are sorted by last modification time in descending order.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param request The request query string containing pagination, filter, and sort parameters (optional).
-     *                Example: "page=1&pageSize=15&sort=lastModificationTime-desc&filter=(countryId~eq~1~and~currentLocationId~eq~481~and~plateNo~contains~'u k b 1130')"
-     * @return The response containing all branch vehicles.
+     * @param countryId The ID of the country to filter vehicles (required, non-null)
+     * @param branchId The ID of the branch to get vehicles from
+     * @param vehiclePlateNumber The plate number or part of it to search for (case-sensitive)
+     * @return GetAllBranchVehiclesResponseBean containing the paginated list of matching vehicles,
+     *         or null if no vehicles are found
+     * @throws org.springframework.web.reactive.function.client.WebClientResponseException if the request fails
+     * @see com.beans.vehicle.GetAllBranchVehiclesResponseBean
      */
     @Cacheable(cacheNames = "allBranchVehiclesCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
-    public GetAllBranchVehiclesResponseBean getAllBranchVehicles(String request) {
+    public GetAllBranchVehiclesResponseBean getAllBranchVehicles( int countryId, int branchId,@NonNull  String vehiclePlateNumber) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
                             .path(apiBasePath + "/RentalVehicle/GetAllBranchVehicles");
-
-                    if (request != null && !request.isEmpty()) {
-                        // Decode the request parameter if it's already URL-encoded to prevent double encoding
-                        String decodedRequest = EncodingUtil.decodeIfEncoded(request);
-                        builder.queryParam("Request", decodedRequest);
-                    }
+                    String filter = String.format("(countryId~eq~%d~and~currentLocationId~eq~%d~and~plateNo~contains~'%s')", 
+                            countryId, branchId, vehiclePlateNumber);
+                    String request = String.format("page=1&pageSize=15&sort=lastModificationTime-desc&filter=%s", filter);
+                    String encodedRequest = URLEncoder.encode(request, StandardCharsets.UTF_8);
+                    builder.queryParam("Request", encodedRequest);
 
                     return builder.build();
                 })
@@ -294,6 +302,7 @@ public class VehicleService {
                 .bodyToMono(GetAllBranchVehiclesResponseBean.class)
                 .block();
     }
+
 
     /**
      * Get vehicle check preparation data.

@@ -155,15 +155,18 @@ public class VehicleController {
      * This endpoint automatically calls the authorization-service to get the refreshToken
      * and uses it in the Authorization header when calling the external API.
      *
-     * @param request The request query string containing pagination, filter, and sort parameters (optional).
-     *                Example: "page=1&pageSize=15&sort=lastModificationTime-desc&filter=(countryId~eq~1~and~currentLocationId~eq~481~and~plateNo~contains~'u k b 1130')"
-     * @return The response containing all branch vehicles.
+     * @param countryId The ID of the country to filter vehicles (required).
+     * @param branchId The ID of the branch to get vehicles from (required).
+     * @param plateNumber The plate number or part of it to search for (optional).
+     * @return The response containing all branch vehicles matching the criteria.
      */
     @GetMapping(path = RENTAL_VEHICLE_GET_ALL_BRANCH_VEHICLES, produces = "application/json")
     public GetAllBranchVehiclesResponseBean getAllBranchVehicles(
-            @RequestParam(required = false) String request) {
-
-        return vehicleService.getAllBranchVehicles(request);
+            @RequestParam(required = true) int countryId,
+            @RequestParam(required = true) int branchId,
+            @RequestParam(required = false) String plateNumber) {
+        return vehicleService.getAllBranchVehicles(countryId, branchId, 
+            plateNumber != null ? plateNumber : "");
     }
 
     /**

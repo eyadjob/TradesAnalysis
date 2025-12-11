@@ -4,7 +4,7 @@ package com.enums;
  * Enum representing lookup types used in the system.
  * Each enum constant corresponds to a lookup type display text.
  */
-public enum LookupType {
+public enum LookupTypes {
     NOT_ASSIGNED("Not assigned"),
     CLASSIFICATIONS("Classifications"),
     MANUFACTURES("Manufactures"),
@@ -54,7 +54,7 @@ public enum LookupType {
 
     private final String displayText;
 
-    LookupType(String displayText) {
+    LookupTypes(String displayText) {
         this.displayText = displayText;
     }
 
@@ -74,12 +74,12 @@ public enum LookupType {
      * @param displayText The display text to search for
      * @return The matching LookupType, or null if not found
      */
-    public static LookupType findByDisplayText(String displayText) {
+    public static LookupTypes findByDisplayText(String displayText) {
         if (displayText == null) {
             return null;
         }
         String trimmed = displayText.trim();
-        for (LookupType type : values()) {
+        for (LookupTypes type : values()) {
             if (type.displayText.equals(trimmed)) {
                 return type;
             }
@@ -94,12 +94,12 @@ public enum LookupType {
      * @param displayText The display text to search for
      * @return The matching LookupType, or null if not found
      */
-    public static LookupType findByDisplayTextIgnoreCase(String displayText) {
+    public static LookupTypes findByDisplayTextIgnoreCase(String displayText) {
         if (displayText == null) {
             return null;
         }
         String trimmed = displayText.trim();
-        for (LookupType type : values()) {
+        for (LookupTypes type : values()) {
             if (type.displayText.equalsIgnoreCase(trimmed)) {
                 return type;
             }

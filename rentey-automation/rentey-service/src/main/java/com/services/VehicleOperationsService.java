@@ -3,6 +3,7 @@ package com.services;
 import com.annotation.LogExecutionTime;
 import com.beans.general.AbpResponseBean;
 import com.beans.vehicle.*;
+import com.enums.VehicleCheckTypes;
 import com.util.NumberUtil;
 import com.util.PropertyManager;
 import org.slf4j.Logger;
@@ -10,8 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -148,6 +147,9 @@ public class VehicleOperationsService {
         logger.info("Created vehicle request with plate number: {}", randomPlateNumber);
 
         // Call createVehicles through VehicleService
+        CreateVehiclesResponseBean createVehiclesResponseBean = vehicleService.createVehicles(request);
+        createVehiclesResponseBean.vehiclePlateNumber = randomPlateNumber;
+
         return vehicleService.createVehicles(request);
     }
 
@@ -163,45 +165,26 @@ public class VehicleOperationsService {
     @LogExecutionTime
     public AbpResponseBean createAndReceiveNewVehicle(String countryName, String branchName) {
         logger.info("Creating and receiving new vehicle for country: {}, branch: {}", countryName, branchName);
-        
-        // Step 1: Create the vehicle with random plate number
+
         CreateVehiclesResponseBean createResponse = createVehicleWithRandomPlateNumber(countryName, branchName);
         
         if (createResponse == null || !Boolean.TRUE.equals(createResponse.success())) {
             logger.error("Failed to create vehicle. Response: {}", createResponse);
             throw new RuntimeException("Failed to create vehicle: " + (createResponse != null ? createResponse.error() : "Unknown error"));
         }
-        
-        // Step 2: Get the plate number from the created vehicle
-        // We need to extract the plate number from the request we just made
-        // Since createVehicleWithRandomPlateNumber generates it internally, we'll query for it
+
         int countryId = Integer.parseInt(countryService.getOperationalCountryIdFromName(countryName));
         String branchId = countryService.getBranchIdByName(
                 countryService.getUserBranchesForCombobox(countryId, new ArrayList<>(List.of(8900, 8902))),
                 branchName);
-        
-        // Step 3: Find the newly created vehicle by querying all branch vehicles
-        // We'll use a filter to find vehicles created recently
-        String filter = String.format("(countryId~eq~%d~and~currentLocationId~eq~%s)", countryId, branchId);
-        String encodedFilter = URLEncoder.encode(filter, StandardCharsets.UTF_8);
-        String request = String.format("page=1&pageSize=1&sort=lastModificationTime-desc&filter=%s", encodedFilter);
-        
-        GetAllBranchVehiclesResponseBean vehiclesResponse = vehicleService.getAllBranchVehicles(request);
-        
-        if (vehiclesResponse == null || vehiclesResponse.result() == null || 
-            vehiclesResponse.result().data() == null || vehiclesResponse.result().data().isEmpty()) {
-            logger.error("Failed to find created vehicle");
-            throw new RuntimeException("Failed to find created vehicle");
-        }
-        
+
+        GetAllBranchVehiclesResponseBean vehiclesResponse = vehicleService.getAllBranchVehicles(countryId, Integer.parseInt(branchId),CreateVehiclesResponseBean.vehiclePlateNumber);
         GetAllBranchVehiclesResponseBean.BranchVehicle createdVehicle = vehiclesResponse.result().data().get(0);
         Integer vehicleId = createdVehicle.id();
         String plateNumber = createdVehicle.plateNo();
-        
         logger.info("Found created vehicle with ID: {}, plate number: {}", vehicleId, plateNumber);
-        
-        // Step 4: Get vehicle check preparation data
-        Integer checkTypeId = 6; // Receive New Vehicle
+
+        Integer checkTypeId = VehicleCheckTypes.RECEIVE_VEHICLE.getId();
         Integer sourceId = 120;
         GetVehicleCheckPreparationDataResponseBean preparationData = 
                 vehicleService.getVehicleCheckPreparationData(vehicleId, checkTypeId, sourceId);
@@ -210,11 +193,9 @@ public class VehicleOperationsService {
             logger.error("Failed to get vehicle check preparation data");
             throw new RuntimeException("Failed to get vehicle check preparation data");
         }
-        
         GetVehicleCheckPreparationDataResponseBean.VehicleCheckPreparationDataResult prepResult = 
                 preparationData.result();
-        
-        // Step 5: Build the ReceiveNewVehicle request payload
+
         ReceiveNewVehicleRequestBean receiveRequest = buildReceiveNewVehicleRequest(
                 vehicleId,
                 prepResult,
