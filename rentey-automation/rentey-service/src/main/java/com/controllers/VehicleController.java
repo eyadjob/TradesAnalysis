@@ -1,11 +1,18 @@
 package com.controllers;
 
+import com.beans.general.AbpResponseBean;
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
+import com.beans.general.UploadBase64FileRequestBean;
+import com.beans.general.UploadBase64FileResponseBean;
 import com.beans.vehicle.CreateVehiclesRequestBean;
 import com.beans.vehicle.CreateVehiclesResponseBean;
 import com.beans.vehicle.GetAllAccidentPoliciesResponseBean;
+import com.beans.vehicle.GetAllBranchVehiclesResponseBean;
 import com.beans.vehicle.GetAllCarModelsResponseBean;
 import com.beans.vehicle.GetVendorComboboxItemsResponseBean;
+import com.beans.vehicle.GetVehicleCheckPreparationDataResponseBean;
+import com.beans.vehicle.ReceiveNewVehicleRequestBean;
+import com.services.VehicleOperationsService;
 import com.services.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +28,9 @@ public class VehicleController {
 
     @Autowired
     private VehicleService vehicleService;
+    
+    @Autowired
+    private VehicleOperationsService vehicleOperationsService;
 
     /**
      * Get insurance company combobox items.
@@ -141,6 +151,97 @@ public class VehicleController {
     }
 
     /**
+     * Get all branch vehicles.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param request The request query string containing pagination, filter, and sort parameters (optional).
+     *                Example: "page=1&pageSize=15&sort=lastModificationTime-desc&filter=(countryId~eq~1~and~currentLocationId~eq~481~and~plateNo~contains~'u k b 1130')"
+     * @return The response containing all branch vehicles.
+     */
+    @GetMapping(path = RENTAL_VEHICLE_GET_ALL_BRANCH_VEHICLES, produces = "application/json")
+    public GetAllBranchVehiclesResponseBean getAllBranchVehicles(
+            @RequestParam(required = false) String request) {
+
+        return vehicleService.getAllBranchVehicles(request);
+    }
+
+    /**
+     * Get vehicle check preparation data.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param vehicleId The vehicle ID (required).
+     * @param checkTypeId The check type ID (required).
+     * @param sourceId The source ID (required).
+     * @return The response containing vehicle check preparation data.
+     */
+    @GetMapping(path = VEHICLE_CHECK_GET_PREPARATION_DATA, produces = "application/json")
+    public GetVehicleCheckPreparationDataResponseBean getVehicleCheckPreparationData(
+            @RequestParam(required = true) Integer vehicleId,
+            @RequestParam(required = true) Integer checkTypeId,
+            @RequestParam(required = true) Integer sourceId) {
+
+        if (vehicleId == null) {
+            throw new IllegalArgumentException("vehicleId parameter is required.");
+        }
+        if (checkTypeId == null) {
+            throw new IllegalArgumentException("checkTypeId parameter is required.");
+        }
+        if (sourceId == null) {
+            throw new IllegalArgumentException("sourceId parameter is required.");
+        }
+
+        return vehicleService.getVehicleCheckPreparationData(vehicleId, checkTypeId, sourceId);
+    }
+
+    /**
+     * Upload base64 file.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param request The request containing base64 encoded file data (e.g., "data:image/jpeg;base64,...").
+     * @return The response containing the uploaded file information.
+     */
+    @PostMapping(path = FILE_UPLOAD_BASE64, consumes = "application/json", produces = "application/json")
+    public UploadBase64FileResponseBean uploadBase64File(
+            @RequestBody(required = true) UploadBase64FileRequestBean request) {
+
+        if (request == null) {
+            throw new IllegalArgumentException("Request body is required and cannot be null.");
+        }
+
+        if (request.data() == null || request.data().isEmpty()) {
+            throw new IllegalArgumentException("data field is required and cannot be empty.");
+        }
+
+        return vehicleService.uploadBase64File(request);
+    }
+
+    /**
+     * Receive new vehicle.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param request The request containing vehicle check information for receiving a new vehicle.
+     * @return The response containing the result of the operation.
+     */
+    @PostMapping(path = RENTAL_VEHICLE_RECEIVE_NEW_VEHICLE, consumes = "application/json", produces = "application/json")
+    public AbpResponseBean receiveNewVehicle(
+            @RequestBody(required = true) ReceiveNewVehicleRequestBean request) {
+
+        if (request == null) {
+            throw new IllegalArgumentException("Request body is required and cannot be null.");
+        }
+
+        if (request.vehicleId() == null) {
+            throw new IllegalArgumentException("vehicleId is required and cannot be null.");
+        }
+
+        return vehicleService.receiveNewVehicle(request);
+    }
+
+    /**
      * Create a vehicle with a random plate number.
      * This endpoint automatically calls the authorization-service to get the refreshToken
      * and uses it in the Authorization header when calling the external API.
@@ -156,6 +257,6 @@ public class VehicleController {
             @RequestParam(required = false) String countryName,
             @RequestParam(required = false) String branchName) {
 
-        return vehicleService.createVehicleWithRandomPlateNumber(countryName, branchName);
+        return vehicleOperationsService.createVehicleWithRandomPlateNumber(countryName, branchName);
     }
 }

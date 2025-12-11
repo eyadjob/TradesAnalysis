@@ -54,7 +54,19 @@ public class CacheConfiguration implements CachingConfigurer {
                 "propertiesCache",
                 "allInsuranceCompaniesCache",
                 "allAccidentPoliciesCache",
-                "vendorComboboxCache"
+                "vendorComboboxCache",
+                "updateAllSettingsCache",
+                "changeTenantSettingsCache",
+                "updateCountrySettingsCache",
+                "changeBranchSettingsCache",
+                "operationalCountriesCache",
+                "countriesPhoneCache",
+                "allPermissionsCache",
+                "createOrUpdateRoleCache",
+                "createOrUpdateCustomerCache",
+                "createVehiclesCache",
+                "allBranchVehiclesCache",
+                "vehicleCheckPreparationDataCache"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above

@@ -31,6 +31,7 @@ logging:
   level:
     root: INFO
     com: DEBUG  # To see DEBUG logs from your packages
+    com.aspect.ExecutionTimeLoggingAspect: INFO  # Ensure execution time logging is visible
     org.springframework.web: INFO
     org.springframework.boot: INFO
 

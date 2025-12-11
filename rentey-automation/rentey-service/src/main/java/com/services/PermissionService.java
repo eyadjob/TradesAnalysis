@@ -5,6 +5,7 @@ import com.beans.customer.CreateOrUpdateRoleRequestBean;
 import com.beans.user.GetAllPermissionsResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 

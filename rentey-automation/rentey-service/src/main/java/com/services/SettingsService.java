@@ -5,6 +5,7 @@ import com.beans.setting.TenantAndCountrySettingsRequestBean;
 import com.beans.setting.UpdateAllSettingsRequestBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.beans.setting.GetOperationalCountriesResponseBean;
@@ -29,6 +30,7 @@ public class SettingsService {
                 .bodyToMono(AbpResponseBean.class)
                 .block();
     }
+
 
     public AbpResponseBean changeTenantSettings(Integer countryId, TenantAndCountrySettingsRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
@@ -76,6 +78,7 @@ public class SettingsService {
      *
      * @return The response containing all operational countries.
      */
+    @Cacheable(cacheNames = "operationalCountriesCache", keyGenerator = "AutoKeyGenerator")
     public GetOperationalCountriesResponseBean getOperationalCountries() {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()

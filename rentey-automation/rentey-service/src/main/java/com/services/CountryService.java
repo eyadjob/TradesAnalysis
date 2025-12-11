@@ -60,6 +60,7 @@ public class CountryService {
      * @param filterTypes List of filter types to apply.
      * @return The response containing all user branches for combobox.
      */
+
     @Cacheable(cacheNames = "userBranchesForCombobox", keyGenerator = "AutoKeyGenerator")
     public GetUserBranchesForComboboxResponseBean getUserBranchesForCombobox(
             Integer countryId, Boolean includeInActive,
@@ -93,10 +94,10 @@ public class CountryService {
                 .block();
     }
 
+    @Cacheable(cacheNames = "userBranchesForCombobox", keyGenerator = "AutoKeyGenerator")
     public GetUserBranchesForComboboxResponseBean getUserBranchesForCombobox(int countryId,List<Integer> filterTypes) {
         return getUserBranchesForCombobox(countryId,false,false,filterTypes);
     }
-
     public String getBranchIdByName(GetUserBranchesForComboboxResponseBean userBranchesForComboboxResponseBean, String branchName) {
         return userBranchesForComboboxResponseBean.result().items().stream().filter(userBranches -> userBranches.displayText().equals(branchName))
                 .findFirst().map(userBranches -> String.valueOf(userBranches.value())).orElse("-1");
