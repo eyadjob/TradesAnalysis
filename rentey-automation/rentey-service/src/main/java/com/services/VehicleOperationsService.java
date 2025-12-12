@@ -150,7 +150,7 @@ public class VehicleOperationsService {
         CreateVehiclesResponseBean createVehiclesResponseBean = vehicleService.createVehicles(request);
         createVehiclesResponseBean.vehiclePlateNumber = randomPlateNumber;
 
-        return vehicleService.createVehicles(request);
+        return createVehiclesResponseBean;
     }
 
     /**
