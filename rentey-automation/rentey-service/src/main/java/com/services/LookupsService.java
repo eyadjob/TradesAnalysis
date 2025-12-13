@@ -3,6 +3,7 @@ package com.services;
 import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
+import com.beans.lookups.GetItemsByTypeResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
@@ -87,6 +88,37 @@ public class LookupsService {
         return getAllItemsComboboxItems(typeId,false,false);
     }
 
+
+    /**
+     * Get items by type.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param typeId The type ID for the lookup items (required).
+     * @param includeInActive Whether to include inactive items (default: false).
+     * @return The response containing all items for the specified type.
+     */
+    @Cacheable(cacheNames = "itemsByTypeCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetItemsByTypeResponseBean getItemsByType(Integer typeId, Boolean includeInActive) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Lookups/GetItemsByType");
+                    
+                    if (typeId != null) {
+                        builder.queryParam("typeId", typeId);
+                    }
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetItemsByTypeResponseBean.class)
+                .block();
+    }
 
     public String getComboboxItemValueByDisplayText(GetAllItemsComboboxItemsResponseBean comboboxItemsResponseBean,String displayText) {
         for (GetAllItemsComboboxItemsResponseBean.ComboboxItem comboboxItem : comboboxItemsResponseBean.result().items()) {

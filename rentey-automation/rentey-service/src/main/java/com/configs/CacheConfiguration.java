@@ -71,7 +71,14 @@ public class CacheConfiguration implements CachingConfigurer {
                 "vehicleCheckPreparationDataCache",
                 "uploadBase64FileCachedData",
                 "extrasNamesExcludedFromBookingPaymentDetailsCache",
-                "createBookingDateInputsCache"
+                "createBookingDateInputsCache",
+                "isValidPhoneCache",
+                "customerContractInformationByNameCache",
+                "itemsByTypeCache",
+                "allExternalLoyaltiesConfigurationsItemsCache",
+                "integratedLoyaltiesCache",
+                "externalLoyaltiesWithAllowRedeemComboboxCache",
+                "contractExtraItemsCache"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above

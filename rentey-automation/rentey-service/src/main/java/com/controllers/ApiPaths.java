@@ -44,10 +44,12 @@ public final class ApiPaths {
     
     // Contract endpoints
     public static final String CONTRACT_EXTRA_CONFIGURATION_GET_EXTRAS_NAMES_EXCLUDED = "/ContractExtraConfiguration/GetExtrasNamesExcludedFromBookingPaymentDetails";
+    public static final String CONTRACT_EXTRA_CONFIGURATION_GET_CONTRACT_EXTRA_ITEMS = "/ContractExtraConfiguration/GetContractExtraItems";
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
     public static final String CUSTOMER_GET_ALL_ITEMS_COMBOBOX = "/Customer/GetAllItemsComboboxItems";
+    public static final String CUSTOMER_GET_CONTRACT_INFORMATION_BY_NAME = "/Customer/GetCustomerContractInformationByName";
 
     //Import Customer endpoints
     public static final String IMPORT_CUSTOMER_FROM_CSV_FILE = "/import-customer-from-csv-file";
@@ -59,6 +61,7 @@ public final class ApiPaths {
     // Lookups endpoints
     public static final String LOOKUPS_GET_ALL_ITEMS_COMBOBOX = "/Lookups/GetAllItemsComboboxItems";
     public static final String LOOKUPS_GET_TYPES_COMBOBOX = "/Lookups/GetTypesComboboxItems";
+    public static final String LOOKUPS_GET_ITEMS_BY_TYPE = "/Lookups/GetItemsByType";
     
     // Insurance Company endpoints
     public static final String INSURANCE_COMPANY_GET_COMBOBOX_ITEMS = "/InsuranceCompany/GetInsuranceCompanyComboboxItems";
@@ -85,6 +88,16 @@ public final class ApiPaths {
     
     // Booking endpoints
     public static final String BOOKING_GET_CREATE_BOOKING_DATE_INPUTS = "/Booking/GetCreateBookingDateInputs";
+    
+    // Validation endpoints
+    public static final String VALIDATE_PHONE_IS_VALID = "/ValidatePhone/IsValid";
+    
+    // External Loyalty Configuration endpoints
+    public static final String EXTERNAL_LOYALTY_CONFIGURATION_GET_ALL_ITEMS = "/ExternalLoyaltyConfiguration/GetAllExternalLoyaltiesConfigurationsItems";
+    public static final String EXTERNAL_LOYALTY_CONFIGURATION_GET_INTEGRATED_LOYALTIES = "/ExternalLoyaltyConfiguration/GetIntegratedLoyalties";
+    
+    // Customer Membership endpoints
+    public static final String CUSTOMER_MEMBERSHIP_GET_EXTERNAL_LOYALTIES_WITH_ALLOW_REDEEM_COMBOBOX = "/CustomerMembership/GetExternalLoyaltiesWithAllowRedeemCombobox";
     
     // Private constructor to prevent instantiation
     private ApiPaths() {
