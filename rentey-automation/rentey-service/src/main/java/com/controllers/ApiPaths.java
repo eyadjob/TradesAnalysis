@@ -18,7 +18,6 @@ public final class ApiPaths {
 
     public static final String BASE_PATH_WITHOUT_SERVICE = "/api";
 
-    
     // Permission endpoints
     public static final String PERMISSION_GET_ALL = "/Permission/GetAllPermissions";
     public static final String ROLE_CREATE_OR_UPDATE = "/Role/CreateOrUpdateRole";
