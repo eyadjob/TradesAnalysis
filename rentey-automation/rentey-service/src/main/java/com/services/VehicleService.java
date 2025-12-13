@@ -14,6 +14,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -286,9 +287,8 @@ public class VehicleService {
     @LogExecutionTime
     public GetAllBranchVehiclesResponseBean getAllBranchVehicles( int countryId, int branchId,@NonNull  String vehiclePlateNumber) {
         String plateNumberWithEncodedSpaces = vehiclePlateNumber.replace(" ", "%20");
-        String filter = String.format("(countryId~eq~%d~and~currentLocationId~eq~%d~and~plateNo~contains~'%s')",
-                countryId, branchId, plateNumberWithEncodedSpaces).replace("'","%27");
-//        ~and~statusId~eq~140
+        String filter = String.format("(countryId~eq~%d~and~currentLocationId~eq~%d~and~plateNo~contains~'%s'~and~statusId~eq~147)",
+                countryId, branchId, plateNumberWithEncodedSpaces);
         String request = String.format("page=1&pageSize=15&sort=lastModificationTime-desc&filter=%s", filter);
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
@@ -300,8 +300,7 @@ public class VehicleService {
                 .bodyToMono(GetAllBranchVehiclesResponseBean.class)
                 .block();
     }
-
-
+    
     /**
      * Get vehicle check preparation data.
      * Authorization header and all headers from RenteyConfiguration are automatically included.

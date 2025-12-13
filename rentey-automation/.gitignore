@@ -38,3 +38,4 @@ rentey-service/customersToImport/
 
 ### Logs ###
 logs/
+authorization-service/logs/
