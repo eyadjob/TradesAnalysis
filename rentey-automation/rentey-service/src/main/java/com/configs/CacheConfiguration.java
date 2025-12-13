@@ -70,7 +70,8 @@ public class CacheConfiguration implements CachingConfigurer {
                 "allBranchVehiclesCache",
                 "vehicleCheckPreparationDataCache",
                 "uploadBase64FileCachedData",
-                "extrasNamesExcludedFromBookingPaymentDetailsCache"
+                "extrasNamesExcludedFromBookingPaymentDetailsCache",
+                "createBookingDateInputsCache"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above

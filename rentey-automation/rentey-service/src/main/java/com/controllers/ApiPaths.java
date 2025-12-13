@@ -83,6 +83,9 @@ public final class ApiPaths {
     public static final String VEHICLE_CHECK_GET_PREPARATION_DATA = "/VehicleCheck/GetVehicleCheckPreparationData";
     public static final String RENTAL_VEHICLE_RECEIVE_NEW_VEHICLE = "/RentalVehicle/ReceiveNewVehicle";
     
+    // Booking endpoints
+    public static final String BOOKING_GET_CREATE_BOOKING_DATE_INPUTS = "/Booking/GetCreateBookingDateInputs";
+    
     // Private constructor to prevent instantiation
     private ApiPaths() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
