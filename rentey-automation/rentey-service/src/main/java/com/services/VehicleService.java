@@ -22,11 +22,11 @@ import java.nio.charset.StandardCharsets;
  */
 @Service
 public class VehicleService {
-    
+
     @Autowired
     @Qualifier("settingsWebClient")
     private WebClient settingsWebClient;
-    
+
     @Autowired
     @Qualifier("apiBasePath")
     private String apiBasePath;
@@ -86,7 +86,7 @@ public class VehicleService {
      */
     @Cacheable(cacheNames = "allAccidentPoliciesCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
-        public GetAllAccidentPoliciesResponseBean getAllAccidentPolicies(
+    public GetAllAccidentPoliciesResponseBean getAllAccidentPolicies(
             Integer countryId,
             Boolean includeInactive,
             String request) {
@@ -285,18 +285,16 @@ public class VehicleService {
     @Cacheable(cacheNames = "allBranchVehiclesCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
     public GetAllBranchVehiclesResponseBean getAllBranchVehicles( int countryId, int branchId,@NonNull  String vehiclePlateNumber) {
-        // Authorization header and all headers from RenteyConfiguration are automatically included
+        String plateNumberWithEncodedSpaces = vehiclePlateNumber.replace(" ", "%20");
+        String filter = String.format("(countryId~eq~%d~and~currentLocationId~eq~%d~and~plateNo~contains~'%s')",
+                countryId, branchId, plateNumberWithEncodedSpaces).replace("'","%27");
+//        ~and~statusId~eq~140
+        String request = String.format("page=1&pageSize=15&sort=lastModificationTime-desc&filter=%s", filter);
         return settingsWebClient.get()
                 .uri(uriBuilder -> {
-                    var builder = uriBuilder
-                            .path(apiBasePath + "/RentalVehicle/GetAllBranchVehicles");
-                    String filter = String.format("(countryId~eq~%d~and~currentLocationId~eq~%d~and~plateNo~contains~'%s')", 
-                            countryId, branchId, vehiclePlateNumber);
-                    String request = String.format("page=1&pageSize=15&sort=lastModificationTime-desc&filter=%s", filter);
-                    String encodedRequest = URLEncoder.encode(request, StandardCharsets.UTF_8);
-                    builder.queryParam("Request", encodedRequest);
-
-                    return builder.build();
+                    uriBuilder.path(apiBasePath + "/RentalVehicle/GetAllBranchVehicles");
+                    uriBuilder.queryParam("Request", request);
+                    return uriBuilder.build();
                 })
                 .retrieve()
                 .bodyToMono(GetAllBranchVehiclesResponseBean.class)
