@@ -1,5 +1,6 @@
 package com.controllers;
 
+import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import com.services.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,18 @@ public class ContractController {
         }
 
         return contractService.getCountriesPhone(typeId, includeInActive, includeNotAssign);
+    }
+
+    /**
+     * Get extras names excluded from booking payment details.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @return The response containing a list of extras names excluded from booking payment details.
+     */
+    @GetMapping(path = CONTRACT_EXTRA_CONFIGURATION_GET_EXTRAS_NAMES_EXCLUDED, produces = "application/json")
+    public GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean getExtrasNamesExcludedFromBookingPaymentDetails() {
+        return contractService.getExtrasNamesExcludedFromBookingPaymentDetails();
     }
 }
 

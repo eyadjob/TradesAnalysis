@@ -45,8 +45,10 @@ public class CacheConfiguration implements CachingConfigurer {
         cacheManager.setCacheNames(Arrays.asList(
                 "countryCurrencyInfo",
                 "userBranchesForCombobox",
+                "branchesCountriesComboboxItemsCache",
                 "countriesForCombobox",
                 "currenciesForCombobox",
+                "nationalitiesForComboboxCache",
                 "allCarsModelsCache",
                 "fuelTypesForCombobox",
                 "typesComboboxItems",
@@ -67,7 +69,8 @@ public class CacheConfiguration implements CachingConfigurer {
                 "createVehiclesCache",
                 "allBranchVehiclesCache",
                 "vehicleCheckPreparationDataCache",
-                "uploadBase64FileCachedData"
+                "uploadBase64FileCachedData",
+                "extrasNamesExcludedFromBookingPaymentDetailsCache"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above

@@ -32,6 +32,7 @@ public final class ApiPaths {
     public static final String COUNTRY_GET_OPERATIONAL_COUNTRIES = "/Country/GetOperationalCountries";
     public static final String COUNTRY_GET_COUNTRIES_PHONE = "/Country/GetCountriesPhone";
     public static final String COUNTRY_GET_COUNTRIES_FOR_COMBOBOX = "/Country/GetCountriesForCombobox";
+    public static final String COUNTRY_GET_NATIONALITIES_FOR_COMBOBOX = "/Country/GetNationalitiesForCombobox";
     
     // Currency endpoints
     public static final String CURRENCY_GET_COUNTRY_CURRENCY_INFO = "/Currency/GetCountryCurrencyInfo";
@@ -39,6 +40,10 @@ public final class ApiPaths {
     
     // Branch endpoints
     public static final String BRANCH_GET_USER_BRANCHES_FOR_COMBOBOX = "/Branch/GetUserBranchesForCombobox";
+    public static final String BRANCH_GET_BRANCHES_COUNTRIES_COMBOBOX_ITEMS = "/Branch/GetBranchesCountriesComboboxItems";
+    
+    // Contract endpoints
+    public static final String CONTRACT_EXTRA_CONFIGURATION_GET_EXTRAS_NAMES_EXCLUDED = "/ContractExtraConfiguration/GetExtrasNamesExcludedFromBookingPaymentDetails";
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";

@@ -168,6 +168,50 @@ public class CountryService {
                 .block();
     }
 
+    /**
+     * Get nationalities for combobox.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param includeInActive Whether to include inactive nationalities (default: false).
+     * @return The response containing all nationalities for combobox.
+     */
+    @Cacheable(cacheNames = "nationalitiesForComboboxCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetAllItemsComboboxItemsResponseBean getNationalitiesForCombobox(Boolean includeInActive) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Country/GetNationalitiesForCombobox");
+                    
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get branches countries combobox items.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @return The response containing all branches countries combobox items.
+     */
+    @Cacheable(cacheNames = "branchesCountriesComboboxItemsCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetAllItemsComboboxItemsResponseBean getBranchesCountriesComboboxItems() {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(apiBasePath + "/Branch/GetBranchesCountriesComboboxItems")
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
+    }
+
     public String getOperationalCountryIdFromName(String documentIssueCountry) {
         if (this.countriesResponseBean == null) {
             this.countriesResponseBean = settingsService.getOperationalCountries();

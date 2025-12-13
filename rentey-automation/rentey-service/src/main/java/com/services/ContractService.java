@@ -1,6 +1,7 @@
 package com.services;
 
 import com.annotation.LogExecutionTime;
+import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,6 +45,23 @@ public class ContractService {
                         .build())
                 .retrieve()
                 .bodyToMono(GetCountriesPhoneResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get extras names excluded from booking payment details.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @return The response containing a list of extras names excluded from booking payment details.
+     */
+    @Cacheable(cacheNames = "extrasNamesExcludedFromBookingPaymentDetailsCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean getExtrasNamesExcludedFromBookingPaymentDetails() {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(apiBasePath + "/ContractExtraConfiguration/GetExtrasNamesExcludedFromBookingPaymentDetails")
+                .retrieve()
+                .bodyToMono(GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean.class)
                 .block();
     }
 }
