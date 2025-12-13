@@ -214,7 +214,7 @@ public class VehicleOperationsService {
             GetVehicleCheckPreparationDataResponseBean.VehicleCheckPreparationDataResult prepResult,
             GetAllBranchVehiclesResponseBean.BranchVehicle vehicle,
             Integer checkTypeId) {
-        Integer fuelLevelId = Integer.parseInt(lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(12),vehicle.fuel()));
+        Integer fuelLevelId = Integer.parseInt(lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(12), vehicle.fuel()));
         Integer odometer = prepResult.odometer() != null ? prepResult.odometer() :
                 (prepResult.minimumOdomter() != null ? prepResult.minimumOdomter() :
                         (vehicle.odometer() != null ? vehicle.odometer() : 22));
@@ -227,14 +227,13 @@ public class VehicleOperationsService {
                 new ReceiveNewVehicleRequestBean.ReferenceDetails(checkTypeId);
 
         // Build skeleton details
-        ReceiveNewVehicleRequestBean.SkeletonDetails skeletonDetails = null;
         GetVehicleCheckPreparationDataResponseBean.VehicleSkeletonDetails skeleton = prepResult.vehicleSkeletonDetails();
         ReceiveNewVehicleRequestBean.ImageInfo skeletonImage = new ReceiveNewVehicleRequestBean.ImageInfo(
                 skeleton.image().id(),
                 skeleton.image().url(),
                 skeleton.image().isNewDocument()
         );
-        skeletonDetails = new ReceiveNewVehicleRequestBean.SkeletonDetails(
+        ReceiveNewVehicleRequestBean.SkeletonDetails skeletonDetails = new ReceiveNewVehicleRequestBean.SkeletonDetails(
                 skeleton.id(),
                 skeletonImage
         );
@@ -265,20 +264,20 @@ public class VehicleOperationsService {
 
         // Build snapshots from snapshot details list
         List<ReceiveNewVehicleRequestBean.SnapshotItem> snapshots = new ArrayList<>();
-            for (GetVehicleCheckPreparationDataResponseBean.SnapshotDetails snapshotDetail :
-                    prepResult.checkType().snapshotDetailsList()) {
-                // Use placeholder URL for snapshots
-                ReceiveNewVehicleRequestBean.SnapshotImage snapshotImage =
-                        new ReceiveNewVehicleRequestBean.SnapshotImage(
-                                signatureUrl
-                        );
-                ReceiveNewVehicleRequestBean.Snapshot snapshot =
-                        new ReceiveNewVehicleRequestBean.Snapshot(snapshotImage);
-                snapshots.add(new ReceiveNewVehicleRequestBean.SnapshotItem(
-                        snapshotDetail.snapshotId(),
-                        snapshot
-                ));
-            }
+        for (GetVehicleCheckPreparationDataResponseBean.SnapshotDetails snapshotDetail :
+                prepResult.checkType().snapshotDetailsList()) {
+            // Use placeholder URL for snapshots
+            ReceiveNewVehicleRequestBean.SnapshotImage snapshotImage =
+                    new ReceiveNewVehicleRequestBean.SnapshotImage(
+                            signatureUrl
+                    );
+            ReceiveNewVehicleRequestBean.Snapshot snapshot =
+                    new ReceiveNewVehicleRequestBean.Snapshot(snapshotImage);
+            snapshots.add(new ReceiveNewVehicleRequestBean.SnapshotItem(
+                    snapshotDetail.snapshotId(),
+                    snapshot
+            ));
+        }
 
         GetCountryCurrencyInfoResponseBean countryCurrencyInfo = countryService.getCountryCurrencyInfo(vehicle.countryId());
         // Build total damages cost
@@ -311,14 +310,11 @@ public class VehicleOperationsService {
             char letter = (char) ('A' + random.nextInt(26));
             plate.append(letter).append(" ");
         }
-
         plate.append(" ");
-
         // Generate 4 random digits
         for (int i = 0; i < 4; i++) {
             plate.append(random.nextInt(10));
         }
-
         return plate.toString().replace("  ", " ");
     }
 }

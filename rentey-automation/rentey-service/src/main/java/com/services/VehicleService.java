@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.UnsupportedEncodingException;
@@ -36,6 +38,9 @@ public class VehicleService {
     @Autowired
     @Qualifier("apiBasePathWithoutService")
     private String apiBasePathWithoutService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     /**
@@ -346,7 +351,7 @@ public class VehicleService {
     /**
      * Upload base64 file.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
-     * Note: This API expects a raw string payload with application/json-patch+json content type.
+     * Note: This API expects a JSON-encoded string value (the string wrapped in quotes) with application/json-patch+json content type.
      *
      * @param request The request containing base64 encoded file data (e.g., "data:image/jpeg;base64,...").
      * @return The response containing the uploaded file information.
@@ -355,15 +360,20 @@ public class VehicleService {
     @Cacheable(cacheNames = "uploadBase64FileCachedData", keyGenerator = "AutoKeyGenerator")
     public UploadBase64FileResponseBean uploadBase64File(UploadBase64FileRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
-        // This API expects a raw string payload with application/json-patch+json content type
-        // The body is the raw string (not wrapped in JSON), but content type must be application/json-patch+json
-        return settingsWebClient.post()
-                .uri(apiBasePathWithoutService + "/FileUpload/UploadBase64File")
-                .contentType(MediaType.parseMediaType("application/json-patch+json"))
-                .bodyValue(request.data())
-                .retrieve()
-                .bodyToMono(UploadBase64FileResponseBean.class)
-                .block();
+        // This API expects a JSON-encoded string value (e.g., "data:image/jpeg;base64,..." with quotes)
+        // We manually JSON-encode the string using ObjectMapper to ensure proper encoding
+        try {
+            String jsonEncodedString = objectMapper.writeValueAsString(request.data());
+            return settingsWebClient.post()
+                    .uri(apiBasePathWithoutService + "/FileUpload/UploadBase64File")
+                    .contentType(MediaType.parseMediaType("application/json-patch+json"))
+                    .bodyValue(jsonEncodedString)
+                    .retrieve()
+                    .bodyToMono(UploadBase64FileResponseBean.class)
+                    .block();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize base64 data for upload", e);
+        }
     }
 
     /**
