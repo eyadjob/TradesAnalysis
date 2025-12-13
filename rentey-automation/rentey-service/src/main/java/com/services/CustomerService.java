@@ -15,10 +15,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Service
 public class CustomerService {
 
-
-
-
-
     private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
     @Autowired
@@ -61,8 +57,6 @@ public class CustomerService {
             logger.error("===================================");
         }).block();
     }
-
-
-
+     
 }
 
