@@ -262,4 +262,27 @@ public class VehicleController {
 
         return vehicleOperationsService.createVehicleWithRandomPlateNumber(countryName, branchName);
     }
+
+    /**
+     * Create a vehicle with random plate number and then receive it.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     * This method orchestrates the creation of a vehicle and then immediately receives it
+     * by calling the ReceiveNewVehicle API with proper payload.
+     *
+     * @param countryName The country name for the vehicle (required).
+     * @param branchName The branch name for the vehicle (optional, will use first available if not provided).
+     * @return The response containing the result of the receive new vehicle operation.
+     */
+    @GetMapping(path = VEHICLE_CREATE_AND_RECEIVE, produces = "application/json")
+    public AbpResponseBean createAndReceiveNewVehicle(
+            @RequestParam(required = true) String countryName,
+            @RequestParam(required = false) String branchName) {
+
+        if (countryName == null || countryName.isEmpty()) {
+            throw new IllegalArgumentException("countryName parameter is required and cannot be empty.");
+        }
+
+        return vehicleOperationsService.createAndReceiveNewVehicle(countryName, branchName);
+    }
 }

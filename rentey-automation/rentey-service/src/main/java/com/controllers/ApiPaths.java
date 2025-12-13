@@ -70,6 +70,7 @@ public final class ApiPaths {
     // Vehicle endpoints
     public static final String VEHICLE_CREATE = "/Vehicle/CreateVehicles";
     public static final String VEHICLE_CREATE_WITH_RANDOM_PLATE = "/Vehicle/CreateVehicleWithRandomPlateNumber";
+    public static final String VEHICLE_CREATE_AND_RECEIVE = "/Vehicle/CreateAndRecieveVehicler";
     public static final String RENTAL_VEHICLE_GET_ALL_BRANCH_VEHICLES = "/RentalVehicle/GetAllBranchVehicles";
     public static final String VEHICLE_CHECK_GET_PREPARATION_DATA = "/VehicleCheck/GetVehicleCheckPreparationData";
     public static final String RENTAL_VEHICLE_RECEIVE_NEW_VEHICLE = "/RentalVehicle/ReceiveNewVehicle";
