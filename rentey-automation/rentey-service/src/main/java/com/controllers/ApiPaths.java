@@ -15,7 +15,9 @@ public final class ApiPaths {
      * Base path for all service API endpoints.
      */
     public static final String BASE_PATH = "/api/services/app";
-    
+
+    public static final String BASE_PATH_WITHOUT_SERVICE = "/api";
+
     // Permission endpoints
     public static final String PERMISSION_GET_ALL = "/Permission/GetAllPermissions";
     public static final String ROLE_CREATE_OR_UPDATE = "/Role/CreateOrUpdateRole";
@@ -30,6 +32,7 @@ public final class ApiPaths {
     public static final String COUNTRY_GET_OPERATIONAL_COUNTRIES = "/Country/GetOperationalCountries";
     public static final String COUNTRY_GET_COUNTRIES_PHONE = "/Country/GetCountriesPhone";
     public static final String COUNTRY_GET_COUNTRIES_FOR_COMBOBOX = "/Country/GetCountriesForCombobox";
+    public static final String COUNTRY_GET_NATIONALITIES_FOR_COMBOBOX = "/Country/GetNationalitiesForCombobox";
     
     // Currency endpoints
     public static final String CURRENCY_GET_COUNTRY_CURRENCY_INFO = "/Currency/GetCountryCurrencyInfo";
@@ -37,20 +40,28 @@ public final class ApiPaths {
     
     // Branch endpoints
     public static final String BRANCH_GET_USER_BRANCHES_FOR_COMBOBOX = "/Branch/GetUserBranchesForCombobox";
+    public static final String BRANCH_GET_BRANCHES_COUNTRIES_COMBOBOX_ITEMS = "/Branch/GetBranchesCountriesComboboxItems";
+    
+    // Contract endpoints
+    public static final String CONTRACT_EXTRA_CONFIGURATION_GET_EXTRAS_NAMES_EXCLUDED = "/ContractExtraConfiguration/GetExtrasNamesExcludedFromBookingPaymentDetails";
+    public static final String CONTRACT_EXTRA_CONFIGURATION_GET_CONTRACT_EXTRA_ITEMS = "/ContractExtraConfiguration/GetContractExtraItems";
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
     public static final String CUSTOMER_GET_ALL_ITEMS_COMBOBOX = "/Customer/GetAllItemsComboboxItems";
+    public static final String CUSTOMER_GET_CONTRACT_INFORMATION_BY_NAME = "/Customer/GetCustomerContractInformationByName";
 
     //Import Customer endpoints
     public static final String IMPORT_CUSTOMER_FROM_CSV_FILE = "/import-customer-from-csv-file";
 
     // File Upload endpoints
     public static final String FILE_UPLOAD_BASE64 = "/FileUpload/UploadBase64File";
-    
+
+
     // Lookups endpoints
     public static final String LOOKUPS_GET_ALL_ITEMS_COMBOBOX = "/Lookups/GetAllItemsComboboxItems";
     public static final String LOOKUPS_GET_TYPES_COMBOBOX = "/Lookups/GetTypesComboboxItems";
+    public static final String LOOKUPS_GET_ITEMS_BY_TYPE = "/Lookups/GetItemsByType";
     
     // Insurance Company endpoints
     public static final String INSURANCE_COMPANY_GET_COMBOBOX_ITEMS = "/InsuranceCompany/GetInsuranceCompanyComboboxItems";
@@ -74,6 +85,19 @@ public final class ApiPaths {
     public static final String RENTAL_VEHICLE_GET_ALL_BRANCH_VEHICLES = "/RentalVehicle/GetAllBranchVehicles";
     public static final String VEHICLE_CHECK_GET_PREPARATION_DATA = "/VehicleCheck/GetVehicleCheckPreparationData";
     public static final String RENTAL_VEHICLE_RECEIVE_NEW_VEHICLE = "/RentalVehicle/ReceiveNewVehicle";
+    
+    // Booking endpoints
+    public static final String BOOKING_GET_CREATE_BOOKING_DATE_INPUTS = "/Booking/GetCreateBookingDateInputs";
+    
+    // Validation endpoints
+    public static final String VALIDATE_PHONE_IS_VALID = "/ValidatePhone/IsValid";
+    
+    // External Loyalty Configuration endpoints
+    public static final String EXTERNAL_LOYALTY_CONFIGURATION_GET_ALL_ITEMS = "/ExternalLoyaltyConfiguration/GetAllExternalLoyaltiesConfigurationsItems";
+    public static final String EXTERNAL_LOYALTY_CONFIGURATION_GET_INTEGRATED_LOYALTIES = "/ExternalLoyaltyConfiguration/GetIntegratedLoyalties";
+    
+    // Customer Membership endpoints
+    public static final String CUSTOMER_MEMBERSHIP_GET_EXTERNAL_LOYALTIES_WITH_ALLOW_REDEEM_COMBOBOX = "/CustomerMembership/GetExternalLoyaltiesWithAllowRedeemCombobox";
     
     // Private constructor to prevent instantiation
     private ApiPaths() {

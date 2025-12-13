@@ -1,6 +1,7 @@
 package com.controllers;
 
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
+import com.beans.lookups.GetItemsByTypeResponseBean;
 import com.services.LookupsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,27 @@ public class LookupsController {
     @GetMapping(path = LOOKUPS_GET_TYPES_COMBOBOX, produces = "application/json")
     public GetAllItemsComboboxItemsResponseBean getTypesComboboxItems() {
         return lookupsService.getTypesComboboxItems();
+    }
+
+    /**
+     * Get items by type.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param typeId The type ID for the lookup items (required).
+     * @param includeInActive Whether to include inactive items (default: false).
+     * @return The response containing all items for the specified type.
+     */
+    @GetMapping(path = LOOKUPS_GET_ITEMS_BY_TYPE, produces = "application/json")
+    public GetItemsByTypeResponseBean getItemsByType(
+            @RequestParam(required = true) Integer typeId,
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive) {
+
+        if (typeId == null) {
+            throw new IllegalArgumentException("typeId parameter is required.");
+        }
+
+        return lookupsService.getItemsByType(typeId, includeInActive);
     }
 }
 

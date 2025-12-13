@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.UnsupportedEncodingException;
@@ -31,6 +34,14 @@ public class VehicleService {
     @Autowired
     @Qualifier("apiBasePath")
     private String apiBasePath;
+
+    @Autowired
+    @Qualifier("apiBasePathWithoutService")
+    private String apiBasePathWithoutService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
 
     /**
      * Get insurance company combobox items.
@@ -340,19 +351,48 @@ public class VehicleService {
     /**
      * Upload base64 file.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * Note: This API expects a JSON-encoded string value (the string wrapped in quotes) with application/json-patch+json content type.
      *
      * @param request The request containing base64 encoded file data (e.g., "data:image/jpeg;base64,...").
      * @return The response containing the uploaded file information.
      */
     @LogExecutionTime
+    @Cacheable(cacheNames = "uploadBase64FileCachedData", keyGenerator = "AutoKeyGenerator")
     public UploadBase64FileResponseBean uploadBase64File(UploadBase64FileRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
-        return settingsWebClient.post()
-                .uri(apiBasePath + "/FileUpload/UploadBase64File")
-                .bodyValue(request)
-                .retrieve()
-                .bodyToMono(UploadBase64FileResponseBean.class)
-                .block();
+        // This API expects a JSON-encoded string value (e.g., "data:image/jpeg;base64,..." with quotes)
+        // We manually JSON-encode the string using ObjectMapper to ensure proper encoding
+        try {
+            String jsonEncodedString = objectMapper.writeValueAsString(request.data());
+            return settingsWebClient.post()
+                    .uri(apiBasePathWithoutService + "/FileUpload/UploadBase64File")
+                    .contentType(MediaType.parseMediaType("application/json-patch+json"))
+                    .bodyValue(jsonEncodedString)
+                    .retrieve()
+                    .bodyToMono(UploadBase64FileResponseBean.class)
+                    .block();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize base64 data for upload", e);
+        }
+    }
+
+    /**
+     * Upload signature image as base64 and return the virtual path.
+     * This method uploads a default signature image and returns its virtual path.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @return The virtual path of the uploaded signature image, or null if upload fails.
+     */
+    @LogExecutionTime
+    public String uploadSignatureImage() {
+        String base64ImageData = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAD6APoDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJ/4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/9k=";
+        UploadBase64FileRequestBean uploadRequest = new UploadBase64FileRequestBean(base64ImageData);
+        UploadBase64FileResponseBean uploadResponse = uploadBase64File(uploadRequest);
+        
+        if (uploadResponse != null && uploadResponse.result() != null && uploadResponse.result().virtualPath() != null) {
+            return uploadResponse.result().virtualPath();
+        }
+        return null;
     }
 
     /**

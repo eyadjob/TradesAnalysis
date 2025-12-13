@@ -26,6 +26,7 @@ public class CountryController {
      * @param countryId The country ID for which to get the currency information (required).
      * @return The response containing the country currency information.
      */
+
     @GetMapping(path = CURRENCY_GET_COUNTRY_CURRENCY_INFO, produces = "application/json")
     public GetCountryCurrencyInfoResponseBean getCountryCurrencyInfo(
             @RequestParam(required = true) Integer countryId) {
@@ -92,6 +93,32 @@ public class CountryController {
             @RequestParam(required = false, defaultValue = "false") Boolean includeInActive) {
 
         return countryService.getCurrenciesForCombobox(includeInActive);
+    }
+
+    /**
+     * Get branches countries combobox items.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @return The response containing all branches countries combobox items.
+     */
+    @GetMapping(path = BRANCH_GET_BRANCHES_COUNTRIES_COMBOBOX_ITEMS, produces = "application/json")
+    public GetAllItemsComboboxItemsResponseBean getBranchesCountriesComboboxItems() {
+        return countryService.getBranchesCountriesComboboxItems();
+    }
+
+    /**
+     * Get nationalities for combobox.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param includeInActive Whether to include inactive nationalities (default: false).
+     * @return The response containing all nationalities for combobox.
+     */
+    @GetMapping(path = COUNTRY_GET_NATIONALITIES_FOR_COMBOBOX, produces = "application/json")
+    public GetAllItemsComboboxItemsResponseBean getNationalitiesForCombobox(
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive) {
+        return countryService.getNationalitiesForCombobox(includeInActive);
     }
 }
 

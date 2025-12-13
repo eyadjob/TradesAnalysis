@@ -1,5 +1,7 @@
 package com.controllers;
 
+import com.beans.contract.GetContractExtraItemsResponseBean;
+import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import com.services.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,71 @@ public class ContractController {
         }
 
         return contractService.getCountriesPhone(typeId, includeInActive, includeNotAssign);
+    }
+
+    /**
+     * Get extras names excluded from booking payment details.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @return The response containing a list of extras names excluded from booking payment details.
+     */
+    @GetMapping(path = CONTRACT_EXTRA_CONFIGURATION_GET_EXTRAS_NAMES_EXCLUDED, produces = "application/json")
+    public GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean getExtrasNamesExcludedFromBookingPaymentDetails() {
+        return contractService.getExtrasNamesExcludedFromBookingPaymentDetails();
+    }
+
+    /**
+     * Get contract extra items.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param branchId The branch ID (required).
+     * @param categoryId The category ID (required).
+     * @param rentalRatesSchemaPeriodId The rental rates schema period ID (required).
+     * @param operationType The operation type (required).
+     * @param contractType The contract type (required).
+     * @param source The source (required).
+     * @param includeInactive Whether to include inactive items (default: false).
+     * @param rentalTypeId The rental type ID (required).
+     * @return The response containing contract extra items.
+     */
+    @GetMapping(path = CONTRACT_EXTRA_CONFIGURATION_GET_CONTRACT_EXTRA_ITEMS, produces = "application/json")
+    public GetContractExtraItemsResponseBean getContractExtraItems(
+            @RequestParam(required = true) Integer branchId,
+            @RequestParam(required = true) Integer categoryId,
+            @RequestParam(required = true) Integer rentalRatesSchemaPeriodId,
+            @RequestParam(required = true) Integer operationType,
+            @RequestParam(required = true) Integer contractType,
+            @RequestParam(required = true) Integer source,
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInactive,
+            @RequestParam(required = true) Integer rentalTypeId) {
+
+        if (branchId == null) {
+            throw new IllegalArgumentException("branchId parameter is required.");
+        }
+        if (categoryId == null) {
+            throw new IllegalArgumentException("categoryId parameter is required.");
+        }
+        if (rentalRatesSchemaPeriodId == null) {
+            throw new IllegalArgumentException("rentalRatesSchemaPeriodId parameter is required.");
+        }
+        if (operationType == null) {
+            throw new IllegalArgumentException("operationType parameter is required.");
+        }
+        if (contractType == null) {
+            throw new IllegalArgumentException("contractType parameter is required.");
+        }
+        if (source == null) {
+            throw new IllegalArgumentException("source parameter is required.");
+        }
+        if (rentalTypeId == null) {
+            throw new IllegalArgumentException("rentalTypeId parameter is required.");
+        }
+
+        return contractService.getContractExtraItems(
+                branchId, categoryId, rentalRatesSchemaPeriodId, operationType,
+                contractType, source, includeInactive, rentalTypeId);
     }
 }
 

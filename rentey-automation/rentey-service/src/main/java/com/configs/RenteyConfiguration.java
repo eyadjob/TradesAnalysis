@@ -71,6 +71,12 @@ public class RenteyConfiguration {
         return apiBasePath;
     }
 
+    @Bean("apiBasePathWithoutService")
+    public String apiBasePathWithoutService(@Value("${settings.api.api-base-path.without.service}") String apiBasePath) {
+        return apiBasePath;
+    }
+
+
     @Bean("authorizationWebClient")
     public WebClient authorizationWebClient(@Value("${authorization.service.base-url}") String baseUrl) {
         return WebClient.builder()
