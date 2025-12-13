@@ -31,6 +31,10 @@ public class VehicleService {
     @Qualifier("apiBasePath")
     private String apiBasePath;
 
+    @Qualifier("apiBasePathWithoutService")
+    private String apiBasePathWithoutService;
+
+
     /**
      * Get insurance company combobox items.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
@@ -346,14 +350,34 @@ public class VehicleService {
      * @return The response containing the uploaded file information.
      */
     @LogExecutionTime
+    @Cacheable(cacheNames = "uploadBase64FileCachedData", keyGenerator = "AutoKeyGenerator")
     public UploadBase64FileResponseBean uploadBase64File(UploadBase64FileRequestBean request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
-                .uri(apiBasePath + "/FileUpload/UploadBase64File")
+                .uri(apiBasePathWithoutService + "/FileUpload/UploadBase64File")
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(UploadBase64FileResponseBean.class)
                 .block();
+    }
+
+    /**
+     * Upload signature image as base64 and return the virtual path.
+     * This method uploads a default signature image and returns its virtual path.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @return The virtual path of the uploaded signature image, or null if upload fails.
+     */
+    @LogExecutionTime
+    public String uploadSignatureImage() {
+        String base64ImageData = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAD6APoDAREAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJ/4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/9k=";
+        UploadBase64FileRequestBean uploadRequest = new UploadBase64FileRequestBean(base64ImageData);
+        UploadBase64FileResponseBean uploadResponse = uploadBase64File(uploadRequest);
+        
+        if (uploadResponse != null && uploadResponse.result() != null && uploadResponse.result().virtualPath() != null) {
+            return uploadResponse.result().virtualPath();
+        }
+        return null;
     }
 
     /**

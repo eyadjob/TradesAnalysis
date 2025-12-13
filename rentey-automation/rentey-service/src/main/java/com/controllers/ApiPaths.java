@@ -15,6 +15,9 @@ public final class ApiPaths {
      * Base path for all service API endpoints.
      */
     public static final String BASE_PATH = "/api/services/app";
+
+    public static final String BASE_PATH_WITHOUT_SERVICE = "/api";
+
     
     // Permission endpoints
     public static final String PERMISSION_GET_ALL = "/Permission/GetAllPermissions";
@@ -47,7 +50,8 @@ public final class ApiPaths {
 
     // File Upload endpoints
     public static final String FILE_UPLOAD_BASE64 = "/FileUpload/UploadBase64File";
-    
+
+
     // Lookups endpoints
     public static final String LOOKUPS_GET_ALL_ITEMS_COMBOBOX = "/Lookups/GetAllItemsComboboxItems";
     public static final String LOOKUPS_GET_TYPES_COMBOBOX = "/Lookups/GetTypesComboboxItems";

@@ -1,6 +1,7 @@
 package com.services;
 
 import com.annotation.LogExecutionTime;
+import com.beans.country.GetCountryCurrencyInfoResponseBean;
 import com.beans.general.AbpResponseBean;
 import com.beans.vehicle.*;
 import com.enums.VehicleCheckTypes;
@@ -28,17 +29,15 @@ public class VehicleOperationsService {
     private static final Logger logger = LoggerFactory.getLogger(VehicleOperationsService.class);
     private static final Random random = new Random();
     private static final Map<String, String> userDefinedVariables = PropertyManager.loadPropertyFileIntoMap("user-defined-variables.properties");
-    
+
     @Autowired
     private VehicleService vehicleService;
-    
+
     @Autowired
     private LookupsService lookupsService;
-    
+
     @Autowired
     private CountryService countryService;
-
-
 
 
     /**
@@ -53,49 +52,49 @@ public class VehicleOperationsService {
     public CreateVehiclesResponseBean createVehicleWithRandomPlateNumber(String countryName, String branchName) {
         int countryId = Integer.parseInt(countryService.getOperationalCountryIdFromName(countryName));
         logger.info("Creating vehicle with random plate number for countryId: {}", countryId);
-        
+
         // Call VehicleService methods through injected service to ensure caching works
         String insuranceCompanyId = vehicleService.getInsuranceCompanyIdByName(
                 vehicleService.getInsuranceCompanyComboboxItems(countryId),
                 userDefinedVariables.get("automationOrganizationName"));
-        
+
         String accidentPolicyId = vehicleService.getAccidentPolicyNumberByOrganizationName(
                 vehicleService.getAllAccidentPolicies(countryId),
                 userDefinedVariables.get("automationOrganizationName"));
-        
+
         String branchId = countryService.getBranchIdByName(
                 countryService.getUserBranchesForCombobox(countryId, new ArrayList<>(List.of(8900, 8902))),
                 branchName);
-        
+
         String vehicleFuelTypeId = lookupsService.getComboboxItemValueByDisplayText(
                 vehicleService.getFuelTypesForCombobox(countryId),
                 userDefinedVariables.get("automationFuelTypeName"));
-        
+
         String vehicleFuelLevelId = lookupsService.getComboboxItemValueByDisplayText(
                 lookupsService.getAllItemsComboboxItems(12), "100%");
-        
+
         String vehicleColorId = lookupsService.getComboboxItemValueByDisplayText(
                 lookupsService.getAllItemsComboboxItems(13),
                 userDefinedVariables.get("automationColourName"));
-        
+
         String vehicleUsageTypeId = lookupsService.getComboboxItemValueByDisplayText(
                 lookupsService.getAllItemsComboboxItems(11), "Rental");
-        
+
         String vehicleLicenseTypeId = lookupsService.getComboboxItemValueByDisplayText(
                 lookupsService.getAllItemsComboboxItems(10), "Private");
-        
+
         String vehicleTrimLevelId = lookupsService.getComboboxItemValueByDisplayText(
                 lookupsService.getAllItemsComboboxItems(14),
                 userDefinedVariables.get("automationTrimLevel"));
-        
+
         String vehicleVendorId = vehicleService.getVendorIdByName(
                 vehicleService.getVendorComboboxItems(),
                 userDefinedVariables.get("automationVendorName"));
-        
+
         String carModelId = vehicleService.getCarModelIdByName(
                 vehicleService.getAllCarModels(),
                 userDefinedVariables.get("automationCarModelName"));
-        
+
         String randomPlateNumber = generateRandomPlateNumber();
         String chassisNo = NumberUtil.generateRandomNumericString(17);
 
@@ -148,7 +147,7 @@ public class VehicleOperationsService {
 
         // Call createVehicles through VehicleService
         CreateVehiclesResponseBean createVehiclesResponseBean = vehicleService.createVehicles(request);
-        createVehiclesResponseBean.vehiclePlateNumber = randomPlateNumber;
+        CreateVehiclesResponseBean.vehiclePlateNumber = randomPlateNumber;
 
         return createVehiclesResponseBean;
     }
@@ -167,7 +166,7 @@ public class VehicleOperationsService {
         logger.info("Creating and receiving new vehicle for country: {}, branch: {}", countryName, branchName);
 
         CreateVehiclesResponseBean createResponse = createVehicleWithRandomPlateNumber(countryName, branchName);
-        
+
         if (createResponse == null || !Boolean.TRUE.equals(createResponse.success())) {
             logger.error("Failed to create vehicle. Response: {}", createResponse);
             throw new RuntimeException("Failed to create vehicle: " + (createResponse != null ? createResponse.error() : "Unknown error"));
@@ -178,7 +177,7 @@ public class VehicleOperationsService {
                 countryService.getUserBranchesForCombobox(countryId, new ArrayList<>(List.of(8900, 8902))),
                 branchName);
 
-        GetAllBranchVehiclesResponseBean vehiclesResponse = vehicleService.getAllBranchVehicles(countryId, Integer.parseInt(branchId),CreateVehiclesResponseBean.vehiclePlateNumber);
+        GetAllBranchVehiclesResponseBean vehiclesResponse = vehicleService.getAllBranchVehicles(countryId, Integer.parseInt(branchId), CreateVehiclesResponseBean.vehiclePlateNumber);
         GetAllBranchVehiclesResponseBean.BranchVehicle createdVehicle = vehiclesResponse.result().data().get(0);
         Integer vehicleId = createdVehicle.id();
         String plateNumber = createdVehicle.plateNo();
@@ -186,133 +185,110 @@ public class VehicleOperationsService {
 
         Integer checkTypeId = VehicleCheckTypes.RECEIVE_VEHICLE.getId();
         Integer sourceId = 120;
-        GetVehicleCheckPreparationDataResponseBean preparationData = 
-                vehicleService.getVehicleCheckPreparationData(vehicleId, checkTypeId, sourceId);
-        
+        GetVehicleCheckPreparationDataResponseBean preparationData = vehicleService.getVehicleCheckPreparationData(vehicleId, checkTypeId, sourceId);
+
         if (preparationData == null || preparationData.result() == null) {
             logger.error("Failed to get vehicle check preparation data");
             throw new RuntimeException("Failed to get vehicle check preparation data");
         }
-        GetVehicleCheckPreparationDataResponseBean.VehicleCheckPreparationDataResult prepResult = 
+        GetVehicleCheckPreparationDataResponseBean.VehicleCheckPreparationDataResult prepResult =
                 preparationData.result();
 
         ReceiveNewVehicleRequestBean receiveRequest = buildReceiveNewVehicleRequest(
                 vehicleId,
                 prepResult,
-                createdVehicle
+                createdVehicle,
+                checkTypeId
         );
-        
+
         // Step 6: Call receiveNewVehicle
         logger.info("Receiving new vehicle with ID: {}", vehicleId);
         return vehicleService.receiveNewVehicle(receiveRequest);
     }
-    
+
     /**
      * Build the ReceiveNewVehicle request payload from preparation data.
      */
     private ReceiveNewVehicleRequestBean buildReceiveNewVehicleRequest(
             Integer vehicleId,
             GetVehicleCheckPreparationDataResponseBean.VehicleCheckPreparationDataResult prepResult,
-            GetAllBranchVehiclesResponseBean.BranchVehicle vehicle) {
-        
-        // Get fuel ID from preparation data or vehicle
-        Integer fuelId = prepResult.fuelId() != null ? prepResult.fuelId() : vehicle.fuelId();
-        
-        // Get odometer from preparation data or vehicle (use minimum if available)
-        Integer odometer = prepResult.odometer() != null ? prepResult.odometer() : 
-                          (prepResult.minimumOdomter() != null ? prepResult.minimumOdomter() : 
-                           (vehicle.odometer() != null ? vehicle.odometer() : 22));
-        
-        // Build signature (using a placeholder URL - in real scenario, this would be uploaded)
-        ReceiveNewVehicleRequestBean.Signature signature = new ReceiveNewVehicleRequestBean.Signature(
-                "https://pagwapi.rentey.com/webapigw/Temp/Downloads/placeholder-signature.jpeg"
-        );
-        
-        // Build reference details
-        Integer checkTypeId = prepResult.checkType() != null && prepResult.checkType().id() != null ? 
-                prepResult.checkType().id() : 6;
-        ReceiveNewVehicleRequestBean.ReferenceDetails referenceDetails = 
+            GetAllBranchVehiclesResponseBean.BranchVehicle vehicle,
+            Integer checkTypeId) {
+        Integer fuelLevelId = Integer.parseInt(lookupsService.getComboboxItemValueByDisplayText(lookupsService.getAllItemsComboboxItems(12),vehicle.fuel()));
+        Integer odometer = prepResult.odometer() != null ? prepResult.odometer() :
+                (prepResult.minimumOdomter() != null ? prepResult.minimumOdomter() :
+                        (vehicle.odometer() != null ? vehicle.odometer() : 22));
+
+        String signatureUrl = vehicleService.uploadSignatureImage();
+
+        // Build signature with uploaded image URL
+        ReceiveNewVehicleRequestBean.Signature signature = new ReceiveNewVehicleRequestBean.Signature(signatureUrl);
+        ReceiveNewVehicleRequestBean.ReferenceDetails referenceDetails =
                 new ReceiveNewVehicleRequestBean.ReferenceDetails(checkTypeId);
-        
+
         // Build skeleton details
         ReceiveNewVehicleRequestBean.SkeletonDetails skeletonDetails = null;
-        if (prepResult.vehicleSkeletonDetails() != null) {
-            GetVehicleCheckPreparationDataResponseBean.VehicleSkeletonDetails skeleton = 
-                    prepResult.vehicleSkeletonDetails();
-            if (skeleton.image() != null) {
-                ReceiveNewVehicleRequestBean.ImageInfo skeletonImage = 
-                        new ReceiveNewVehicleRequestBean.ImageInfo(
-                                skeleton.image().id(),
-                                skeleton.image().url(),
-                                skeleton.image().isNewDocument()
-                        );
-                skeletonDetails = new ReceiveNewVehicleRequestBean.SkeletonDetails(
-                        skeleton.id(),
-                        skeletonImage
-                );
-            }
-        }
-        
-        // Build vehicle check damages from checklist details
+        GetVehicleCheckPreparationDataResponseBean.VehicleSkeletonDetails skeleton = prepResult.vehicleSkeletonDetails();
+        ReceiveNewVehicleRequestBean.ImageInfo skeletonImage = new ReceiveNewVehicleRequestBean.ImageInfo(
+                skeleton.image().id(),
+                skeleton.image().url(),
+                skeleton.image().isNewDocument()
+        );
+        skeletonDetails = new ReceiveNewVehicleRequestBean.SkeletonDetails(
+                skeleton.id(),
+                skeletonImage
+        );
+
         List<ReceiveNewVehicleRequestBean.CheckItemStatus> checkItemStatuses = new ArrayList<>();
-        if (prepResult.checklistDetails() != null) {
-            for (GetVehicleCheckPreparationDataResponseBean.ChecklistDetail checklist : prepResult.checklistDetails()) {
-                if (checklist.checkItems() != null) {
-                    for (GetVehicleCheckPreparationDataResponseBean.CheckItem checkItem : checklist.checkItems()) {
-                        // Use the first passed choice if available, otherwise first choice
-                        Integer choiceId = null;
-                        if (checkItem.passedChoices() != null && !checkItem.passedChoices().isEmpty()) {
-                            choiceId = checkItem.passedChoices().get(0);
-                        } else if (checkItem.choices() != null && !checkItem.choices().isEmpty()) {
-                            choiceId = checkItem.choices().get(0).id();
-                        }
-                        
-                        if (choiceId != null) {
-                            checkItemStatuses.add(new ReceiveNewVehicleRequestBean.CheckItemStatus(
-                                    checklist.id(),
-                                    checkItem.id(),
-                                    choiceId
-                            ));
-                        }
-                    }
+        for (GetVehicleCheckPreparationDataResponseBean.ChecklistDetail checklist : prepResult.checklistDetails()) {
+            for (GetVehicleCheckPreparationDataResponseBean.CheckItem checkItem : checklist.checkItems()) {
+                Integer choiceId = null;
+                choiceId = checkItem.passedChoices().get(0);
+                choiceId = checkItem.choices().get(0).id();
+
+                if (choiceId != null) {
+                    checkItemStatuses.add(new ReceiveNewVehicleRequestBean.CheckItemStatus(
+                            checklist.id(),
+                            checkItem.id(),
+                            choiceId
+                    ));
                 }
             }
         }
-        
-        ReceiveNewVehicleRequestBean.VehicleCheckDamages vehicleCheckDamages = 
+
+        ReceiveNewVehicleRequestBean.VehicleCheckDamages vehicleCheckDamages =
                 new ReceiveNewVehicleRequestBean.VehicleCheckDamages(
                         checkItemStatuses,
                         new ArrayList<>(), // skeletonBodyDamages
                         new ArrayList<>()  // otherDamages
                 );
-        
+
         // Build snapshots from snapshot details list
         List<ReceiveNewVehicleRequestBean.SnapshotItem> snapshots = new ArrayList<>();
-        if (prepResult.checkType() != null && prepResult.checkType().snapshotDetailsList() != null) {
-            for (GetVehicleCheckPreparationDataResponseBean.SnapshotDetails snapshotDetail : 
+            for (GetVehicleCheckPreparationDataResponseBean.SnapshotDetails snapshotDetail :
                     prepResult.checkType().snapshotDetailsList()) {
                 // Use placeholder URL for snapshots
-                ReceiveNewVehicleRequestBean.SnapshotImage snapshotImage = 
+                ReceiveNewVehicleRequestBean.SnapshotImage snapshotImage =
                         new ReceiveNewVehicleRequestBean.SnapshotImage(
-                                "https://pagwapi.rentey.com/webapigw/Temp/Downloads/placeholder-snapshot.jpeg"
+                                signatureUrl
                         );
-                ReceiveNewVehicleRequestBean.Snapshot snapshot = 
+                ReceiveNewVehicleRequestBean.Snapshot snapshot =
                         new ReceiveNewVehicleRequestBean.Snapshot(snapshotImage);
                 snapshots.add(new ReceiveNewVehicleRequestBean.SnapshotItem(
                         snapshotDetail.snapshotId(),
                         snapshot
                 ));
             }
-        }
-        
+
+        GetCountryCurrencyInfoResponseBean countryCurrencyInfo = countryService.getCountryCurrencyInfo(vehicle.countryId());
         // Build total damages cost
-        ReceiveNewVehicleRequestBean.Cost totalDamagesCost = 
-                new ReceiveNewVehicleRequestBean.Cost(0.0, 1); // value: 0, currencyId: 1
-        
+        ReceiveNewVehicleRequestBean.Cost totalDamagesCost =
+                new ReceiveNewVehicleRequestBean.Cost(0.0, countryCurrencyInfo.result().id()); // value: 0, currencyId: 1
+
         // Build the complete request
         return new ReceiveNewVehicleRequestBean(
                 vehicleId,
-                fuelId,
+                fuelLevelId,
                 odometer,
                 signature,
                 referenceDetails,
@@ -320,7 +296,7 @@ public class VehicleOperationsService {
                 vehicleCheckDamages,
                 snapshots,
                 totalDamagesCost,
-                null // damageStatusId
+                null
         );
     }
 

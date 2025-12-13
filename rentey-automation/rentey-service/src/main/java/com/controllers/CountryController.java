@@ -26,6 +26,7 @@ public class CountryController {
      * @param countryId The country ID for which to get the currency information (required).
      * @return The response containing the country currency information.
      */
+
     @GetMapping(path = CURRENCY_GET_COUNTRY_CURRENCY_INFO, produces = "application/json")
     public GetCountryCurrencyInfoResponseBean getCountryCurrencyInfo(
             @RequestParam(required = true) Integer countryId) {

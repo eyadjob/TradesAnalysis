@@ -66,7 +66,8 @@ public class CacheConfiguration implements CachingConfigurer {
                 "createOrUpdateCustomerCache",
                 "createVehiclesCache",
                 "allBranchVehiclesCache",
-                "vehicleCheckPreparationDataCache"
+                "vehicleCheckPreparationDataCache",
+                "uploadBase64FileCachedData"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above
