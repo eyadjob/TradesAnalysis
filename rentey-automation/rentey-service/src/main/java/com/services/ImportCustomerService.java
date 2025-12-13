@@ -5,9 +5,8 @@ import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.customer.CreateOrUpdateCustomerRequestBean;
 import com.beans.customer.CreateOrUpdateCustomerResponseBean;
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
-import com.beans.setting.GetOperationalCountriesResponseBean;
 import com.builders.CustomerDataBuilder;
-import com.enums.LookupType;
+import com.enums.LookupTypes;
 import com.pojo.CustomerCsvData;
 import com.util.CustomerCsvImportUtil;
 import com.util.DateUtil;
@@ -19,13 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 @Service
 public class ImportCustomerService {
@@ -236,7 +231,7 @@ public class ImportCustomerService {
         return new CreateOrUpdateCustomerRequestBean.DocumentDto(
                 "DriverLicenseDto",
                 issueCountryId,
-                getComboboxItemsValueByDisplayText("Driver License",getLookupTypeIdByName(LookupType.DRIVER_LICENSE_CATEGORY.getDisplayText())), // Default document type ID for Driver License
+                getComboboxItemsValueByDisplayText("Driver License",getLookupTypeIdByName(LookupTypes.DRIVER_LICENSE_CATEGORY.getDisplayText())), // Default document type ID for Driver License
                 getValueOrEmpty(csvData.licenseNo()),
                 null, // copyNumber not applicable for DriverLicense
                 DateUtil.formatDateToRenteyFormat(csvData.birthDate()), // Use birthDate as issueDate if available

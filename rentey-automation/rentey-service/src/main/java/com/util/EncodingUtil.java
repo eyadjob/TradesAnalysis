@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -31,12 +32,48 @@ public class EncodingUtil {
             if (encodedValue.contains("%")) {
                 return URLDecoder.decode(encodedValue, StandardCharsets.UTF_8);
             }
+
         } catch (Exception e) {
             // If decoding fails, use the original value
             logger.warn("Failed to decode request parameter, using original value: {}", e.getMessage());
         }
 
         return encodedValue;
+    }
+
+    /**
+     * Encodes a string for use in URL query parameters with single quotes and double-encoded spaces.
+     * Wraps the string in single quotes and URL encodes it, ensuring spaces are double-encoded.
+     * 
+     * Example: "Y G R 4515" -> "%27Y%2520G%2520R%25204515%27"
+     * 
+     * @param value The string to encode (e.g., plate number).
+     * @return The encoded string wrapped in single quotes with double-encoded spaces.
+     */
+    public static String encodeWithQuotesAndDoubleEncodedSpaces(String value) {
+        if (value == null) {
+            return "";
+        }
+        
+        // Wrap in single quotes
+        String quoted =  value;
+        
+        // First, replace spaces with %20 to prepare for double encoding
+        String withSpacesEncoded = quoted.replace(" ", "%20");
+        withSpacesEncoded = withSpacesEncoded.replace("'", "%27");
+
+        // URL encode the entire string
+        // This will encode: ' as %27, and %20 (already encoded spaces) as %2520
+        try {
+            return URLEncoder.encode(withSpacesEncoded, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            logger.warn("Failed to encode string, using original value: {}", e.getMessage());
+            return quoted;
+        }
+    }
+
+    public static String encodePlateNumberForKendo(String plateNumber) {
+        return "%27"+plateNumber.replace(" ", "%2520")+"%27";
     }
 }
 
