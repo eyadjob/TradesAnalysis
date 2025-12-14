@@ -2,6 +2,7 @@ package com.controllers;
 
 import com.beans.contract.GetContractExtraItemsResponseBean;
 import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
+import com.beans.contract.GetOpenContractDateInputsResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import com.services.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,6 +103,25 @@ public class ContractController {
         return contractService.getContractExtraItems(
                 branchId, categoryId, rentalRatesSchemaPeriodId, operationType,
                 contractType, source, includeInactive, rentalTypeId);
+    }
+
+    /**
+     * Get open contract date inputs.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param pickupBranch The pickup branch ID (required).
+     * @return The response containing open contract date inputs.
+     */
+    @GetMapping(path = CONTRACT_GET_OPEN_CONTRACT_DATE_INPUTS, produces = "application/json")
+    public GetOpenContractDateInputsResponseBean getOpenContractDateInputs(
+            @RequestParam(required = true) Integer pickupBranch) {
+
+        if (pickupBranch == null) {
+            throw new IllegalArgumentException("pickupBranch parameter is required.");
+        }
+
+        return contractService.getOpenContractDateInputs(pickupBranch);
     }
 }
 

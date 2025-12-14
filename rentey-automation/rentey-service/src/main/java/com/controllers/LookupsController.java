@@ -51,5 +51,21 @@ public class LookupsController {
 
         return lookupsService.getItemsByType(typeId, includeInActive);
     }
+
+    /**
+     * Get payment methods combobox items.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param includeInActive Whether to include inactive items (default: false).
+     * @param includeNotAssign Whether to include not assigned items (default: true).
+     * @return The response containing payment methods combobox items.
+     */
+    @GetMapping(path = PAYMENT_GET_PAYMENT_METHODS_COMBOBOX_ITEMS, produces = "application/json")
+    public GetAllItemsComboboxItemsResponseBean getPaymentMethodsComboboxItems(
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive,
+            @RequestParam(required = false, defaultValue = "true") Boolean includeNotAssign) {
+        return lookupsService.getPaymentMethodsComboboxItems(includeInActive, includeNotAssign);
+    }
 }
 

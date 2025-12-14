@@ -129,5 +129,35 @@ public class LookupsService {
         return "-1";
     }
 
+    /**
+     * Get payment methods combobox items.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param includeInActive Whether to include inactive items (default: false).
+     * @param includeNotAssign Whether to include not assigned items (default: true).
+     * @return The response containing payment methods combobox items.
+     */
+    @Cacheable(cacheNames = "paymentMethodsComboboxItemsCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetAllItemsComboboxItemsResponseBean getPaymentMethodsComboboxItems(Boolean includeInActive, Boolean includeNotAssign) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/Payment/GetPaymentMethodsComboboxItems");
+                    
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    if (includeNotAssign != null) {
+                        builder.queryParam("includeNotAssign", includeNotAssign);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllItemsComboboxItemsResponseBean.class)
+                .block();
+    }
 
 }

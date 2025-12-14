@@ -3,6 +3,7 @@ package com.services;
 import com.annotation.LogExecutionTime;
 import com.beans.contract.GetContractExtraItemsResponseBean;
 import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
+import com.beans.contract.GetOpenContractDateInputsResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -112,6 +113,27 @@ public class ContractService {
                 })
                 .retrieve()
                 .bodyToMono(GetContractExtraItemsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get open contract date inputs.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param pickupBranch The pickup branch ID (required).
+     * @return The response containing open contract date inputs.
+     */
+    @Cacheable(cacheNames = "openContractDateInputsCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetOpenContractDateInputsResponseBean getOpenContractDateInputs(Integer pickupBranch) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePath + "/Contract/GetOpenContractDateInputs")
+                        .queryParam("pickupBranch", pickupBranch)
+                        .build())
+                .retrieve()
+                .bodyToMono(GetOpenContractDateInputsResponseBean.class)
                 .block();
     }
 }

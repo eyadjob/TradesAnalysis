@@ -1,5 +1,10 @@
 package com.controllers;
 
+import com.beans.booking.CalculateBillingInformationRequestBean;
+import com.beans.booking.CalculateBillingInformationResponseBean;
+import com.beans.booking.CreateBookingRequestBean;
+import com.beans.booking.CreateBookingResponseBean;
+import com.beans.booking.GetBestRentalRateForModelResponseBean;
 import com.beans.booking.GetCreateBookingDateInputsResponseBean;
 import com.beans.customer.GetCustomerContractInformationByNameResponseBean;
 import com.beans.loyalty.GetAllExternalLoyaltiesConfigurationsItemsResponseBean;
@@ -134,6 +139,88 @@ public class BookingController {
         }
 
         return bookingService.getExternalLoyaltiesWithAllowRedeemCombobox(customerId, branchId);
+    }
+
+    /**
+     * Get best rental rate for model.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param countryId The country ID (required).
+     * @param branchId The branch ID (required).
+     * @param modelId The model ID (required).
+     * @param year The year (required).
+     * @param pickupDate The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @param dropoffDate The dropoff date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @return The response containing the best rental rate for the model.
+     */
+    @GetMapping(path = RENTAL_VEHICLE_GET_BEST_RENTAL_RATE_FOR_MODEL, produces = "application/json")
+    public GetBestRentalRateForModelResponseBean getBestRentalRateForModel(
+            @RequestParam(required = true) Integer countryId,
+            @RequestParam(required = true) Integer branchId,
+            @RequestParam(required = true) Integer modelId,
+            @RequestParam(required = true) Integer year,
+            @RequestParam(required = true) String pickupDate,
+            @RequestParam(required = true) String dropoffDate) {
+
+        if (countryId == null) {
+            throw new IllegalArgumentException("countryId parameter is required.");
+        }
+        if (branchId == null) {
+            throw new IllegalArgumentException("branchId parameter is required.");
+        }
+        if (modelId == null) {
+            throw new IllegalArgumentException("modelId parameter is required.");
+        }
+        if (year == null) {
+            throw new IllegalArgumentException("year parameter is required.");
+        }
+        if (pickupDate == null || pickupDate.isEmpty()) {
+            throw new IllegalArgumentException("pickupDate parameter is required.");
+        }
+        if (dropoffDate == null || dropoffDate.isEmpty()) {
+            throw new IllegalArgumentException("dropoffDate parameter is required.");
+        }
+
+        return bookingService.getBestRentalRateForModel(countryId, branchId, modelId, year, pickupDate, dropoffDate);
+    }
+
+    /**
+     * Calculate billing information.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param request The request containing booking information for billing calculation.
+     * @return The response containing calculated billing information.
+     */
+    @PostMapping(path = BOOKING_CALCULATE_BILLING_INFORMATION, consumes = "application/json", produces = "application/json")
+    public CalculateBillingInformationResponseBean calculateBillingInformation(
+            @RequestBody(required = true) CalculateBillingInformationRequestBean request) {
+
+        if (request == null) {
+            throw new IllegalArgumentException("Request body is required and cannot be null.");
+        }
+
+        return bookingService.calculateBillingInformation(request);
+    }
+
+    /**
+     * Create booking.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param request The request containing booking information to create a booking.
+     * @return The response containing the created booking information.
+     */
+    @PostMapping(path = CREATE_BOOKING_CREATE_BOOKING, consumes = "application/json", produces = "application/json")
+    public CreateBookingResponseBean createBooking(
+            @RequestBody(required = true) CreateBookingRequestBean request) {
+
+        if (request == null) {
+            throw new IllegalArgumentException("Request body is required and cannot be null.");
+        }
+
+        return bookingService.createBooking(request);
     }
 }
 
