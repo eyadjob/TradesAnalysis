@@ -78,7 +78,10 @@ public class CacheConfiguration implements CachingConfigurer {
                 "allExternalLoyaltiesConfigurationsItemsCache",
                 "integratedLoyaltiesCache",
                 "externalLoyaltiesWithAllowRedeemComboboxCache",
-                "contractExtraItemsCache"
+                "contractExtraItemsCache",
+                "paymentMethodsComboboxItemsCache",
+                "bestRentalRateForModelCache",
+                "openContractDateInputsCache"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above

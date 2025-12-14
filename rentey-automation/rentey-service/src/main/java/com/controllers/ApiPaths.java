@@ -45,6 +45,7 @@ public final class ApiPaths {
     // Contract endpoints
     public static final String CONTRACT_EXTRA_CONFIGURATION_GET_EXTRAS_NAMES_EXCLUDED = "/ContractExtraConfiguration/GetExtrasNamesExcludedFromBookingPaymentDetails";
     public static final String CONTRACT_EXTRA_CONFIGURATION_GET_CONTRACT_EXTRA_ITEMS = "/ContractExtraConfiguration/GetContractExtraItems";
+    public static final String CONTRACT_GET_OPEN_CONTRACT_DATE_INPUTS = "/Contract/GetOpenContractDateInputs";
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
@@ -62,6 +63,9 @@ public final class ApiPaths {
     public static final String LOOKUPS_GET_ALL_ITEMS_COMBOBOX = "/Lookups/GetAllItemsComboboxItems";
     public static final String LOOKUPS_GET_TYPES_COMBOBOX = "/Lookups/GetTypesComboboxItems";
     public static final String LOOKUPS_GET_ITEMS_BY_TYPE = "/Lookups/GetItemsByType";
+    
+    // Payment endpoints
+    public static final String PAYMENT_GET_PAYMENT_METHODS_COMBOBOX_ITEMS = "/Payment/GetPaymentMethodsComboboxItems";
     
     // Insurance Company endpoints
     public static final String INSURANCE_COMPANY_GET_COMBOBOX_ITEMS = "/InsuranceCompany/GetInsuranceCompanyComboboxItems";
@@ -83,11 +87,16 @@ public final class ApiPaths {
     public static final String VEHICLE_CREATE_WITH_RANDOM_PLATE = "/Vehicle/CreateVehicleWithRandomPlateNumber";
     public static final String VEHICLE_CREATE_AND_RECEIVE = "/Vehicle/CreateAndRecieveVehicler";
     public static final String RENTAL_VEHICLE_GET_ALL_BRANCH_VEHICLES = "/RentalVehicle/GetAllBranchVehicles";
+    public static final String RENTAL_VEHICLE_GET_BEST_RENTAL_RATE_FOR_MODEL = "/RentalVehicle/GetBestRentalRateForModel";
     public static final String VEHICLE_CHECK_GET_PREPARATION_DATA = "/VehicleCheck/GetVehicleCheckPreparationData";
     public static final String RENTAL_VEHICLE_RECEIVE_NEW_VEHICLE = "/RentalVehicle/ReceiveNewVehicle";
     
     // Booking endpoints
     public static final String BOOKING_GET_CREATE_BOOKING_DATE_INPUTS = "/Booking/GetCreateBookingDateInputs";
+    public static final String BOOKING_CALCULATE_BILLING_INFORMATION = "/Booking/CalculateBillingInformation";
+    
+    // Create Booking endpoints
+    public static final String CREATE_BOOKING_CREATE_BOOKING = "/CreateBooking/CreateBooking";
     
     // Validation endpoints
     public static final String VALIDATE_PHONE_IS_VALID = "/ValidatePhone/IsValid";

@@ -1,6 +1,11 @@
 package com.services;
 
 import com.annotation.LogExecutionTime;
+import com.beans.booking.CalculateBillingInformationRequestBean;
+import com.beans.booking.CalculateBillingInformationResponseBean;
+import com.beans.booking.CreateBookingRequestBean;
+import com.beans.booking.CreateBookingResponseBean;
+import com.beans.booking.GetBestRentalRateForModelResponseBean;
 import com.beans.booking.GetCreateBookingDateInputsResponseBean;
 import com.beans.customer.GetCustomerContractInformationByNameResponseBean;
 import com.beans.loyalty.GetAllExternalLoyaltiesConfigurationsItemsResponseBean;
@@ -160,6 +165,79 @@ public class BookingService {
                         .build())
                 .retrieve()
                 .bodyToMono(GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get best rental rate for model.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param countryId The country ID (required).
+     * @param branchId The branch ID (required).
+     * @param modelId The model ID (required).
+     * @param year The year (required).
+     * @param pickupDate The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @param dropoffDate The dropoff date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @return The response containing the best rental rate for the model.
+     */
+    @Cacheable(cacheNames = "bestRentalRateForModelCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetBestRentalRateForModelResponseBean getBestRentalRateForModel(
+            Integer countryId,
+            Integer branchId,
+            Integer modelId,
+            Integer year,
+            String pickupDate,
+            String dropoffDate) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePath + "/RentalVehicle/GetBestRentalRateForModel")
+                        .queryParam("CountryId", countryId)
+                        .queryParam("BranchId", branchId)
+                        .queryParam("ModelId", modelId)
+                        .queryParam("Year", year)
+                        .queryParam("PickupDate", pickupDate)
+                        .queryParam("DropoffDate", dropoffDate)
+                        .build())
+                .retrieve()
+                .bodyToMono(GetBestRentalRateForModelResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Calculate billing information.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param request The request containing booking information for billing calculation.
+     * @return The response containing calculated billing information.
+     */
+    @LogExecutionTime
+    public CalculateBillingInformationResponseBean calculateBillingInformation(CalculateBillingInformationRequestBean request) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.post()
+                .uri(apiBasePath + "/Booking/CalculateBillingInformation")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(CalculateBillingInformationResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Create booking.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param request The request containing booking information to create a booking.
+     * @return The response containing the created booking information.
+     */
+    @LogExecutionTime
+    public CreateBookingResponseBean createBooking(CreateBookingRequestBean request) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.post()
+                .uri(apiBasePath + "/CreateBooking/CreateBooking")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(CreateBookingResponseBean.class)
                 .block();
     }
 }
