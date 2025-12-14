@@ -32,19 +32,13 @@ public class BookingOperationsService {
     CustomerService customerService;
 
     @Autowired
-    ImportCustomerService importCustomerService;
+    CustomerOperationsService customerOperationsService;
 
 
     public CreateBookingResponseBean createNewBooking(String countryName, String branchName) {
-        CreateOrUpdateCustomerRequestBean createOrUpdateCustomerRequestBean = importCustomerService.buildRequestFromCsvData(customerCsvData);
-        CreateOrUpdateCustomerResponseBean response = customerService.createOrUpdateCustomer(createOrUpdateCustomerRequestBean);
+        CreateOrUpdateCustomerResponseBean createOrUpdateCustomerResponseBean = customerOperationsService.createCustomerWithRandomData("Saudi Arabia");
         CreateVehiclesResponseBean createResponse = vehicleOperationsService.createVehicleWithRandomPlateNumber(countryName, branchName);
         vehicleOperationsService.createAndReceiveNewVehicle(countryName, branchName,createResponse);
-
-
-
-
-
 
     }
 }

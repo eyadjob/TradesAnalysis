@@ -4,12 +4,15 @@ import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.customer.CreateOrUpdateCustomerRequestBean;
 import com.beans.customer.CreateOrUpdateCustomerResponseBean;
+import com.enums.LookupTypes;
+import com.pojo.CustomerCsvData;
+import com.util.DateUtil;
 import com.util.ObjectMapperUtil;
+import com.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -28,6 +31,13 @@ public class CustomerService {
     @Autowired
     @Qualifier("apiBasePath")
     private String apiBasePath;
+
+    @Autowired
+    private LookupsService lookupsService;
+
+    @Autowired
+    private CountryService countryService;
+
 
     /**
      * Create or update a customer.
@@ -58,6 +68,130 @@ public class CustomerService {
             logger.error("===================================");
         }).block();
     }
-     
+
+
+    /**
+     * Builds a Driver License Document from CSV data.
+     *
+     * @param csvData The CSV data containing driver license information
+     * @return DocumentDto for driver license document
+     */
+    public CreateOrUpdateCustomerRequestBean.DocumentDto buildDriverLicenseDocument(CustomerCsvData csvData) {
+        String issueCountryId = String.valueOf(lookupsService.getNationalityIdByName(csvData.licenseIssueCountry()));
+        CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
+                "", // URL - empty for CSV import
+                0,  // Size
+                ""  // Type
+        );
+
+        return new CreateOrUpdateCustomerRequestBean.DocumentDto(
+                "DriverLicenseDto",
+                issueCountryId,
+                lookupsService.getComboboxItemsValueByDisplayText("Driver License", lookupsService.getLookupTypeIdByName(LookupTypes.DRIVER_LICENSE_CATEGORY.getDisplayText())), // Default document type ID for Driver License
+                StringUtil.getValueOrEmpty(csvData.licenseNo()),
+                null, // copyNumber not applicable for DriverLicense
+                DateUtil.formatDateToRenteyFormat(csvData.birthDate()), // Use birthDate as issueDate if available
+                DateUtil.formatDateToRenteyFormat(csvData.licenseExpiryDate()),
+                "Driver License",
+                lookupsService.getCountryNameByIsoCode(csvData.licenseIssueCountry()),
+                attachment,
+                "-1" // Default licenseCategoryId
+        );
+    }
+
+
+    /**
+     * Builds an Identity Document from CSV data.
+     *
+     * @param csvData The CSV data containing document information
+     * @return DocumentDto for identity document
+     */
+    public CreateOrUpdateCustomerRequestBean.DocumentDto buildIdentityDocument(CustomerCsvData csvData) {
+        String issueCountryId = String.valueOf(lookupsService.getNationalityIdByName(csvData.documentIssueCountry()));
+        String documentTypeId = lookupsService.getComboboxItemsValueByDisplayText(csvData.documentType(), 17);
+
+        CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
+                "", // URL - empty for CSV import
+                0,  // Size
+                ""  // Type
+        );
+
+        return new CreateOrUpdateCustomerRequestBean.DocumentDto(
+                "IdentityDto",
+                issueCountryId,
+                documentTypeId,
+                StringUtil.getValueOrEmpty(csvData.documentNumber()),
+                1, // Default copyNumber
+                DateUtil.formatDateToRenteyFormat(csvData.birthDate()), // Use birthDate as issueDate if available
+                DateUtil.formatDateToRenteyFormat(csvData.documentExpireDate()),
+                "Identity",
+                lookupsService.getCountryNameByIsoCode(csvData.documentIssueCountry()),
+                attachment,
+                null
+        );
+    }
+
+    /**
+     * Builds an Identity Document from CSV data.
+     *
+     *
+     * @return DocumentDto for identity document
+     */
+    public CreateOrUpdateCustomerRequestBean.DocumentDto buildCustomerDocument(String documentDiscriminator, String documentIssueCountry,String documentType, String issueCountryId, String documentNumber, String birthDate, String documentExpirationDate) {
+        String documentTypeId = lookupsService.getComboboxItemsValueByDisplayText(documentType, 17);
+        CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
+                "", // URL - empty for CSV import
+                0,  // Size
+                ""  // Type
+        );
+
+        return new CreateOrUpdateCustomerRequestBean.DocumentDto(
+                documentDiscriminator,
+                issueCountryId,
+                documentTypeId,
+                StringUtil.getValueOrEmpty(documentNumber),
+                1, // Default copyNumber
+                DateUtil.formatDateToRenteyFormat(birthDate), // Use birthDate as issueDate if available
+                DateUtil.formatDateToRenteyFormat(documentExpirationDate),
+                documentType,
+                documentIssueCountry,
+                attachment,
+                null
+        );
+    }
+
+    /**
+     * Builds an Identity Document with just a document number.
+     * Uses default values for other fields (SAU country, default document type).
+     *
+     * @param documentNumber The document number
+     * @return DocumentDto for identity document
+     */
+    public CreateOrUpdateCustomerRequestBean.DocumentDto buildIdentityDocument( String countryName,String documentNumber) {
+        String countryId = countryService.getOperationalCountryIdFromName(countryName);
+        String documentTypeId = lookupsService.getComboboxItemsValueByDisplayText("National ID", 17);
+        if (documentTypeId == null) {
+            documentTypeId = "-1"; // Default if not found
+        }
+        CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
+                "", // URL - empty
+                0,  // Size
+                ""  // Type
+        );
+
+        return new CreateOrUpdateCustomerRequestBean.DocumentDto(
+                "IdentityDto",
+                countryId,
+                documentTypeId,
+                StringUtil.getValueOrEmpty(documentNumber),
+                1, // Default copyNumber
+                DateUtil.formatDateToRenteyFormat(""), // Empty date
+                DateUtil.formatDateToRenteyFormat(""), // Empty date
+                "Identity",
+                countryName,
+                attachment,
+                null
+        );
+    }
 }
 

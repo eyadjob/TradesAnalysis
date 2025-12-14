@@ -4,9 +4,7 @@ import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.customer.CreateOrUpdateCustomerRequestBean;
 import com.beans.customer.CreateOrUpdateCustomerResponseBean;
-import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.builders.CustomerDataBuilder;
-import com.enums.LookupTypes;
 import com.pojo.CustomerCsvData;
 import com.util.CustomerCsvImportUtil;
 import com.util.DateUtil;
@@ -57,6 +55,7 @@ public class ImportCustomerService {
     public ImportCustomerService() {
 
     }
+
     @LogRequestAndResponseOnDesk
     @LogExecutionTime
     public CreateOrUpdateCustomerResponseBean importCustomerRecordsToSystemFromCsvFile() {
@@ -72,13 +71,13 @@ public class ImportCustomerService {
                 CreateOrUpdateCustomerRequestBean createOrUpdateCustomerRequestBean = buildRequestFromCsvData(customerCsvData);
                 CreateOrUpdateCustomerResponseBean response = customerService.createOrUpdateCustomer(createOrUpdateCustomerRequestBean);
                 responses.add(response);
-                
+
                 // Extract response code and message
                 String responseCode = extractResponseCode(response);
                 String responseMessage = extractResponseMessage(response);
                 responseCodes.add(responseCode);
                 responseMessages.add(responseMessage);
-                
+
                 logger.info("Successfully imported customer: {} {} {} - Code: {}, Message: {}",
                         customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName(),
                         responseCode, responseMessage);
@@ -89,7 +88,7 @@ public class ImportCustomerService {
                 responseCodes.add(errorCode);
                 responseMessages.add(errorMessage);
                 responses.add(null); // Add null to maintain list alignment
-                
+
                 logger.error("Failed to import customer: {} {} {} - Status: {}, Error: {}",
                         customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName(),
                         errorCode, errorMessage, e);
@@ -100,7 +99,7 @@ public class ImportCustomerService {
                 responseCodes.add(errorCode);
                 responseMessages.add(errorMessage);
                 responses.add(null); // Add null to maintain list alignment
-                
+
                 logger.error("Failed to import customer: {} {} {} - Error: {}",
                         customerCsvData.firstName(), customerCsvData.secondName(), customerCsvData.familyName(),
                         errorMessage, e);
@@ -156,8 +155,8 @@ public class ImportCustomerService {
 
         // Map Basic Information
         builder.withBasicInformation(
-                String. valueOf(lookupsService.getNationalityIdByName(csvData.nationality())),
-                lookupsService.getComboboxItemsValueByDisplayText(csvData.gender(),6),
+                String.valueOf(lookupsService.getNationalityIdByName(csvData.nationality())),
+                lookupsService.getComboboxItemsValueByDisplayText(csvData.gender(), 6),
                 DateUtil.formatDateToRenteyFormat(csvData.birthDate())
         );
 
@@ -170,13 +169,13 @@ public class ImportCustomerService {
 
         // Add Identity Document if DocumentNumber is provided
         if (isNotEmpty(csvData.documentNumber())) {
-            CreateOrUpdateCustomerRequestBean.DocumentDto identityDocument = buildIdentityDocument(csvData);
+            CreateOrUpdateCustomerRequestBean.DocumentDto identityDocument = customerService.buildIdentityDocument(csvData);
             builder.withDocument(identityDocument);
         }
 
         // Add Driver License Document if licenseNo is provided
         if (isNotEmpty(csvData.licenseNo())) {
-            CreateOrUpdateCustomerRequestBean.DocumentDto driverLicenseDocument = buildDriverLicenseDocument(csvData);
+            CreateOrUpdateCustomerRequestBean.DocumentDto driverLicenseDocument = customerService.buildDriverLicenseDocument(csvData);
             builder.withDocument(driverLicenseDocument);
         }
 
@@ -184,111 +183,6 @@ public class ImportCustomerService {
     }
 
 
-    /**
-     * Builds CreateOrUpdateCustomerRequestBean from CustomerCsvData.
-     *
-     * @param csvData The CSV data to map
-     * @return CreateOrUpdateCustomerRequestBean populated with CSV data
-     */
-    private CreateOrUpdateCustomerRequestBean buildRequestFromCsvData(CustomerCsvData csvData) {
-        CustomerDataBuilder builder = CustomerDataBuilder.create();
-
-        // Map Full Name
-        builder.withFullName(
-                StringUtil.getValueOrEmpty(csvData.firstName()),
-                StringUtil.getValueOrEmpty(csvData.secondName()),
-                StringUtil.getValueOrEmpty(csvData.familyName())
-        );
-
-        // Map Contact Information
-        builder.withContactInformation(
-                StringUtil.getValueOrEmpty(csvData.primaryPhone()),
-                StringUtil.getValueOrEmpty("")
-        );
-
-        // Map Basic Information
-        builder.withBasicInformation(
-                String. valueOf(lookupsService.getNationalityIdByName(csvData.nationality())),
-                lookupsService.getComboboxItemsValueByDisplayText(csvData.gender(),6),
-                DateUtil.formatDateToRenteyFormat(csvData.birthDate())
-        );
-
-        // Map Address (using DocumentIssueCountry as default, or "1" if not available)
-        String countryId = String.valueOf(lookupsService.getNationalityIdByName(csvData.documentIssueCountry()));
-        builder.withAddress(countryId, -1); // -1 for cityId as default
-
-        // Clear default documents and build from CSV data
-        builder.clearDocuments();
-
-        // Add Identity Document if DocumentNumber is provided
-        if (isNotEmpty(csvData.documentNumber())) {
-            CreateOrUpdateCustomerRequestBean.DocumentDto identityDocument = buildIdentityDocument(csvData);
-            builder.withDocument(identityDocument);
-        }
-
-        // Add Driver License Document if licenseNo is provided
-        if (isNotEmpty(csvData.licenseNo())) {
-            CreateOrUpdateCustomerRequestBean.DocumentDto driverLicenseDocument = buildDriverLicenseDocument(csvData);
-            builder.withDocument(driverLicenseDocument);
-        }
-
-        return builder.build();
-    }
-
-
-    /**
-     * Builds an Identity Document from CSV data.
-     */
-    private CreateOrUpdateCustomerRequestBean.DocumentDto buildIdentityDocument(CustomerCsvData csvData) {
-        String issueCountryId = String.valueOf(lookupsService.getNationalityIdByName(csvData.documentIssueCountry()));
-        String documentTypeId = lookupsService.getComboboxItemsValueByDisplayText(csvData.documentType(),17);
-
-        CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
-                "", // URL - empty for CSV import
-                0,  // Size
-                ""  // Type
-        );
-
-        return new CreateOrUpdateCustomerRequestBean.DocumentDto(
-                "IdentityDto",
-                issueCountryId,
-                documentTypeId,
-                StringUtil.getValueOrEmpty(csvData.documentNumber()),
-                1, // Default copyNumber
-                DateUtil.formatDateToRenteyFormat(csvData.birthDate()), // Use birthDate as issueDate if available
-                DateUtil.formatDateToRenteyFormat(csvData.documentExpireDate()),
-                "Identity",
-                lookupsService.getCountryNameByIsoCode(csvData.documentIssueCountry()),
-                attachment,
-                null
-        );
-    }
-
-    /**
-     * Builds a Driver License Document from CSV data.
-     */
-    private CreateOrUpdateCustomerRequestBean.DocumentDto buildDriverLicenseDocument(CustomerCsvData csvData) {
-        String issueCountryId = String.valueOf(lookupsService.getNationalityIdByName(csvData.licenseIssueCountry()));
-        CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
-                "", // URL - empty for CSV import
-                0,  // Size
-                ""  // Type
-        );
-
-        return new CreateOrUpdateCustomerRequestBean.DocumentDto(
-                "DriverLicenseDto",
-                issueCountryId,
-                lookupsService.getComboboxItemsValueByDisplayText("Driver License",lookupsService.getLookupTypeIdByName(LookupTypes.DRIVER_LICENSE_CATEGORY.getDisplayText())), // Default document type ID for Driver License
-                StringUtil.getValueOrEmpty(csvData.licenseNo()),
-                null, // copyNumber not applicable for DriverLicense
-                DateUtil.formatDateToRenteyFormat(csvData.birthDate()), // Use birthDate as issueDate if available
-                DateUtil.formatDateToRenteyFormat(csvData.licenseExpiryDate()),
-                "Driver License",
-                lookupsService.getCountryNameByIsoCode(csvData.licenseIssueCountry()),
-                attachment,
-                "-1" // Default licenseCategoryId
-        );
-    }
 
 
     /**
@@ -356,7 +250,7 @@ public class ImportCustomerService {
             if (responseBody != null && !responseBody.trim().isEmpty()) {
                 com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
                 com.fasterxml.jackson.databind.JsonNode rootNode = mapper.readTree(responseBody);
-                
+
                 // Try to extract error message from ABP response structure
                 if (rootNode.has("error")) {
                     com.fasterxml.jackson.databind.JsonNode errorNode = rootNode.get("error");
@@ -367,14 +261,14 @@ public class ImportCustomerService {
                         return errorNode.asText();
                     }
                 }
-                
+
                 // If no error field, return the full response body (truncated if too long)
                 return responseBody.length() > 500 ? responseBody.substring(0, 500) + "..." : responseBody;
             }
         } catch (Exception ex) {
             logger.warn("Error parsing exception response body: {}", ex.getMessage());
         }
-        
+
         // Fallback to exception message
         return e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
     }
@@ -386,36 +280,6 @@ public class ImportCustomerService {
         return value != null && !value.trim().isEmpty();
     }
 
-    /**
-     * Generates an email address from first name and family name.
-     */
-    private String generateEmailFromName(String firstName, String familyName) {
-        String first = StringUtil.getValueOrEmpty(firstName).toLowerCase().replaceAll("[^a-z0-9]", "");
-        String family = StringUtil.getValueOrEmpty(familyName).toLowerCase().replaceAll("[^a-z0-9]", "");
-        if (first.isEmpty() && family.isEmpty()) {
-            return "customer@iyelo.com";
-        }
-        return (first + family + "@iyelo.com").toLowerCase();
-    }
-
-
-    /**
-     * Formats a date string. Returns empty string if null/empty, otherwise returns as is.
-     */
-    private String formatDate(String dateStr) {
-        if (!isNotEmpty(dateStr)) {
-            return "";
-        }
-        // If already in ISO format, return as is
-        if (dateStr.contains("T") || dateStr.contains("+") || dateStr.contains("Z")) {
-            return dateStr;
-        }
-        // Try to format common date formats
-        if (dateStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            return dateStr + "T00:00:00+03:00";
-        }
-        return dateStr;
-    }
 
 }
 
