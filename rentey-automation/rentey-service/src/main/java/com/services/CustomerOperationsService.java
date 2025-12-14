@@ -58,13 +58,13 @@ public class CustomerOperationsService {
 
         // Map Basic Information
         builder.withBasicInformation(
-                String. valueOf(getNationalityIdByName(csvData.nationality())),
-                getComboboxItemsValueByDisplayText(csvData.gender(),6),
-                DateUtil.formatDateToRenteyFormat(csvData.birthDate())
+                String. valueOf(lookupsService.getNationalityIdByName("SAU")),
+                lookupsService.getComboboxItemsValueByDisplayText("Male",6),
+                DateUtil.formatDateToRenteyFormat("withBasicInformation")
         );
 
         // Map Address (using DocumentIssueCountry as default, or "1" if not available)
-        String countryId = String.valueOf(getNationalityIdByName(csvData.documentIssueCountry()));
+        String countryId = String.valueOf(lookupsService.getNationalityIdByName(csvData.documentIssueCountry()));
         builder.withAddress(countryId, -1); // -1 for cityId as default
 
         // Clear default documents and build from CSV data
