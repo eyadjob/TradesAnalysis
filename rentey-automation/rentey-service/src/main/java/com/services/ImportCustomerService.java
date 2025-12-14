@@ -11,6 +11,7 @@ import com.pojo.CustomerCsvData;
 import com.util.CustomerCsvImportUtil;
 import com.util.DateUtil;
 import com.util.PropertyManager;
+import com.util.StringUtil;
 import com.util.XlsxWriterUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -149,15 +150,15 @@ public class ImportCustomerService {
 
         // Map Full Name
         builder.withFullName(
-                getValueOrEmpty(csvData.firstName()),
-                getValueOrEmpty(csvData.secondName()),
-                getValueOrEmpty(csvData.familyName())
+                StringUtil.getValueOrEmpty(csvData.firstName()),
+                StringUtil.getValueOrEmpty(csvData.secondName()),
+                StringUtil.getValueOrEmpty(csvData.familyName())
         );
 
         // Map Contact Information
         builder.withContactInformation(
-                getValueOrEmpty(csvData.primaryPhone()),
-                getValueOrEmpty("")
+                StringUtil.getValueOrEmpty(csvData.primaryPhone()),
+                StringUtil.getValueOrEmpty("")
         );
 
         // Map Basic Information
@@ -189,6 +190,59 @@ public class ImportCustomerService {
         return builder.build();
     }
 
+
+    /**
+     * Builds CreateOrUpdateCustomerRequestBean from CustomerCsvData.
+     *
+     * @param csvData The CSV data to map
+     * @return CreateOrUpdateCustomerRequestBean populated with CSV data
+     */
+    private CreateOrUpdateCustomerRequestBean buildRequestFromCsvData(CustomerCsvData csvData) {
+        CustomerDataBuilder builder = CustomerDataBuilder.create();
+
+        // Map Full Name
+        builder.withFullName(
+                StringUtil.getValueOrEmpty(csvData.firstName()),
+                StringUtil.getValueOrEmpty(csvData.secondName()),
+                StringUtil.getValueOrEmpty(csvData.familyName())
+        );
+
+        // Map Contact Information
+        builder.withContactInformation(
+                StringUtil.getValueOrEmpty(csvData.primaryPhone()),
+                StringUtil.getValueOrEmpty("")
+        );
+
+        // Map Basic Information
+        builder.withBasicInformation(
+                String. valueOf(getNationalityIdByName(csvData.nationality())),
+                getComboboxItemsValueByDisplayText(csvData.gender(),6),
+                DateUtil.formatDateToRenteyFormat(csvData.birthDate())
+        );
+
+        // Map Address (using DocumentIssueCountry as default, or "1" if not available)
+        String countryId = String.valueOf(getNationalityIdByName(csvData.documentIssueCountry()));
+        builder.withAddress(countryId, -1); // -1 for cityId as default
+
+        // Clear default documents and build from CSV data
+        builder.clearDocuments();
+
+        // Add Identity Document if DocumentNumber is provided
+        if (isNotEmpty(csvData.documentNumber())) {
+            CreateOrUpdateCustomerRequestBean.DocumentDto identityDocument = buildIdentityDocument(csvData);
+            builder.withDocument(identityDocument);
+        }
+
+        // Add Driver License Document if licenseNo is provided
+        if (isNotEmpty(csvData.licenseNo())) {
+            CreateOrUpdateCustomerRequestBean.DocumentDto driverLicenseDocument = buildDriverLicenseDocument(csvData);
+            builder.withDocument(driverLicenseDocument);
+        }
+
+        return builder.build();
+    }
+
+
     /**
      * Builds an Identity Document from CSV data.
      */
@@ -206,7 +260,7 @@ public class ImportCustomerService {
                 "IdentityDto",
                 issueCountryId,
                 documentTypeId,
-                getValueOrEmpty(csvData.documentNumber()),
+                StringUtil.StringUtil.getValueOrEmpty(csvData.documentNumber()),
                 1, // Default copyNumber
                 DateUtil.formatDateToRenteyFormat(csvData.birthDate()), // Use birthDate as issueDate if available
                 DateUtil.formatDateToRenteyFormat(csvData.documentExpireDate()),
@@ -232,7 +286,7 @@ public class ImportCustomerService {
                 "DriverLicenseDto",
                 issueCountryId,
                 getComboboxItemsValueByDisplayText("Driver License",getLookupTypeIdByName(LookupTypes.DRIVER_LICENSE_CATEGORY.getDisplayText())), // Default document type ID for Driver License
-                getValueOrEmpty(csvData.licenseNo()),
+                StringUtil.StringUtil.getValueOrEmpty(csvData.licenseNo()),
                 null, // copyNumber not applicable for DriverLicense
                 DateUtil.formatDateToRenteyFormat(csvData.birthDate()), // Use birthDate as issueDate if available
                 DateUtil.formatDateToRenteyFormat(csvData.licenseExpiryDate()),
@@ -243,12 +297,6 @@ public class ImportCustomerService {
         );
     }
 
-    /**
-     * Gets value or returns empty string if null.
-     */
-    private String getValueOrEmpty(String value) {
-        return value != null && !value.trim().isEmpty() ? value.trim() : "";
-    }
 
     /**
      * Extracts response code from CreateOrUpdateCustomerResponseBean.
@@ -349,8 +397,8 @@ public class ImportCustomerService {
      * Generates an email address from first name and family name.
      */
     private String generateEmailFromName(String firstName, String familyName) {
-        String first = getValueOrEmpty(firstName).toLowerCase().replaceAll("[^a-z0-9]", "");
-        String family = getValueOrEmpty(familyName).toLowerCase().replaceAll("[^a-z0-9]", "");
+        String first = StringUtil.StringUtil.getValueOrEmpty(firstName).toLowerCase().replaceAll("[^a-z0-9]", "");
+        String family = StringUtil.StringUtil.getValueOrEmpty(familyName).toLowerCase().replaceAll("[^a-z0-9]", "");
         if (first.isEmpty() && family.isEmpty()) {
             return "customer@iyelo.com";
         }
