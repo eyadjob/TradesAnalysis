@@ -3,27 +3,18 @@ package com.services;
 import com.beans.customer.CreateOrUpdateCustomerRequestBean;
 import com.beans.customer.CreateOrUpdateCustomerResponseBean;
 import com.builders.CustomerDataBuilder;
-import com.util.CustomerCsvImportUtil;
+import com.enums.CustomerDocumentType;
 import com.util.DateUtil;
 import com.util.StringUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CustomerOperationsService {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomerOperationsService.class);
-
     @Autowired
     private CustomerService customerService;
-
-    @Autowired
-    private CustomerCsvImportUtil customerCsvImportUtil;
 
     @Autowired
     private LookupsService lookupsService;
@@ -32,11 +23,15 @@ public class CustomerOperationsService {
     private CountryService countryService;
 
     @Autowired
-    private SettingsService settingsService;
+    VehicleService vehicleService;
+
+    @Autowired
+    @org.springframework.beans.factory.annotation.Qualifier("settingsApiBaseUrl")
+    private String settingsApiBaseUrl;
 
 
     public CreateOrUpdateCustomerResponseBean createCustomerWithRandomData(String countryName) {
-        CreateOrUpdateCustomerRequestBean createOrUpdateCustomerRequestBean = buildRequestForCustomerCreation(countryName);
+        CreateOrUpdateCustomerRequestBean createOrUpdateCustomerRequestBean = buildCustomerCreationRequestBean(countryName);
         return  customerService.createOrUpdateCustomer(createOrUpdateCustomerRequestBean);
     }
 
@@ -46,15 +41,17 @@ public class CustomerOperationsService {
      *
      * @return CreateOrUpdateCustomerRequestBean populated with CSV data
      */
-    private CreateOrUpdateCustomerRequestBean buildRequestForCustomerCreation(String countryName) {
-        CustomerDataBuilder builder = CustomerDataBuilder.create();
+    private CreateOrUpdateCustomerRequestBean buildCustomerCreationRequestBean(String countryName) {
+        CustomerDataBuilder builder = CustomerDataBuilder.create(settingsApiBaseUrl);
         String countryId = countryService.getOperationalCountryIdFromName(countryName);
+        String identityDocumentTypeId = lookupsService.getComboboxItemsValueByDisplayText(CustomerDocumentType.IDENTITY.getDisplayText(),17);
+        String driverLicenseDocumentTypeId = lookupsService.getComboboxItemsValueByDisplayText(CustomerDocumentType.DRIVER_LICENSE.getDisplayText(),17);
         String firstName = StringUtil.generateRandomStringWithPrefix("Eyad Automation", 10);
         String secondName = StringUtil.generateRandomStringWithPrefix("Eyad Automation", 10);
         String thirdName = StringUtil.generateRandomStringWithPrefix("Eyad Automation", 10);
         String phoneNumber = "966-51" + StringUtil.generateRandomNumber(7);
         String documentNumber = StringUtil.generateRandomNumber(10);
-
+        String imagePath =  vehicleService.uploadSignatureImage();
 
         // Map Full Name
         builder.withFullName(
@@ -65,19 +62,49 @@ public class CustomerOperationsService {
 
         builder.withContactInformation(
                 phoneNumber,
-                firstName + "@iyelo.com"
+                firstName.replace(" ","")+ "@iyelo.com"
         );
 
         builder.withBasicInformation(
                 countryId,
                 lookupsService.getComboboxItemsValueByDisplayText("Male", 6),
-                DateUtil.formatDateToRenteyFormat("withBasicInformation")
+                DateUtil.formatDateToRenteyFormat("1989-01-15")
         );
 
         builder.withAddress(countryId, -1); // -1 for cityId as default
         builder.clearDocuments();
-        CreateOrUpdateCustomerRequestBean.DocumentDto identityDocument = customerService.buildCustomerDocument("IdentityDto", countryName, "Identity",countryId,documentNumber,"1989/01/15","2035/01/20");
+
+       CreateOrUpdateCustomerRequestBean.Attachment documentAttachment = builder.getDocumentAttachment(imagePath);
+        CreateOrUpdateCustomerRequestBean.DocumentDto identityDocument = new CreateOrUpdateCustomerRequestBean.DocumentDto(
+                "IdentityDto",
+                countryId,
+                identityDocumentTypeId,
+                documentNumber,
+                1, // copyNumber
+                DateUtil.formatDateToRenteyFormat("1989-01-15"), // issueDate
+                DateUtil.formatDateToRenteyFormat("2035-01-20"), // expiryDate
+                "Identity", // typeName
+                countryName,
+                documentAttachment,// issueCountry
+               null // licenseCategoryId (not applicable for Identity)
+        );
         builder.withDocument(identityDocument);
+
+
+                CreateOrUpdateCustomerRequestBean.DocumentDto driverLicenseDocument  = new CreateOrUpdateCustomerRequestBean.DocumentDto(
+                "DriverLicenseDto",
+                countryId,
+                driverLicenseDocumentTypeId,
+                documentNumber,
+                1, // copyNumber
+                DateUtil.formatDateToRenteyFormat("1989-01-15"), // issueDate
+                DateUtil.formatDateToRenteyFormat("2035-01-20"), // expiryDate
+                "Driver License", // typeName
+                countryName, // issueCountry
+                documentAttachment,
+                null// licenseCategoryId (not applicable for Identity)
+        );
+        builder.withDocument(driverLicenseDocument);
 
         return builder.build();
     }

@@ -49,6 +49,7 @@ public final class ApiPaths {
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
+    public static final String CUSTOMER_CREATE_WITH_RANDOM_NAME = "/Customer/CreateCustomerWithRandomName";
     public static final String CUSTOMER_GET_ALL_ITEMS_COMBOBOX = "/Customer/GetAllItemsComboboxItems";
     public static final String CUSTOMER_GET_CONTRACT_INFORMATION_BY_NAME = "/Customer/GetCustomerContractInformationByName";
 
@@ -107,6 +108,9 @@ public final class ApiPaths {
     
     // Customer Membership endpoints
     public static final String CUSTOMER_MEMBERSHIP_GET_EXTERNAL_LOYALTIES_WITH_ALLOW_REDEEM_COMBOBOX = "/CustomerMembership/GetExternalLoyaltiesWithAllowRedeemCombobox";
+    
+    // Token Auth endpoints
+    public static final String TOKEN_AUTH_AUTHENTICATE = "/TokenAuth/Authenticate";
     
     // Private constructor to prevent instantiation
     private ApiPaths() {

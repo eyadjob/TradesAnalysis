@@ -42,6 +42,10 @@ public class ImportCustomerService {
     @Autowired
     private XlsxWriterUtil xlsxWriterUtil;
 
+    @Autowired
+    @org.springframework.beans.factory.annotation.Qualifier("settingsApiBaseUrl")
+    private String settingsApiBaseUrl;
+
     @Value("${csv.export.directory}")
     private String exportDirectory;
 
@@ -138,7 +142,7 @@ public class ImportCustomerService {
      * @return CreateOrUpdateCustomerRequestBean populated with CSV data
      */
     private CreateOrUpdateCustomerRequestBean buildRequestFromCsvData(CustomerCsvData csvData) {
-        CustomerDataBuilder builder = CustomerDataBuilder.create();
+        CustomerDataBuilder builder = CustomerDataBuilder.create(settingsApiBaseUrl);
 
         // Map Full Name
         builder.withFullName(

@@ -240,5 +240,6 @@ public class BookingService {
                 .bodyToMono(CreateBookingResponseBean.class)
                 .block();
     }
+
 }
 

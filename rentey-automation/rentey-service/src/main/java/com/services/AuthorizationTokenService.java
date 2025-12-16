@@ -1,7 +1,6 @@
 package com.services;
 
 import com.beans.authentication.AuthenticateRequestBean;
-import com.clients.AuthorizationServiceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,10 +17,7 @@ import org.springframework.stereotype.Service;
 public class AuthorizationTokenService {
 
     @Autowired
-    private AuthorizationServiceClient authorizationServiceClient;
-
-    @Autowired
-    private AuthorizationServiceManager authorizationServiceManager;
+    private AuthorizationService authorizationService;
 
     @Value("${authorization.service.credentials.userNameOrEmailAddress}")
     private String userNameOrEmailAddress;
@@ -33,52 +29,59 @@ public class AuthorizationTokenService {
     private Boolean rememberClient;
 
     /**
-     * Retrieves a refresh token from the authorization service.
-     * This method automatically ensures authorization-service is running before making the call.
+     * Retrieves a refresh token by calling the internal AuthorizationService.
+     * This method now uses the internal AuthorizationService instead of the external authorization-service module.
      * 
      * @return The refresh token string
      * @throws RuntimeException if the token cannot be retrieved or if there's a connection error
      */
     public String getRefreshToken() {
-        try {
-            // Ensure authorization-service is running before making the call
-            authorizationServiceManager.ensureAuthorizationServiceIsRunning();
-        } catch (RuntimeException e) {
-            // If authorization-service failed to start, wrap the error with more context
-            throw new RuntimeException(
-                "Failed to start authorization-service automatically: " + e.getMessage() + 
-                ". Please ensure authorization-service can be started or start it manually.",
-                e
-            );
-        }
-        
+        // Create authentication request with only authentication fields
+        // Configuration fields are not needed since we're calling the internal API directly
+        // (they will be null and won't be serialized due to Jackson's non_null configuration)
         AuthenticateRequestBean authRequest = new AuthenticateRequestBean(
                 userNameOrEmailAddress,
                 password,
                 rememberClient,
-                null,
-                false,
-                null
+                null,  // twoFactorRememberClientToken
+                false, // singleSignIn
+                null,  // returnUrl
+                // Configuration fields are null - not needed for internal API call
+                null,  // baseUrl
+                null,  // tenantId
+                null,  // userAgent
+                null,  // accept
+                null,  // acceptLanguage
+                null,  // acceptEncoding
+                null,  // pragma
+                null,  // cacheControl
+                null,  // expires
+                null,  // xRequestedWith
+                null,  // aspnetcoreCulture
+                null,  // origin
+                null   // referer
         );
 
+        org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(AuthorizationTokenService.class);
+        logger.info("Requesting token from internal AuthorizationService");
+
         try {
-            var authResponse = authorizationServiceClient.authenticate(authRequest);
+            var authResponse = authorizationService.authenticate(authRequest);
             
-            if (authResponse == null || authResponse.result() == null || authResponse.result().refreshToken() == null) {
-                throw new RuntimeException("Failed to get refresh token from authorization-service. Response: " + authResponse);
+            if (authResponse == null || authResponse.result() == null || (authResponse.result().refreshToken() == null && authResponse.result().accessToken() == null )) {
+                throw new RuntimeException("Failed to get refresh token from AuthorizationService. Response: " + authResponse);
             }
 
-            return authResponse.result().refreshToken();
-        } catch (org.springframework.web.reactive.function.client.WebClientException e) {
-            if (e.getCause() instanceof java.net.ConnectException) {
-                throw new RuntimeException(
-                    "Cannot connect to authorization-service at http://localhost:8088. " +
-                    "The service may have failed to start automatically. " +
-                    "Please check the logs or start it manually: cd authorization-service && mvnw spring-boot:run",
-                    e
-                );
+            logger.info("Successfully retrieved refresh token from AuthorizationService");
+            if (authResponse.result().refreshToken() != null && !authResponse.result().refreshToken().isEmpty()) {
+                return authResponse.result().refreshToken();
+            } else {
+                return authResponse.result().accessToken();
             }
-            throw new RuntimeException("Error calling authorization-service: " + e.getMessage(), e);
+
+        } catch (Exception e) {
+            logger.error("Error calling AuthorizationService: {}", e.getMessage(), e);
+            throw new RuntimeException("Error calling AuthorizationService: " + e.getMessage(), e);
         }
     }
 }

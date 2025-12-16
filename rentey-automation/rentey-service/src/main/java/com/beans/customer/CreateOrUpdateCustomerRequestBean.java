@@ -113,6 +113,60 @@ public record CreateOrUpdateCustomerRequestBean(
             // DriverLicenseDto specific fields
             @JsonProperty("licenseCategoryId") String licenseCategoryId
     ) {
+        /**
+         * Constructor that creates DocumentDto without attachment (sets it to null).
+         *
+         * @param discriminator The document discriminator type
+         * @param issueCountryId The issue country ID
+         * @param typeId The document type ID
+         * @param number The document number
+         * @param copyNumber The copy number
+         * @param issueDate The issue date
+         * @param expiryDate The expiry date
+         * @param typeName The document type name
+         * @param issueCountry The issue country name
+         * @param licenseCategoryId The license category ID (for DriverLicenseDto)
+         */
+        public DocumentDto(
+                String discriminator,
+                String issueCountryId,
+                String typeId,
+                String number,
+                Integer copyNumber,
+                String issueDate,
+                String expiryDate,
+                String typeName,
+                String issueCountry,
+                String licenseCategoryId
+        ) {
+            this(discriminator, issueCountryId, typeId, number, copyNumber, issueDate, expiryDate, typeName, issueCountry, null, licenseCategoryId);
+        }
+
+        /**
+         * Constructor that creates DocumentDto without attachment (sets it to null).
+         *
+         * @param discriminator The document discriminator type
+         * @param number The document number
+         * @param copyNumber The copy number
+         * @param issueDate The issue date
+         * @param expiryDate The expiry date
+         * @param typeName The document type name
+         * @param issueCountry The issue country name
+         * @param licenseCategoryId The license category ID (for DriverLicenseDto)
+         */
+        public DocumentDto(
+                String discriminator,
+                String number,
+                Integer copyNumber,
+                String issueDate,
+                String expiryDate,
+                String typeName,
+                String issueCountry,
+                String licenseCategoryId
+        ) {
+            this(discriminator, null, null, number, copyNumber, issueDate, expiryDate, typeName, issueCountry, null, licenseCategoryId);
+        }
+
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -35,10 +35,10 @@ public class BookingOperationsService {
     CustomerOperationsService customerOperationsService;
 
 
-    public CreateBookingResponseBean createNewBooking(String countryName, String branchName) {
-        CreateOrUpdateCustomerResponseBean createOrUpdateCustomerResponseBean = customerOperationsService.createCustomerWithRandomData("Saudi Arabia");
-        CreateVehiclesResponseBean createResponse = vehicleOperationsService.createVehicleWithRandomPlateNumber(countryName, branchName);
-        vehicleOperationsService.createAndReceiveNewVehicle(countryName, branchName,createResponse);
-
-    }
+//    public CreateBookingResponseBean createNewBooking(String countryName, String branchName) {
+//        CreateOrUpdateCustomerResponseBean createOrUpdateCustomerResponseBean = customerOperationsService.createCustomerWithRandomData("Saudi Arabia");
+//        CreateVehiclesResponseBean createResponse = vehicleOperationsService.createVehicleWithRandomPlateNumber(countryName, branchName);
+//        vehicleOperationsService.createAndReceiveNewVehicle(countryName, branchName,createResponse);
+//
+//    }
 }
