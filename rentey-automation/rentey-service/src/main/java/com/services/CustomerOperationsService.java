@@ -58,7 +58,7 @@ public class CustomerOperationsService {
 
         builder.withContactInformation(
                 phoneNumber,
-                firstName + "@iyelo.com"
+                firstName.replace(" ","")+ "@iyelo.com"
         );
 
         builder.withBasicInformation(
@@ -69,8 +69,7 @@ public class CustomerOperationsService {
 
         builder.withAddress(countryId, -1); // -1 for cityId as default
         builder.clearDocuments();
-
-
+        
        CreateOrUpdateCustomerRequestBean.Attachment documentAttachment = builder.getDocumentAttachment();
         CreateOrUpdateCustomerRequestBean.DocumentDto identityDocument = new CreateOrUpdateCustomerRequestBean.DocumentDto(
                 "IdentityDto",
