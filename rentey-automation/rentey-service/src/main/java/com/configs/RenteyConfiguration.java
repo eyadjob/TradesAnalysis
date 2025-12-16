@@ -76,6 +76,11 @@ public class RenteyConfiguration {
         return apiBasePath;
     }
 
+    @Bean("settingsApiBaseUrl")
+    public String settingsApiBaseUrl(@Value("${settings.api.base-url}") String baseUrl) {
+        return baseUrl;
+    }
+
 
     @Bean("authorizationWebClient")
     public WebClient authorizationWebClient(@Value("${authorization.service.base-url}") String baseUrl) {
@@ -92,8 +97,10 @@ public class RenteyConfiguration {
             @Value("${authorization.service.response-timeout-seconds}") int responseTimeoutSeconds,
             @Value("${authorization.service.connect-timeout-millis}") int connectTimeoutMillis) {
         // Configure WebClient with configurable timeouts for authorization service
+        // responseTimeout: Maximum time to wait for HTTP response after sending request
+        java.time.Duration responseTimeout = java.time.Duration.ofSeconds(responseTimeoutSeconds);
         HttpClient httpClient = HttpClient.create()
-                .responseTimeout(java.time.Duration.ofSeconds(responseTimeoutSeconds))
+                .responseTimeout(responseTimeout)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, connectTimeoutMillis);
         
         WebClient webClient = WebClient.builder()
@@ -104,8 +111,12 @@ public class RenteyConfiguration {
                 .defaultHeader(HttpHeaders.ACCEPT, "application/json")
                 .build();
         
+        // Configure HttpServiceProxyFactory with blockTimeout for blocking operations
+        // blockTimeout: Maximum time to wait when HttpServiceProxyFactory blocks on synchronous calls
+        // This must be set to prevent the default 5-second timeout when blocking
         return HttpServiceProxyFactory
                 .builder(WebClientAdapter.forClient(webClient))
+                .blockTimeout(responseTimeout) // Use same timeout as responseTimeout
                 .build()
                 .createClient(com.clients.AuthorizationServiceClient.class);
     }

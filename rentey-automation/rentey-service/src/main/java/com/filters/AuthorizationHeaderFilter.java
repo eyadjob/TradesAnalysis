@@ -86,7 +86,7 @@ public class AuthorizationHeaderFilter {
                     return token;
                 })
                 .subscribeOn(Schedulers.boundedElastic()) // Run blocking call on bounded elastic scheduler
-                .timeout(Duration.ofSeconds(120)) // Increase timeout to 35 seconds to allow for authorization service response (30s) + overhead
+                .timeout(Duration.ofMinutes(5)) // Timeout set to 5 minutes to allow for authorization service response
                 .doOnError(e -> {
                     logger.error("Error getting token: {}", e.getMessage(), e);
                     // Clear cache on error

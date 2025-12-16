@@ -38,4 +38,3 @@ public record GetAllExternalLoyaltiesConfigurationsItemsResponseBean(
     ) {
     }
 }
-

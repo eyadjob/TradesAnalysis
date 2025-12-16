@@ -4,6 +4,7 @@ import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.customer.CreateOrUpdateCustomerRequestBean;
 import com.beans.customer.CreateOrUpdateCustomerResponseBean;
+import com.builders.CustomerDataBuilder;
 import com.enums.LookupTypes;
 import com.pojo.CustomerCsvData;
 import com.util.DateUtil;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 @Service
 public class CustomerService {
@@ -37,6 +40,10 @@ public class CustomerService {
 
     @Autowired
     private CountryService countryService;
+
+    @Autowired
+    @org.springframework.beans.factory.annotation.Qualifier("settingsApiBaseUrl")
+    private String settingsApiBaseUrl;
 
 
     /**
@@ -134,30 +141,36 @@ public class CustomerService {
     /**
      * Builds an Identity Document from CSV data.
      *
-     *
      * @return DocumentDto for identity document
      */
-    public CreateOrUpdateCustomerRequestBean.DocumentDto buildCustomerDocument(String documentDiscriminator, String documentIssueCountry,String documentType, String issueCountryId, String documentNumber, String birthDate, String documentExpirationDate) {
-        String documentTypeId = lookupsService.getComboboxItemsValueByDisplayText(documentType, 17);
-        CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
-                "", // URL - empty for CSV import
-                0,  // Size
-                ""  // Type
-        );
+    public CustomerDataBuilder buildCustomerDocument(List<CreateOrUpdateCustomerRequestBean.DocumentDto> documentDtos) {
+        CustomerDataBuilder builder = CustomerDataBuilder.create(settingsApiBaseUrl);
+        for (CreateOrUpdateCustomerRequestBean.DocumentDto documentDto : documentDtos) {
+            String documentTypeId = lookupsService.getComboboxItemsValueByDisplayText(documentDto.typeName(), 17);
+            String countryId = countryService.getOperationalCountryIdFromName(documentDto.issueCountry());
+            CreateOrUpdateCustomerRequestBean.Attachment attachment = new CreateOrUpdateCustomerRequestBean.Attachment(
+                    "", // URL - empty for CSV import
+                    0,  // Size
+                    ""  // Type
+            );
+            CreateOrUpdateCustomerRequestBean.DocumentDto documentDto1 = new CreateOrUpdateCustomerRequestBean.DocumentDto(
+                    documentDto.discriminator(),
+                    countryId,
+                    documentTypeId,
+                    documentDto.number(),
+                    1, // Default copyNumber
+                    DateUtil.formatDateToRenteyFormat(documentDto.issueDate()), // Use birthDate as issueDate if available
+                    DateUtil.formatDateToRenteyFormat(documentDto.expiryDate()),
+                    documentDto.typeName(),
+                    documentDto.issueCountry(),
+                    attachment,
+                    null
+            );
 
-        return new CreateOrUpdateCustomerRequestBean.DocumentDto(
-                documentDiscriminator,
-                issueCountryId,
-                documentTypeId,
-                StringUtil.getValueOrEmpty(documentNumber),
-                1, // Default copyNumber
-                DateUtil.formatDateToRenteyFormat(birthDate), // Use birthDate as issueDate if available
-                DateUtil.formatDateToRenteyFormat(documentExpirationDate),
-                documentType,
-                documentIssueCountry,
-                attachment,
-                null
-        );
+
+            builder.withDocument(documentDto1);
+        }
+        return builder;
     }
 
     /**
@@ -167,7 +180,7 @@ public class CustomerService {
      * @param documentNumber The document number
      * @return DocumentDto for identity document
      */
-    public CreateOrUpdateCustomerRequestBean.DocumentDto buildIdentityDocument( String countryName,String documentNumber) {
+    public CreateOrUpdateCustomerRequestBean.DocumentDto buildIdentityDocument(String countryName, String documentNumber) {
         String countryId = countryService.getOperationalCountryIdFromName(countryName);
         String documentTypeId = lookupsService.getComboboxItemsValueByDisplayText("National ID", 17);
         if (documentTypeId == null) {

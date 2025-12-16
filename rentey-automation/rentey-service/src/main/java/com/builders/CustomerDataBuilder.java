@@ -11,53 +11,80 @@ import java.util.List;
  */
 public class CustomerDataBuilder {
 
+    private final String baseUrl;
+
     // Default values from the JSON payload
     private String firstName = "Eyad Automation Test Customer douehuuoqqyb";
     private String secondName = "Eyad Automation Test Customer douehuuoqqyb";
     private String familyName = "Eyad Automation Test Customer douehuuoqqyb";
-    
+
     private String primaryPhone = "966-517067328";
     private String email = "EyadAutomationTestCustomerdouehuuoqqyb@iyelo.com";
-    
+
     private String nationalityId = "1";
     private String genderId = "110";
     private String dateOfBirth = "1999-08-26T16:14:05+03:00";
-    
+
     private String organizationId = null;
     private String organizationName = null;
     private String occupationId = null;
-    
+
     private String addressCountryId = "1";
     private Integer addressCityId = -1;
-    
+
     private String secondaryAddressCountryId = null;
     private Integer secondaryAddressCityId = null;
     private String secondaryAddressDetails = null;
-    
+
     private List<CreateOrUpdateCustomerRequestBean.EmergencyContact> emergencyContacts = new ArrayList<>();
-    
+
     private String personalPhotoId = "";
     private String personalPhotoUrl = "";
     private Integer personalPhotoSize = 0;
     private String personalPhotoType = "";
-    
+
     private List<CreateOrUpdateCustomerRequestBean.DocumentDto> documents = new ArrayList<>();
-    
+
     private List<Object> externalLoyalties = new ArrayList<>();
-    
+
     private Integer sourceId = 120;
-    
-    private Integer id = 0;
-    private Boolean isTermsConditionsAndPrivacyPolicyApproved = true;
-    private Boolean isMarketingMaterialsApproved = null;
-    private Boolean isDataSharingPolicyApproved = null;
+
+    private final Integer id = 0;
+    private final Boolean isTermsConditionsAndPrivacyPolicyApproved = true;
+    private final Boolean isMarketingMaterialsApproved = null;
+    private final Boolean isDataSharingPolicyApproved = null;
 
     /**
      * Creates a new CustomerDataBuilder with default values.
+     *
+     * @param baseUrl The base URL from settings.api.base-url configuration
      */
-    public CustomerDataBuilder() {
+    public CustomerDataBuilder(String baseUrl) {
+        this.baseUrl = baseUrl;
         // Initialize with default documents from the JSON payload
         initializeDefaultDocuments();
+    }
+
+    /**
+     * Creates a new CustomerDataBuilder with default values.
+     * This is a factory method that creates a new builder instance.
+     *
+     * @param baseUrl The base URL from settings.api.base-url configuration
+     * @return new CustomerDataBuilder instance
+     */
+    public static CustomerDataBuilder create(String baseUrl) {
+        return new CustomerDataBuilder(baseUrl);
+    }
+
+    public CreateOrUpdateCustomerRequestBean.Attachment getDocumentAttachment() {
+        String documentAttachmentUri = baseUrl + "/webapigw/Temp/Downloads/087932aa-ed76-46ba-9637-e7a34b6cb5c2.png";
+         CreateOrUpdateCustomerRequestBean.Attachment documentAttachment =
+                new CreateOrUpdateCustomerRequestBean.Attachment(
+                        documentAttachmentUri,
+                        11649,
+                        ".PNG"
+                );
+        return documentAttachment;
     }
 
     /**
@@ -65,9 +92,10 @@ public class CustomerDataBuilder {
      */
     private void initializeDefaultDocuments() {
         // Identity Document
+        String identityAttachmentUrl = baseUrl + "/webapigw/Temp/Downloads/087932aa-ed76-46ba-9637-e7a34b6cb5c2.png";
         CreateOrUpdateCustomerRequestBean.Attachment identityAttachment =
                 new CreateOrUpdateCustomerRequestBean.Attachment(
-                        "https://ejar-jor-test.iyelo.com:9900/webapigw\\Temp\\Downloads\\087932aa-ed76-46ba-9637-e7a34b6cb5c2.png",
+                        identityAttachmentUrl,
                         11649,
                         ".PNG"
                 );
@@ -89,9 +117,10 @@ public class CustomerDataBuilder {
         documents.add(identityDocument);
 
         // Driver License Document
+        String driverLicenseAttachmentUrl = baseUrl + "/webapigw/Temp/Downloads/087932aa-ed76-46ba-9637-e7a34b6cb5c2.png";
         CreateOrUpdateCustomerRequestBean.Attachment driverLicenseAttachment =
                 new CreateOrUpdateCustomerRequestBean.Attachment(
-                        "https://ejar-jor-test.iyelo.com:9900/webapigw\\Temp\\Downloads\\087932aa-ed76-46ba-9637-e7a34b6cb5c2.png",
+                        driverLicenseAttachmentUrl,
                         11649,
                         ".PNG"
                 );
@@ -399,15 +428,6 @@ public class CustomerDataBuilder {
 
         // Build and return the final request
         return new CreateOrUpdateCustomerRequestBean(customerData);
-    }
-
-    /**
-     * Creates a new CustomerDataBuilder with default values.
-     *
-     * @return new CustomerDataBuilder instance
-     */
-    public static CustomerDataBuilder create() {
-        return new CustomerDataBuilder();
     }
 }
 

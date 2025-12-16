@@ -1,12 +1,14 @@
 package com.beans.customer;
 
 import com.beans.interfaces.ResponsePayload;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
  * Response bean for CreateOrUpdateCustomer API.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public record CreateOrUpdateCustomerResponseBean(
         @JsonProperty("result") CustomerResult result,
         @JsonProperty("targetUrl") String targetUrl,

@@ -49,6 +49,7 @@ public final class ApiPaths {
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
+    public static final String CUSTOMER_CREATE_WITH_RANDOM_NAME = "/Customer/CreateCustomerWithRandomName";
     public static final String CUSTOMER_GET_ALL_ITEMS_COMBOBOX = "/Customer/GetAllItemsComboboxItems";
     public static final String CUSTOMER_GET_CONTRACT_INFORMATION_BY_NAME = "/Customer/GetCustomerContractInformationByName";
 
