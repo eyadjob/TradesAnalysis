@@ -109,6 +109,9 @@ public final class ApiPaths {
     // Customer Membership endpoints
     public static final String CUSTOMER_MEMBERSHIP_GET_EXTERNAL_LOYALTIES_WITH_ALLOW_REDEEM_COMBOBOX = "/CustomerMembership/GetExternalLoyaltiesWithAllowRedeemCombobox";
     
+    // Token Auth endpoints
+    public static final String TOKEN_AUTH_AUTHENTICATE = "/TokenAuth/Authenticate";
+    
     // Private constructor to prevent instantiation
     private ApiPaths() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");

@@ -23,6 +23,9 @@ public class CustomerOperationsService {
     private CountryService countryService;
 
     @Autowired
+    VehicleService vehicleService;
+
+    @Autowired
     @org.springframework.beans.factory.annotation.Qualifier("settingsApiBaseUrl")
     private String settingsApiBaseUrl;
 
@@ -48,6 +51,7 @@ public class CustomerOperationsService {
         String thirdName = StringUtil.generateRandomStringWithPrefix("Eyad Automation", 10);
         String phoneNumber = "966-51" + StringUtil.generateRandomNumber(7);
         String documentNumber = StringUtil.generateRandomNumber(10);
+        String imagePath =  vehicleService.uploadSignatureImage();
 
         // Map Full Name
         builder.withFullName(
@@ -69,8 +73,8 @@ public class CustomerOperationsService {
 
         builder.withAddress(countryId, -1); // -1 for cityId as default
         builder.clearDocuments();
-        
-       CreateOrUpdateCustomerRequestBean.Attachment documentAttachment = builder.getDocumentAttachment();
+
+       CreateOrUpdateCustomerRequestBean.Attachment documentAttachment = builder.getDocumentAttachment(imagePath);
         CreateOrUpdateCustomerRequestBean.DocumentDto identityDocument = new CreateOrUpdateCustomerRequestBean.DocumentDto(
                 "IdentityDto",
                 countryId,

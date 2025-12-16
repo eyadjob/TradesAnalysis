@@ -62,14 +62,15 @@ public class LoggingRequestAndResponseAspect {
             String method = request.getMethod();
             
             // Build full URL with scheme, host, port, path, and query string
+            // Use actual IP address instead of localhost
             String scheme = request.getScheme();
-            String serverName = request.getServerName();
+            String host = getActualHost(request);
             int serverPort = request.getServerPort();
             String requestURI = request.getRequestURI();
             String queryString = request.getQueryString();
             
             StringBuilder fullUrl = new StringBuilder();
-            fullUrl.append(scheme).append("://").append(serverName);
+            fullUrl.append(scheme).append("://").append(host);
             if ((scheme.equals("http") && serverPort != 80) || 
                 (scheme.equals("https") && serverPort != 443)) {
                 fullUrl.append(":").append(serverPort);
@@ -226,5 +227,89 @@ public class LoggingRequestAndResponseAspect {
             logger.warn("Error serializing response body: {}", e.getMessage());
             return result.toString();
         }
+    }
+    
+    /**
+     * Gets the actual host/IP address for logging.
+     * Prioritizes the server's actual network IP address over localhost.
+     */
+    private String getActualHost(HttpServletRequest request) {
+        // First, try to get the actual network interface IP address
+        // This is the most reliable way to get the server's real IP
+        try {
+            java.net.NetworkInterface networkInterface = java.util.Collections
+                    .list(java.net.NetworkInterface.getNetworkInterfaces())
+                    .stream()
+                    .filter(ni -> {
+                        try {
+                            return ni.isUp() && !ni.isLoopback() && ni.getInetAddresses().hasMoreElements();
+                        } catch (Exception e) {
+                            return false;
+                        }
+                    })
+                    .findFirst()
+                    .orElse(null);
+            
+            if (networkInterface != null) {
+                java.util.Enumeration<java.net.InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    java.net.InetAddress addr = addresses.nextElement();
+                    if (!addr.isLoopbackAddress() && !addr.isLinkLocalAddress() && addr instanceof java.net.Inet4Address) {
+                        String ip = addr.getHostAddress();
+                        if (ip != null && !ip.equals("127.0.0.1") && !ip.equals("0.0.0.0")) {
+                            logger.debug("Using network interface IP: {}", ip);
+                            return ip;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.debug("Could not get network interface IP: {}", e.getMessage());
+        }
+        
+        // Check for X-Forwarded-Host header (if behind a proxy/load balancer)
+        String forwardedHost = request.getHeader("X-Forwarded-Host");
+        if (forwardedHost != null && !forwardedHost.trim().isEmpty()) {
+            // X-Forwarded-Host can contain port, extract just the host
+            if (forwardedHost.contains(":")) {
+                return forwardedHost.substring(0, forwardedHost.indexOf(":"));
+            }
+            return forwardedHost;
+        }
+        
+        // Use server's local IP address from the request
+        String localAddr = request.getLocalAddr();
+        if (localAddr != null && !localAddr.trim().isEmpty() && !localAddr.equals("127.0.0.1") && !localAddr.equals("0.0.0.0")) {
+            logger.debug("Using request local address: {}", localAddr);
+            return localAddr;
+        }
+        
+        // Try InetAddress.getLocalHost() as fallback
+        try {
+            java.net.InetAddress localHost = java.net.InetAddress.getLocalHost();
+            String hostAddress = localHost.getHostAddress();
+            if (hostAddress != null && !hostAddress.equals("127.0.0.1") && !hostAddress.equals("::1")) {
+                logger.debug("Using InetAddress.getLocalHost(): {}", hostAddress);
+                return hostAddress;
+            }
+        } catch (Exception e) {
+            logger.debug("Could not determine local host address: {}", e.getMessage());
+        }
+        
+        // Check Host header only if it's not localhost
+        String hostHeader = request.getHeader("Host");
+        if (hostHeader != null && !hostHeader.trim().isEmpty() && 
+            !hostHeader.equals("localhost:8088") && !hostHeader.startsWith("localhost:")) {
+            // Host header can contain port, extract just the host
+            if (hostHeader.contains(":")) {
+                return hostHeader.substring(0, hostHeader.indexOf(":"));
+            }
+            return hostHeader;
+        }
+        
+        // Final fallback: return server name (might be localhost, but we tried everything)
+        String serverName = request.getServerName();
+        logger.warn("Could not determine actual IP address, using server name: {}", serverName);
+        return serverName != null ? serverName : "unknown";
     }
 }

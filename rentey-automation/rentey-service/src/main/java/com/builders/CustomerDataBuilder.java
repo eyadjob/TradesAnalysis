@@ -76,11 +76,11 @@ public class CustomerDataBuilder {
         return new CustomerDataBuilder(baseUrl);
     }
 
-    public CreateOrUpdateCustomerRequestBean.Attachment getDocumentAttachment() {
-        String documentAttachmentUri = baseUrl + "/webapigw/Temp/Downloads/087932aa-ed76-46ba-9637-e7a34b6cb5c2.png";
+    public CreateOrUpdateCustomerRequestBean.Attachment getDocumentAttachment(String imagePath) {
+//        String documentAttachmentUri = baseUrl + "/webapigw/Temp/Downloads/087932aa-ed76-46ba-9637-e7a34b6cb5c2.png";
          CreateOrUpdateCustomerRequestBean.Attachment documentAttachment =
                 new CreateOrUpdateCustomerRequestBean.Attachment(
-                        documentAttachmentUri,
+                        imagePath,
                         11649,
                         ".PNG"
                 );
