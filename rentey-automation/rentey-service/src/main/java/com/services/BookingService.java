@@ -418,12 +418,11 @@ public class BookingService {
                 vehicleService.getAllCarModels(),
                 userDefinedVariables.get("automationCarModelName"));
 
-        GetBranchAvailableModelsForBookingComboboxItemsResponseBean availableModelsResponse = 
-                getBranchAvailableModelsForBookingComboboxItems(availableModelsRequest);
+        GetBranchAvailableModelsForBookingComboboxItemsResponseBean availableModelsResponse = getBranchAvailableModelsForBookingComboboxItems(availableModelsRequest);
         String vehicleModelId = getModelIdByModelName(availableModelsRequest,  userDefinedVariables.get("automationCarCategoryName"));
         CreateOrUpdateCustomerResponseBean customerResponseBean= customerOperationsService.createCustomerWithRandomData(countryName);
         validatePreventRentingRestriction(customerResponseBean.result().id(),Integer.parseInt(branchId),Integer.parseInt(vehicleModelId),pickupDate);
-
+        getCustomerContractInformationByName(customerResponseBean.result().fullName().displayName());
     }
 
 
