@@ -6,11 +6,14 @@ import com.beans.booking.CalculateBillingInformationResponseBean;
 import com.beans.booking.CreateBookingRequestBean;
 import com.beans.booking.CreateBookingResponseBean;
 import com.beans.booking.GetBestRentalRateForModelResponseBean;
+import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsRequestBean;
+import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsResponseBean;
 import com.beans.booking.GetCreateBookingDateInputsResponseBean;
 import com.beans.booking.ValidateDurationAndLocationsRequestBean;
 import com.beans.booking.ValidateDurationAndLocationsResponseBean;
 import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
 import com.beans.country.GetCountrySettingsResponseBean;
+import com.beans.customer.CreateOrUpdateCustomerResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import com.beans.customer.GetCustomerContractInformationByNameResponseBean;
 import com.beans.lookups.GetItemsByTypeResponseBean;
@@ -19,11 +22,15 @@ import com.beans.loyalty.GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean
 import com.beans.loyalty.GetIntegratedLoyaltiesResponseBean;
 import com.beans.validation.IsValidPhoneResponseBean;
 import com.enums.LookupTypes;
+import com.util.PropertyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Map;
+
 
 /**
  * Service for interacting with booking-related APIs.
@@ -34,6 +41,8 @@ public class BookingService {
     @Autowired
     @Qualifier("settingsWebClient")
     private WebClient settingsWebClient;
+
+    private static final Map<String, String> userDefinedVariables = PropertyManager.loadPropertyFileIntoMap("user-defined-variables.properties");
 
     @Autowired
     @Qualifier("apiBasePath")
@@ -60,6 +69,9 @@ public class BookingService {
 
     @Autowired
     ContractService contractService;
+
+    @Autowired
+    CustomerOperationsService customerOperationsService;
 
 
 
@@ -296,6 +308,63 @@ public class BookingService {
                 .block();
     }
 
+    /**
+     * Get branch available models for booking combobox items.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * This endpoint retrieves available vehicle models, categories, and years for a specific branch and date range.
+     * Results are cached for 2 hours.
+     *
+     * @param request The request containing branch ID, pickup/dropoff dates, and booking filters.
+     * @return The response containing available models organized by category with nested model and year items.
+     */
+    @Cacheable(cacheNames = "branchAvailableModelsForBookingComboboxItemsCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetBranchAvailableModelsForBookingComboboxItemsResponseBean getBranchAvailableModelsForBookingComboboxItems(
+            GetBranchAvailableModelsForBookingComboboxItemsRequestBean request) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.post()
+                .uri(apiBasePath + "/RentalVehicle/GetBranchAvailableModelsForBookingComboboxItems")
+                .bodyValue(request)
+                .retrieve()
+                .bodyToMono(GetBranchAvailableModelsForBookingComboboxItemsResponseBean.class)
+                .block();
+    }
+
+    public String getModelIdByModelName(GetBranchAvailableModelsForBookingComboboxItemsRequestBean request, String modelName) {
+        return getBranchAvailableModelsForBookingComboboxItems(request).result().items().stream().filter(m -> m.displayText().equals(modelName)).findFirst().map(m -> m.value()).orElse("-1");
+    }
+
+    /**
+     * Validate prevent renting restriction for booking.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * This endpoint validates if there are any restrictions preventing a customer from renting a specific vehicle.
+     *
+     * @param customerId The customer ID (required).
+     * @param pickupBranchId The pickup branch ID (required).
+     * @param vehicleModelId The vehicle model ID (required).
+     * @param pickupDate The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @return The response containing validation results.
+     */
+    @LogExecutionTime
+    public ValidateDurationAndLocationsResponseBean validatePreventRentingRestriction(
+            Long customerId,
+            Integer pickupBranchId,
+            Integer vehicleModelId,
+            String pickupDate) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePath + "/Booking/ValidatePreventRentingRestriction")
+                        .queryParam("customerId", customerId)
+                        .queryParam("pickupBranchId", pickupBranchId)
+                        .queryParam("vehicleModelId", vehicleModelId)
+                        .queryParam("pickupDate", pickupDate)
+                        .build())
+                .retrieve()
+                .bodyToMono(ValidateDurationAndLocationsResponseBean.class)
+                .block();
+    }
+
 
 
     public CreateBookingRequestBean buildBookingCreationRequest(String countryName, String branchName) {
@@ -335,6 +404,25 @@ public class BookingService {
                 dropOffDate
         );
 
+        GetBranchAvailableModelsForBookingComboboxItemsRequestBean availableModelsRequest = buildGetAvailableModelsRequest(
+                Integer.parseInt(branchId),        // branchId from branchId
+                pickupDate,                         // pickupDate from createBookingDateInputs
+                dropOffDate,                        // dropOffDate from createBookingDateInputs
+                "120",                              // source (default value, adjust as needed)
+                -1,                                 // bookingCategoryId (-1 for "Not assigned")
+                -1,                                 // bookingModelId (-1 for "Not assigned")
+                -1                                  // bookingVehicleYear (-1 for "Not assigned")
+        );
+
+        String carModelId = vehicleService.getCarModelIdByName(
+                vehicleService.getAllCarModels(),
+                userDefinedVariables.get("automationCarModelName"));
+
+        GetBranchAvailableModelsForBookingComboboxItemsResponseBean availableModelsResponse = 
+                getBranchAvailableModelsForBookingComboboxItems(availableModelsRequest);
+        String vehicleModelId = getModelIdByModelName(availableModelsRequest,  userDefinedVariables.get("automationCarCategoryName"));
+        CreateOrUpdateCustomerResponseBean customerResponseBean= customerOperationsService.createCustomerWithRandomData(countryName);
+        validatePreventRentingRestriction(customerResponseBean.result().id(),Integer.parseInt(branchId),Integer.parseInt(vehicleModelId),pickupDate);
 
     }
 
@@ -375,6 +463,39 @@ public class BookingService {
                 contractDuration
         );
     }
+
+
+    /**
+     * Build GetBranchAvailableModelsForBookingComboboxItemsRequestBean with provided parameters.
+     *
+     * @param branchId The branch ID.
+     * @param pickupDate The pickup date (format: yyyy-MM-dd HH:mm:ss).
+     * @param dropOffDate The dropoff date (format: yyyy-MM-dd HH:mm:ss).
+     * @param source The source ID as a string.
+     * @param bookingCategoryId The booking category ID (use -1 for "Not assigned").
+     * @param bookingModelId The booking model ID (use -1 for "Not assigned").
+     * @param bookingVehicleYear The booking vehicle year (use -1 for "Not assigned").
+     * @return GetBranchAvailableModelsForBookingComboboxItemsRequestBean instance.
+     */
+    public GetBranchAvailableModelsForBookingComboboxItemsRequestBean buildGetAvailableModelsRequest(
+            Integer branchId,
+            String pickupDate,
+            String dropOffDate,
+            String source,
+            Integer bookingCategoryId,
+            Integer bookingModelId,
+            Integer bookingVehicleYear) {
+        return new GetBranchAvailableModelsForBookingComboboxItemsRequestBean(
+                branchId,
+                pickupDate,
+                dropOffDate,
+                source,
+                bookingCategoryId,
+                bookingModelId,
+                bookingVehicleYear
+        );
+    }
+
 
 
 

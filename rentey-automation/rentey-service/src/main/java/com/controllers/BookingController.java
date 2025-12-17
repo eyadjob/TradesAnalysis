@@ -5,6 +5,8 @@ import com.beans.booking.CalculateBillingInformationResponseBean;
 import com.beans.booking.CreateBookingRequestBean;
 import com.beans.booking.CreateBookingResponseBean;
 import com.beans.booking.GetBestRentalRateForModelResponseBean;
+import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsRequestBean;
+import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsResponseBean;
 import com.beans.booking.GetCreateBookingDateInputsResponseBean;
 import com.beans.booking.ValidateDurationAndLocationsRequestBean;
 import com.beans.booking.ValidateDurationAndLocationsResponseBean;
@@ -252,6 +254,59 @@ public class BookingController {
         }
 
         return bookingService.validateDurationAndLocations(request, pickupDate, dropOffDate);
+    }
+
+    /**
+     * Get branch available models for booking combobox items.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param request The request containing branch ID, pickup/dropoff dates, and booking filters.
+     * @return The response containing available models organized by category with nested model and year items.
+     */
+    @PostMapping(path = RENTAL_VEHICLE_GET_BRANCH_AVAILABLE_MODELS_FOR_BOOKING_COMBOBOX_ITEMS, consumes = "application/json", produces = "application/json")
+    public GetBranchAvailableModelsForBookingComboboxItemsResponseBean getBranchAvailableModelsForBookingComboboxItems(
+            @RequestBody(required = true) GetBranchAvailableModelsForBookingComboboxItemsRequestBean request) {
+
+        if (request == null) {
+            throw new IllegalArgumentException("Request body is required and cannot be null.");
+        }
+
+        return bookingService.getBranchAvailableModelsForBookingComboboxItems(request);
+    }
+
+    /**
+     * Validate prevent renting restriction for booking.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param customerId The customer ID (required).
+     * @param pickupBranchId The pickup branch ID (required).
+     * @param vehicleModelId The vehicle model ID (required).
+     * @param pickupDate The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @return The response containing validation results.
+     */
+    @PostMapping(path = BOOKING_VALIDATE_PREVENT_RENTING_RESTRICTION, produces = "application/json")
+    public ValidateDurationAndLocationsResponseBean validatePreventRentingRestriction(
+            @RequestParam(required = true) Integer customerId,
+            @RequestParam(required = true) Integer pickupBranchId,
+            @RequestParam(required = true) Integer vehicleModelId,
+            @RequestParam(required = true) String pickupDate) {
+
+        if (customerId == null) {
+            throw new IllegalArgumentException("customerId parameter is required.");
+        }
+        if (pickupBranchId == null) {
+            throw new IllegalArgumentException("pickupBranchId parameter is required.");
+        }
+        if (vehicleModelId == null) {
+            throw new IllegalArgumentException("vehicleModelId parameter is required.");
+        }
+        if (pickupDate == null || pickupDate.isEmpty()) {
+            throw new IllegalArgumentException("pickupDate parameter is required.");
+        }
+
+        return bookingService.validatePreventRentingRestriction(customerId, pickupBranchId, vehicleModelId, pickupDate);
     }
 
 

@@ -92,6 +92,7 @@ public final class ApiPaths {
     public static final String VEHICLE_CREATE_AND_RECEIVE = "/Vehicle/CreateAndRecieveVehicler";
     public static final String RENTAL_VEHICLE_GET_ALL_BRANCH_VEHICLES = "/RentalVehicle/GetAllBranchVehicles";
     public static final String RENTAL_VEHICLE_GET_BEST_RENTAL_RATE_FOR_MODEL = "/RentalVehicle/GetBestRentalRateForModel";
+    public static final String RENTAL_VEHICLE_GET_BRANCH_AVAILABLE_MODELS_FOR_BOOKING_COMBOBOX_ITEMS = "/RentalVehicle/GetBranchAvailableModelsForBookingComboboxItems";
     public static final String VEHICLE_CHECK_GET_PREPARATION_DATA = "/VehicleCheck/GetVehicleCheckPreparationData";
     public static final String RENTAL_VEHICLE_RECEIVE_NEW_VEHICLE = "/RentalVehicle/ReceiveNewVehicle";
     
@@ -99,6 +100,7 @@ public final class ApiPaths {
     public static final String BOOKING_GET_CREATE_BOOKING_DATE_INPUTS = "/Booking/GetCreateBookingDateInputs";
     public static final String BOOKING_CALCULATE_BILLING_INFORMATION = "/Booking/CalculateBillingInformation";
     public static final String BOOKING_VALIDATE_DURATION_AND_LOCATIONS = "/Booking/ValidateDurationANDLocations";
+    public static final String BOOKING_VALIDATE_PREVENT_RENTING_RESTRICTION = "/Booking/ValidatePreventRentingRestriction";
     
     // Create Booking endpoints
     public static final String CREATE_BOOKING_CREATE_BOOKING = "/CreateBooking/CreateBooking";
