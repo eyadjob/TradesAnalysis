@@ -50,6 +50,10 @@ public final class ApiPaths {
     public static final String CONTRACT_EXTRA_CONFIGURATION_GET_CONTRACT_EXTRA_ITEMS = "/ContractExtraConfiguration/GetContractExtraItems";
     public static final String CONTRACT_GET_OPEN_CONTRACT_DATE_INPUTS = "/Contract/GetOpenContractDateInputs";
     
+    // Loyalty API endpoints (calls external loyaltyapigw API)
+    public static final String LOYALTY_GET_INTEGRATED_LOYALTIES_FROM_LOYALTY_API = "/Loyalty/GetIntegratedLoyaltiesFromLoyaltyApi";
+    public static final String LOYALTY_GET_EXTERNAL_LOYALTIES_CONFIGURATIONS_ITEMS_FROM_LOYALTY_API = "/Loyalty/GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApi";
+    
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
     public static final String CUSTOMER_CREATE_WITH_RANDOM_NAME = "/Customer/CreateCustomerWithRandomName";
