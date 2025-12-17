@@ -34,6 +34,9 @@ public final class ApiPaths {
     public static final String COUNTRY_GET_COUNTRIES_FOR_COMBOBOX = "/Country/GetCountriesForCombobox";
     public static final String COUNTRY_GET_NATIONALITIES_FOR_COMBOBOX = "/Country/GetNationalitiesForCombobox";
     
+    // Country Settings endpoints
+    public static final String COUNTRY_SETTINGS_GET_SETTINGS = "/CountrySettings/GetSettings";
+    
     // Currency endpoints
     public static final String CURRENCY_GET_COUNTRY_CURRENCY_INFO = "/Currency/GetCountryCurrencyInfo";
     public static final String CURRENCY_GET_CURRENCIES_FOR_COMBOBOX = "/Currency/GetCurrenciesForCombobox";
@@ -46,6 +49,10 @@ public final class ApiPaths {
     public static final String CONTRACT_EXTRA_CONFIGURATION_GET_EXTRAS_NAMES_EXCLUDED = "/ContractExtraConfiguration/GetExtrasNamesExcludedFromBookingPaymentDetails";
     public static final String CONTRACT_EXTRA_CONFIGURATION_GET_CONTRACT_EXTRA_ITEMS = "/ContractExtraConfiguration/GetContractExtraItems";
     public static final String CONTRACT_GET_OPEN_CONTRACT_DATE_INPUTS = "/Contract/GetOpenContractDateInputs";
+    
+    // Loyalty API endpoints (calls external loyaltyapigw API)
+    public static final String LOYALTY_GET_INTEGRATED_LOYALTIES_FROM_LOYALTY_API = "/Loyalty/GetIntegratedLoyaltiesFromLoyaltyApi";
+    public static final String LOYALTY_GET_EXTERNAL_LOYALTIES_CONFIGURATIONS_ITEMS_FROM_LOYALTY_API = "/Loyalty/GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApi";
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";
@@ -89,12 +96,15 @@ public final class ApiPaths {
     public static final String VEHICLE_CREATE_AND_RECEIVE = "/Vehicle/CreateAndRecieveVehicler";
     public static final String RENTAL_VEHICLE_GET_ALL_BRANCH_VEHICLES = "/RentalVehicle/GetAllBranchVehicles";
     public static final String RENTAL_VEHICLE_GET_BEST_RENTAL_RATE_FOR_MODEL = "/RentalVehicle/GetBestRentalRateForModel";
+    public static final String RENTAL_VEHICLE_GET_BRANCH_AVAILABLE_MODELS_FOR_BOOKING_COMBOBOX_ITEMS = "/RentalVehicle/GetBranchAvailableModelsForBookingComboboxItems";
     public static final String VEHICLE_CHECK_GET_PREPARATION_DATA = "/VehicleCheck/GetVehicleCheckPreparationData";
     public static final String RENTAL_VEHICLE_RECEIVE_NEW_VEHICLE = "/RentalVehicle/ReceiveNewVehicle";
     
     // Booking endpoints
     public static final String BOOKING_GET_CREATE_BOOKING_DATE_INPUTS = "/Booking/GetCreateBookingDateInputs";
     public static final String BOOKING_CALCULATE_BILLING_INFORMATION = "/Booking/CalculateBillingInformation";
+    public static final String BOOKING_VALIDATE_DURATION_AND_LOCATIONS = "/Booking/ValidateDurationANDLocations";
+    public static final String BOOKING_VALIDATE_PREVENT_RENTING_RESTRICTION = "/Booking/ValidatePreventRentingRestriction";
     
     // Create Booking endpoints
     public static final String CREATE_BOOKING_CREATE_BOOKING = "/CreateBooking/CreateBooking";

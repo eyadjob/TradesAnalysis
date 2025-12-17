@@ -2,6 +2,7 @@ package com.controllers;
 
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.beans.country.GetCountryCurrencyInfoResponseBean;
+import com.beans.country.GetCountrySettingsResponseBean;
 import com.beans.country.GetCurrenciesForComboboxResponseBean;
 import com.beans.user.GetUserBranchesForComboboxResponseBean;
 import com.services.CountryService;
@@ -119,6 +120,30 @@ public class CountryController {
     public GetAllItemsComboboxItemsResponseBean getNationalitiesForCombobox(
             @RequestParam(required = false, defaultValue = "false") Boolean includeInActive) {
         return countryService.getNationalitiesForCombobox(includeInActive);
+    }
+
+    /**
+     * Get country settings by country ID and keys.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param countryId The country ID for which to get the settings (required).
+     * @param keys List of setting keys to retrieve (required).
+     * @return The response containing the country settings as key-value pairs.
+     */
+    @GetMapping(path = COUNTRY_SETTINGS_GET_SETTINGS, produces = "application/json")
+    public GetCountrySettingsResponseBean getCountrySettings(
+            @RequestParam(required = true) Integer countryId,
+            @RequestParam(required = true) List<String> keys) {
+
+        if (countryId == null) {
+            throw new IllegalArgumentException("countryId parameter is required.");
+        }
+        if (keys == null || keys.isEmpty()) {
+            throw new IllegalArgumentException("keys parameter is required and cannot be empty.");
+        }
+
+        return countryService.getCountrySettings(countryId, keys);
     }
 }
 

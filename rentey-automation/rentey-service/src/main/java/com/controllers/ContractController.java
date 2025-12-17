@@ -2,11 +2,15 @@ package com.controllers;
 
 import com.beans.contract.GetContractExtraItemsResponseBean;
 import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
+import com.beans.contract.GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean;
+import com.beans.contract.GetIntegratedLoyaltiesFromLoyaltyApiResponseBean;
 import com.beans.contract.GetOpenContractDateInputsResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import com.services.ContractService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.controllers.ApiPaths.*;
 
@@ -122,6 +126,34 @@ public class ContractController {
         }
 
         return contractService.getOpenContractDateInputs(pickupBranch);
+    }
+
+    /**
+     * Get integrated loyalties from Loyalty API.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     * Note: This API uses a different base path (loyaltyapigw) instead of the standard webapigw.
+     *
+     * @return The response containing a list of integrated loyalty programs.
+     */
+    @GetMapping(path = LOYALTY_GET_INTEGRATED_LOYALTIES_FROM_LOYALTY_API, produces = "application/json")
+    public List<GetIntegratedLoyaltiesFromLoyaltyApiResponseBean> getIntegratedLoyaltiesFromLoyaltyApi() {
+        return contractService.getIntegratedLoyaltiesFromLoyaltyApi();
+    }
+
+    /**
+     * Get external loyalties configurations items from Loyalty API.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     * Note: This API uses a different base path (loyaltyapigw) instead of the standard webapigw.
+     *
+     * @param includeInActive Whether to include inactive items (default: false).
+     * @return The response containing external loyalty configuration items.
+     */
+    @GetMapping(path = LOYALTY_GET_EXTERNAL_LOYALTIES_CONFIGURATIONS_ITEMS_FROM_LOYALTY_API, produces = "application/json")
+    public GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive) {
+        return contractService.getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(includeInActive);
     }
 }
 

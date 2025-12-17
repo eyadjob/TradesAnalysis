@@ -7,7 +7,6 @@ import com.enums.CustomerDocumentType;
 import com.util.DateUtil;
 import com.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,7 +38,6 @@ public class CustomerOperationsService {
     /**
      * Builds CreateOrUpdateCustomerRequestBean from CustomerCsvData.
      *
-     * @return CreateOrUpdateCustomerRequestBean populated with CSV data
      */
     private CreateOrUpdateCustomerRequestBean buildCustomerCreationRequestBean(String countryName) {
         CustomerDataBuilder builder = CustomerDataBuilder.create(settingsApiBaseUrl);
@@ -59,6 +57,81 @@ public class CustomerOperationsService {
                 secondName,
                 thirdName
         );
+        
+        return buildCustomerCreationRequestBeanInternal(builder, countryName, countryId, identityDocumentTypeId, driverLicenseDocumentTypeId, firstName, phoneNumber, documentNumber, imagePath);
+    }
+
+    /**
+     * Builds CreateOrUpdateCustomerRequestBean with provided names.
+     * Overloaded method that accepts firstName, secondName, and thirdName as parameters.
+     *
+     * @param countryName The name of the country for the customer.
+     * @param firstName The first name of the customer.
+     * @param secondName The second name of the customer.
+     * @param thirdName The third name (family name) of the customer.
+     * @return CreateOrUpdateCustomerRequestBean instance.
+     */
+    private CreateOrUpdateCustomerRequestBean buildCustomerCreationRequestBean(String countryName, String firstName, String secondName, String thirdName) {
+        CustomerDataBuilder customerDataBuilder = CustomerDataBuilder.create(settingsApiBaseUrl);
+        String countryId = countryService.getOperationalCountryIdFromName(countryName);
+        String identityDocumentTypeId = lookupsService.getComboboxItemsValueByDisplayText(CustomerDocumentType.IDENTITY.getDisplayText(),17);
+        String driverLicenseDocumentTypeId = lookupsService.getComboboxItemsValueByDisplayText(CustomerDocumentType.DRIVER_LICENSE.getDisplayText(),17);
+        String phoneNumber = "966-51" + StringUtil.generateRandomNumber(7);
+        String documentNumber = StringUtil.generateRandomNumber(10);
+        String imagePath =  vehicleService.uploadSignatureImage();
+
+        // Map Full Name using provided names
+        customerDataBuilder.withFullName(
+                firstName,
+                secondName,
+                thirdName
+        );
+        
+        return buildCustomerCreationRequestBeanInternal(customerDataBuilder, countryName, countryId, identityDocumentTypeId, driverLicenseDocumentTypeId, firstName, phoneNumber, documentNumber, imagePath);
+    }
+
+    /**
+     * Builds CreateOrUpdateCustomerRequestBean with provided names and phone number.
+     * Overloaded method that accepts firstName, secondName, thirdName, and phoneNumber as parameters.
+     *
+     * @param countryName The name of the country for the customer.
+     * @param firstName The first name of the customer.
+     * @param secondName The second name of the customer.
+     * @param thirdName The third name (family name) of the customer.
+     * @param phoneNumber The phone number of the customer.
+     * @return CreateOrUpdateCustomerRequestBean instance.
+     */
+    private CreateOrUpdateCustomerRequestBean buildCustomerCreationRequestBean(String countryName, String firstName, String secondName, String thirdName, String phoneNumber) {
+        CustomerDataBuilder customerDataBuilder = CustomerDataBuilder.create(settingsApiBaseUrl);
+        String countryId = countryService.getOperationalCountryIdFromName(countryName);
+        String identityDocumentTypeId = lookupsService.getComboboxItemsValueByDisplayText(CustomerDocumentType.IDENTITY.getDisplayText(),17);
+        String driverLicenseDocumentTypeId = lookupsService.getComboboxItemsValueByDisplayText(CustomerDocumentType.DRIVER_LICENSE.getDisplayText(),17);
+        String documentNumber = StringUtil.generateRandomNumber(10);
+        String imagePath =  vehicleService.uploadSignatureImage();
+
+        // Map Full Name using provided names
+        customerDataBuilder.withFullName(
+                firstName,
+                secondName,
+                thirdName
+        );
+        
+        return buildCustomerCreationRequestBeanInternal(customerDataBuilder, countryName, countryId, identityDocumentTypeId, driverLicenseDocumentTypeId, firstName, phoneNumber, documentNumber, imagePath);
+    }
+
+    /**
+     * Internal helper method to build the customer request bean with common logic.
+     */
+    private CreateOrUpdateCustomerRequestBean buildCustomerCreationRequestBeanInternal(
+            CustomerDataBuilder builder,
+            String countryName,
+            String countryId,
+            String identityDocumentTypeId,
+            String driverLicenseDocumentTypeId,
+            String firstName,
+            String phoneNumber,
+            String documentNumber,
+            String imagePath) {
 
         builder.withContactInformation(
                 phoneNumber,

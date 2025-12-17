@@ -3,13 +3,18 @@ package com.services;
 import com.annotation.LogExecutionTime;
 import com.beans.contract.GetContractExtraItemsResponseBean;
 import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
+import com.beans.contract.GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean;
+import com.beans.contract.GetIntegratedLoyaltiesFromLoyaltyApiResponseBean;
 import com.beans.contract.GetOpenContractDateInputsResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.List;
 
 @Service
 public class ContractService {
@@ -26,24 +31,15 @@ public class ContractService {
      * Get countries phone information.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param typeId The type ID for filtering countries (required).
-     * @param includeInActive Whether to include inactive countries (default: false).
-     * @param includeNotAssign Whether to include not assigned countries (default: false).
      * @return The response containing all countries phone information.
      */
     @Cacheable(cacheNames = "countriesPhoneCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
-    public GetCountriesPhoneResponseBean getCountriesPhone(
-            Integer typeId,
-            Boolean includeInActive,
-            Boolean includeNotAssign) {
+    public GetCountriesPhoneResponseBean getCountriesPhone(){
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(apiBasePath + "/Country/GetCountriesPhone")
-                        .queryParam("typeId", typeId)
-                        .queryParam("includeInActive", includeInActive)
-                        .queryParam("includeNotAssign", includeNotAssign)
                         .build())
                 .retrieve()
                 .bodyToMono(GetCountriesPhoneResponseBean.class)
@@ -134,6 +130,56 @@ public class ContractService {
                         .build())
                 .retrieve()
                 .bodyToMono(GetOpenContractDateInputsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get integrated loyalties from Loyalty API.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * This endpoint retrieves all integrated loyalty programs from the loyalty API gateway.
+     * Results are cached for 2 hours.
+     *
+     * @return The response containing a list of integrated loyalty programs.
+     */
+    @Cacheable(cacheNames = "integratedLoyaltiesFromLoyaltyApiCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public List<GetIntegratedLoyaltiesFromLoyaltyApiResponseBean> getIntegratedLoyaltiesFromLoyaltyApi() {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        // Note: This API uses a different base path (loyaltyapigw instead of webapigw)
+        return settingsWebClient.get()
+                .uri("/loyaltyapigw/api/app/external-loyalty-configuration/integrated-loyalties")
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<GetIntegratedLoyaltiesFromLoyaltyApiResponseBean>>() {})
+                .block();
+    }
+
+    /**
+     * Get external loyalties configurations items from Loyalty API.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * This endpoint retrieves external loyalty configuration items from the loyalty API gateway.
+     * Results are cached for 2 hours.
+     *
+     * @param includeInActive Whether to include inactive items (default: false).
+     * @return The response containing external loyalty configuration items.
+     */
+    @Cacheable(cacheNames = "externalLoyaltiesConfigurationsItemsFromLoyaltyApiCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(Boolean includeInActive) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        // Note: This API uses a different base path (loyaltyapigw instead of webapigw)
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path("/loyaltyapigw/api/app/external-loyalty-configuration/external-loyalties-configurations-items");
+                    
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean.class)
                 .block();
     }
 }
