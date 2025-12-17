@@ -98,6 +98,7 @@ public final class ApiPaths {
     // Booking endpoints
     public static final String BOOKING_GET_CREATE_BOOKING_DATE_INPUTS = "/Booking/GetCreateBookingDateInputs";
     public static final String BOOKING_CALCULATE_BILLING_INFORMATION = "/Booking/CalculateBillingInformation";
+    public static final String BOOKING_VALIDATE_DURATION_AND_LOCATIONS = "/Booking/ValidateDurationANDLocations";
     
     // Create Booking endpoints
     public static final String CREATE_BOOKING_CREATE_BOOKING = "/CreateBooking/CreateBooking";

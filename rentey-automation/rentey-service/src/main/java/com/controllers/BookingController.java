@@ -6,6 +6,8 @@ import com.beans.booking.CreateBookingRequestBean;
 import com.beans.booking.CreateBookingResponseBean;
 import com.beans.booking.GetBestRentalRateForModelResponseBean;
 import com.beans.booking.GetCreateBookingDateInputsResponseBean;
+import com.beans.booking.ValidateDurationAndLocationsRequestBean;
+import com.beans.booking.ValidateDurationAndLocationsResponseBean;
 import com.beans.customer.GetCustomerContractInformationByNameResponseBean;
 import com.beans.loyalty.GetAllExternalLoyaltiesConfigurationsItemsResponseBean;
 import com.beans.loyalty.GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean;
@@ -221,6 +223,35 @@ public class BookingController {
         }
 
         return bookingService.createBooking(request);
+    }
+
+    /**
+     * Validate duration and locations for booking.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param request The request containing booking duration and location information.
+     * @param pickupDate The pickup date as a query parameter (required, format: yyyy-MM-dd HH:mm:ss).
+     * @param dropOffDate The dropoff date as a query parameter (required, format: yyyy-MM-dd HH:mm:ss).
+     * @return The response containing validation results.
+     */
+    @PostMapping(path = BOOKING_VALIDATE_DURATION_AND_LOCATIONS, consumes = "application/json", produces = "application/json")
+    public ValidateDurationAndLocationsResponseBean validateDurationAndLocations(
+            @RequestBody(required = true) ValidateDurationAndLocationsRequestBean request,
+            @RequestParam(required = true) String pickupDate,
+            @RequestParam(required = true) String dropOffDate) {
+
+        if (request == null) {
+            throw new IllegalArgumentException("Request body is required and cannot be null.");
+        }
+        if (pickupDate == null || pickupDate.isEmpty()) {
+            throw new IllegalArgumentException("pickupDate parameter is required.");
+        }
+        if (dropOffDate == null || dropOffDate.isEmpty()) {
+            throw new IllegalArgumentException("dropOffDate parameter is required.");
+        }
+
+        return bookingService.validateDurationAndLocations(request, pickupDate, dropOffDate);
     }
 
 

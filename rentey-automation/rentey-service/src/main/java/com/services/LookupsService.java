@@ -4,6 +4,7 @@ import com.annotation.LogExecutionTime;
 import com.annotation.LogRequestAndResponseOnDesk;
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.beans.lookups.GetItemsByTypeResponseBean;
+import com.enums.LookupTypes;
 import com.util.PropertyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -96,6 +97,20 @@ public class LookupsService {
     public GetAllItemsComboboxItemsResponseBean getAllItemsComboboxItems(
             Integer typeId) {
         return getAllItemsComboboxItems(typeId,false,false);
+    }
+
+    @LogExecutionTime
+    public String getLookupItemIdByLookupTypeNameAndItemDisplayName(LookupTypes lookupType, String itemDisplayText) {
+        int lookupTypeId = getLookupTypeIdByName(lookupType.name());
+        GetAllItemsComboboxItemsResponseBean comboboxItemsResponseBean= getAllItemsComboboxItems(lookupTypeId, false, false);
+        return comboboxItemsResponseBean.result().items().stream().filter(i -> i.displayText().equals(itemDisplayText)).map(i -> i.value()).findAny().orElse("-1");
+
+    }
+
+    public String getLookupItemIdByLookupTypeIdAndItemDisplayName(int lookupTypeId, String itemDisplayText) {
+        GetAllItemsComboboxItemsResponseBean comboboxItemsResponseBean= getAllItemsComboboxItems(lookupTypeId, false, false);
+        return comboboxItemsResponseBean.result().items().stream().filter(i -> i.displayText().equals(itemDisplayText)).map(i -> i.value()).findAny().orElse("-1");
+
     }
 
 
