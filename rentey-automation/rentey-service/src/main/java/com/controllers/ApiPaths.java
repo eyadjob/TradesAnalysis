@@ -34,6 +34,9 @@ public final class ApiPaths {
     public static final String COUNTRY_GET_COUNTRIES_FOR_COMBOBOX = "/Country/GetCountriesForCombobox";
     public static final String COUNTRY_GET_NATIONALITIES_FOR_COMBOBOX = "/Country/GetNationalitiesForCombobox";
     
+    // Country Settings endpoints
+    public static final String COUNTRY_SETTINGS_GET_SETTINGS = "/CountrySettings/GetSettings";
+    
     // Currency endpoints
     public static final String CURRENCY_GET_COUNTRY_CURRENCY_INFO = "/Currency/GetCountryCurrencyInfo";
     public static final String CURRENCY_GET_CURRENCIES_FOR_COMBOBOX = "/Currency/GetCurrenciesForCombobox";

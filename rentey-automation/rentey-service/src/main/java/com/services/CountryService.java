@@ -3,11 +3,13 @@ package com.services;
 import com.annotation.LogExecutionTime;
 import com.beans.general.GetAllItemsComboboxItemsResponseBean;
 import com.beans.country.GetCountryCurrencyInfoResponseBean;
+import com.beans.country.GetCountrySettingsResponseBean;
 import com.beans.country.GetCurrenciesForComboboxResponseBean;
 import com.beans.setting.GetOperationalCountriesResponseBean;
 import com.beans.user.GetUserBranchesForComboboxResponseBean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -102,8 +104,24 @@ public class CountryService {
     public GetUserBranchesForComboboxResponseBean getUserBranchesForCombobox(int countryId,List<Integer> filterTypes) {
         return getUserBranchesForCombobox(countryId,false,false,filterTypes);
     }
+
+    @Cacheable(cacheNames = "userBranchesForCombobox", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetUserBranchesForComboboxResponseBean getUserBranchesForCombobox(int countryId) {
+        return getUserBranchesForCombobox(countryId,false,false,null);
+    }
+
+
+
     public String getBranchIdByName(GetUserBranchesForComboboxResponseBean userBranchesForComboboxResponseBean, String branchName) {
         return userBranchesForComboboxResponseBean.result().items().stream().filter(userBranches -> userBranches.displayText().equals(branchName))
+                .findFirst().map(userBranches -> String.valueOf(userBranches.value())).orElse("-1");
+    }
+
+
+    public String getBranchIdByName(String countryId, String branchName) {
+        GetUserBranchesForComboboxResponseBean  branchesForCombobox = getUserBranchesForCombobox(Integer.parseInt(countryId));
+        return branchesForCombobox.result().items().stream().filter(userBranches -> userBranches.displayText().equals(branchName))
                 .findFirst().map(userBranches -> String.valueOf(userBranches.value())).orElse("-1");
     }
 
@@ -223,5 +241,46 @@ public class CountryService {
         }
         return "-1";
     }
+
+    /**
+     * Get country settings by country ID and keys.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * Results are cached for 2 hours.
+     *
+     * @param countryId The country ID for which to get the settings (required).
+     * @param keys List of setting keys to retrieve (required).
+     * @return The response containing the country settings as key-value pairs.
+     */
+    @Cacheable(cacheNames = "countrySettingsCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetCountrySettingsResponseBean getCountrySettings(Integer countryId, List<String> keys) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/CountrySettings/GetSettings");
+                    
+                    if (countryId != null) {
+                        builder.queryParam("countryId", countryId);
+                    }
+                    if (keys != null && !keys.isEmpty()) {
+                        for (String key : keys) {
+                            builder.queryParam("keys", key);
+                        }
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetCountrySettingsResponseBean.class)
+                .block();
+    }
+
+    public List<String> buildKeysForSettingsToGet(String settingKeys ) {
+        return Arrays.stream(settingKeys.split("keys=")).map(k -> k.replace("&","")).toList();
+    }
 }
+
+
+
 

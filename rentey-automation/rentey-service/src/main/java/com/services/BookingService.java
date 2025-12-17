@@ -7,10 +7,12 @@ import com.beans.booking.CreateBookingRequestBean;
 import com.beans.booking.CreateBookingResponseBean;
 import com.beans.booking.GetBestRentalRateForModelResponseBean;
 import com.beans.booking.GetCreateBookingDateInputsResponseBean;
+import com.beans.country.GetCountrySettingsResponseBean;
 import com.beans.customer.GetCustomerContractInformationByNameResponseBean;
 import com.beans.loyalty.GetAllExternalLoyaltiesConfigurationsItemsResponseBean;
 import com.beans.loyalty.GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean;
 import com.beans.loyalty.GetIntegratedLoyaltiesResponseBean;
+import com.beans.user.GetUserBranchesForComboboxResponseBean;
 import com.beans.validation.IsValidPhoneResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,6 +37,23 @@ public class BookingService {
     @Autowired
     @Qualifier("apiBasePathWithoutService")
     private String apiBasePathWithoutService;
+
+    @Autowired
+    CountryService countryService;
+
+    @Autowired
+    LookupsService lookupsService;
+
+    @Autowired
+    CustomerService customerService;
+
+    @Autowired
+    VehicleService vehicleService;
+
+    @Autowired
+    VehicleOperationsService vehicleOperationsService;
+
+
 
     /**
      * Get create booking date inputs.
@@ -240,6 +259,17 @@ public class BookingService {
                 .bodyToMono(CreateBookingResponseBean.class)
                 .block();
     }
+
+
+
+    public CreateBookingRequestBean buildBookingCreationRequest(String countryName, String branchName) {
+        String countryId = countryService.getOperationalCountryIdFromName(countryName);
+        String branchId = countryService.getBranchIdByName(countryId, branchName);
+        GetCountrySettingsResponseBean countrySettingsResponseBean =  countryService.getCountrySettings(Integer.parseInt(countryId),countryService.buildKeysForSettingsToGet("keys=App.CountryManagement.MinimumHoursToBooking&keys=App.CountryManagement.MinimumHoursToBrokerBooking&keys=App.CountryManagement.EnablePaymentOnSystemBooking&keys=App.CountryManagement.MaximumHoursToExecuteImmediateBooking&keys=App.CountryManagement.EnableExternalAuthorizationOnBooking&keys=App.CountryManagement.ContractMinimumHours&keys=App.CountryManagement.MaxDaysWhenAddContract&keys=App.CountryManagement.FreeHours&keys=App.CountryManagement.EnableFuelCost&keys=App.CountryManagement.MaxOdometerChange&keys=App.CountryManagement.MediumMaxAmount&keys=App.CountryManagement.ApplyExternalDriverAuthorizationOn"));
+    }
+
+
+
 
 }
 

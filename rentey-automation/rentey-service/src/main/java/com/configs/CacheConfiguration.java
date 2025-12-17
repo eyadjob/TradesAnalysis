@@ -82,7 +82,8 @@ public class CacheConfiguration implements CachingConfigurer {
                 "paymentMethodsComboboxItemsCache",
                 "bestRentalRateForModelCache",
                 "openContractDateInputsCache",
-                "authenticationCache"
+                "authenticationCache",
+                "countrySettingsCache"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above
