@@ -73,6 +73,9 @@ public class BookingService {
     @Autowired
     CustomerOperationsService customerOperationsService;
 
+    @Autowired
+    SettingsService settingsService;
+
 
 
     /**
@@ -331,8 +334,17 @@ public class BookingService {
     }
 
     public String getModelIdByModelName(GetBranchAvailableModelsForBookingComboboxItemsRequestBean request, String modelName) {
-        return getBranchAvailableModelsForBookingComboboxItems(request).result().items().stream().filter(m -> m.displayText().equals(modelName)).findFirst().map(m -> m.value()).orElse("-1");
+        return getBranchAvailableModelsForBookingComboboxItems(request).result().items().stream()
+                .flatMap(category -> category.bookingAvailableModelComboboxItems().stream())
+                .filter(model -> model.displayText().equals(modelName))
+                .findFirst()
+                .map(model -> model.value())
+                .orElse("-1");
     }
+    public String getCategoryIddByCategoryName(GetBranchAvailableModelsForBookingComboboxItemsRequestBean request, String categoryName) {
+        return getBranchAvailableModelsForBookingComboboxItems(request).result().items().stream().filter(m -> m.displayText().equals(categoryName)).findFirst().map(m -> m.value()).orElse("-1");
+    }
+
 
     /**
      * Validate prevent renting restriction for booking.
@@ -419,12 +431,21 @@ public class BookingService {
                 userDefinedVariables.get("automationCarModelName"));
 
         GetBranchAvailableModelsForBookingComboboxItemsResponseBean availableModelsResponse = getBranchAvailableModelsForBookingComboboxItems(availableModelsRequest);
-        String vehicleModelId = getModelIdByModelName(availableModelsRequest,  userDefinedVariables.get("automationCarCategoryName"));
+        String vehicleModelId = getModelIdByModelName(availableModelsRequest,  userDefinedVariables.get("automationCarModelName"));
+        String vehicleCategoryId = getCategoryIddByCategoryName(availableModelsRequest,  userDefinedVariables.get("automationCarCategoryName"));
         CreateOrUpdateCustomerResponseBean customerResponseBean= customerOperationsService.createCustomerWithRandomData(countryName);
-        validatePreventRentingRestriction(customerResponseBean.result().id(),Integer.parseInt(branchId),Integer.parseInt(carModelId),pickupDate);
+        validatePreventRentingRestriction(customerResponseBean.result().id(),Integer.parseInt(branchId),Integer.parseInt(vehicleModelId),pickupDate);
         getCustomerContractInformationByName(customerResponseBean.result().fullName().displayName());
+        int rentalSchemaPeriodId = settingsService.getRentalSchemaIdByNameAndByPeriodTypeName(Integer.parseInt(countryId),  userDefinedVariables.get("automationRentalRateSchemaName"), "Daily");
         contractService.getIntegratedLoyaltiesFromLoyaltyApi();
         contractService.getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(false);
+        contractService.getExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApi(customerResponseBean.result().id(),Integer.parseInt(branchId));
+        contractService.getContractExtraItems(Integer.valueOf(branchId),Integer.valueOf(vehicleCategoryId),rentalSchemaPeriodId,1801,230,120,false,32100);
+        lookupsService.getPaymentMethodsComboboxItems(false,false);
+        getBestRentalRateForModel(Integer.valueOf(countryId),Integer.valueOf(branchId),Integer.valueOf(vehicleModelId),Integer.valueOf(userDefinedVariables.get("automationYear")),pickupDate,dropOffDate);
+        
+
+
     }
 
 

@@ -27,6 +27,13 @@ public final class ApiPaths {
     public static final String GEO_SETTINGS_CHANGE_TENANT = "/GeoSettings/ChangeTenantSettings";
     public static final String GEO_SETTINGS_UPDATE_COUNTRY = "/GeoSettings/UpdateCountrySettings";
     public static final String GEO_SETTINGS_CHANGE_BRANCH = "/GeoSettings/ChangeBranchSettings";
+    public static final String BRANCH_SETTINGS_GET_SETTINGS = "/BranchSettings/GetSettings";
+    
+    // Rental Rates Schema endpoints
+    public static final String RENTAL_RATES_SCHEMA_GET_ALL = "/RentalRatesSchema/GetAllRentalRatesSchemas";
+    
+    // Rental Rates Schema endpoints
+    public static final String RENTAL_RATES_SCHEMA_GET_ALL = "/RentalRatesSchema/GetAllRentalRatesSchemas";
     
     // Country endpoints
     public static final String COUNTRY_GET_OPERATIONAL_COUNTRIES = "/Country/GetOperationalCountries";
@@ -53,6 +60,7 @@ public final class ApiPaths {
     // Loyalty API endpoints (calls external loyaltyapigw API)
     public static final String LOYALTY_GET_INTEGRATED_LOYALTIES_FROM_LOYALTY_API = "/Loyalty/GetIntegratedLoyaltiesFromLoyaltyApi";
     public static final String LOYALTY_GET_EXTERNAL_LOYALTIES_CONFIGURATIONS_ITEMS_FROM_LOYALTY_API = "/Loyalty/GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApi";
+    public static final String LOYALTY_GET_EXTERNAL_LOYALTIES_WITH_ALLOW_REDEEM_COMBOBOX_FROM_LOYALTY_API = "/Loyalty/GetExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApi";
     
     // Customer endpoints
     public static final String CUSTOMER_CREATE_OR_UPDATE = "/Customer/CreateOrUpdateCustomer";

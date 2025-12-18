@@ -2,14 +2,18 @@ package com.controllers;
 
 import com.beans.general.AbpResponseBean;
 
+import com.beans.setting.GetAllRentalRatesSchemasResponseBean;
+import com.beans.setting.GetBranchSettingsResponseBean;
+import com.beans.setting.GetOperationalCountriesResponseBean;
+import com.beans.setting.TenantAndCountrySettingsRequestBean;
 import com.beans.setting.UpdateAllSettingsRequestBean;
 import com.services.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.controllers.ApiPaths.*;
-import com.beans.setting.GetOperationalCountriesResponseBean;
-import com.beans.setting.TenantAndCountrySettingsRequestBean;
 
 @RestController
 @RequestMapping(path = BASE_PATH)
@@ -128,6 +132,56 @@ public class SettingsController {
     @GetMapping(path = COUNTRY_GET_OPERATIONAL_COUNTRIES, produces = "application/json")
     public GetOperationalCountriesResponseBean getOperationalCountries() {
         return settingsService.getOperationalCountries();
+    }
+
+    /**
+     * Get all rental rates schemas.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param includeInActive Whether to include inactive schemas (default: false).
+     * @param countryId The country ID (required).
+     * @return The response containing all rental rates schemas.
+     */
+    @GetMapping(path = RENTAL_RATES_SCHEMA_GET_ALL, produces = "application/json")
+    public GetAllRentalRatesSchemasResponseBean getAllRentalRatesSchemas(
+            @RequestParam(required = false, defaultValue = "false") Boolean includeInActive,
+            @RequestParam(required = true) Integer countryId) {
+
+        if (countryId == null) {
+            throw new IllegalArgumentException("countryId parameter is required.");
+        }
+
+        return settingsService.getAllRentalRatesSchemas(countryId, includeInActive);
+    }
+
+    /**
+     * Get branch settings by country ID, branch ID, and keys.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param countryId The country ID (required).
+     * @param branchId The branch ID (required).
+     * @param keys List of setting keys to retrieve (required).
+     * @return The response containing the branch settings as key-value pairs.
+     */
+    @GetMapping(path = BRANCH_SETTINGS_GET_SETTINGS, produces = "application/json")
+    public GetBranchSettingsResponseBean getBranchSettings(
+            @RequestParam(required = true) Integer countryId,
+            @RequestParam(required = true) Integer branchId,
+            @RequestParam(required = true) List<String> keys) {
+
+        if (countryId == null) {
+            throw new IllegalArgumentException("countryId parameter is required.");
+        }
+        if (branchId == null) {
+            throw new IllegalArgumentException("branchId parameter is required.");
+        }
+        if (keys == null || keys.isEmpty()) {
+            throw new IllegalArgumentException("keys parameter is required and cannot be empty.");
+        }
+
+        return settingsService.getBranchSettings(countryId, branchId, keys);
     }
 }
 
