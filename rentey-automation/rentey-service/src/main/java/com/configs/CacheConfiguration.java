@@ -86,7 +86,8 @@ public class CacheConfiguration implements CachingConfigurer {
                 "countrySettingsCache",
                 "branchAvailableModelsForBookingComboboxItemsCache",
                 "integratedLoyaltiesFromLoyaltyApiCache",
-                "externalLoyaltiesConfigurationsItemsFromLoyaltyApiCache"
+                "externalLoyaltiesConfigurationsItemsFromLoyaltyApiCache",
+                "externalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApiCache"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above

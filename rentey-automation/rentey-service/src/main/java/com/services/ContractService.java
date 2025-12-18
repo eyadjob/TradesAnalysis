@@ -4,6 +4,7 @@ import com.annotation.LogExecutionTime;
 import com.beans.contract.GetContractExtraItemsResponseBean;
 import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
 import com.beans.contract.GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean;
+import com.beans.contract.GetExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApiResponseBean;
 import com.beans.contract.GetIntegratedLoyaltiesFromLoyaltyApiResponseBean;
 import com.beans.contract.GetOpenContractDateInputsResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
@@ -180,6 +181,34 @@ public class ContractService {
                 })
                 .retrieve()
                 .bodyToMono(GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get external loyalties with allow redeem combobox from Loyalty API.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * This endpoint retrieves external loyalties that allow redeem for a specific customer and branch.
+     * Results are cached for 2 hours.
+     *
+     * @param customerId The customer ID (required).
+     * @param branchId The branch ID (required).
+     * @return The response containing a list of external loyalties with allow redeem combobox items.
+     */
+    @Cacheable(cacheNames = "externalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApiCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public List<GetExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApiResponseBean> getExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApi(
+            Long customerId,
+            Integer branchId) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        // Note: This API uses a different base path (loyaltyapigw instead of webapigw)
+        return settingsWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/loyaltyapigw/api/app/customer-membership/external-loyalties-with-allow-redeem-combobox")
+                        .queryParam("customerId", customerId)
+                        .queryParam("branchId", branchId)
+                        .build())
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<GetExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApiResponseBean>>() {})
                 .block();
     }
 }

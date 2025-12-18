@@ -2,6 +2,7 @@ package com.services;
 
 import com.annotation.LogExecutionTime;
 import com.beans.general.AbpResponseBean;
+import com.beans.setting.GetAllRentalRatesSchemasResponseBean;
 import com.beans.setting.TenantAndCountrySettingsRequestBean;
 import com.beans.setting.UpdateAllSettingsRequestBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,39 @@ public class SettingsService {
                 .uri(apiBasePath + "/Country/GetOperationalCountries")
                 .retrieve()
                 .bodyToMono(GetOperationalCountriesResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get all rental rates schemas.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     * This endpoint retrieves all rental rates schemas for a specific country.
+     * Results are cached for 2 hours.
+     *
+     * @param includeInActive Whether to include inactive schemas (default: false).
+     * @param countryId The country ID (required).
+     * @return The response containing all rental rates schemas.
+     */
+    @Cacheable(cacheNames = "allRentalRatesSchemasCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetAllRentalRatesSchemasResponseBean getAllRentalRatesSchemas(Boolean includeInActive, Integer countryId) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/RentalRatesSchema/GetAllRentalRatesSchemas");
+                    
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    if (countryId != null) {
+                        builder.queryParam("countryId", countryId);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllRentalRatesSchemasResponseBean.class)
                 .block();
     }
 }

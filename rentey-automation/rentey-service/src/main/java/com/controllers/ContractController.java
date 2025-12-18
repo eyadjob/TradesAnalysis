@@ -3,6 +3,7 @@ package com.controllers;
 import com.beans.contract.GetContractExtraItemsResponseBean;
 import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
 import com.beans.contract.GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean;
+import com.beans.contract.GetExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApiResponseBean;
 import com.beans.contract.GetIntegratedLoyaltiesFromLoyaltyApiResponseBean;
 import com.beans.contract.GetOpenContractDateInputsResponseBean;
 import com.beans.customer.GetCountriesPhoneResponseBean;
@@ -154,6 +155,31 @@ public class ContractController {
     public GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(
             @RequestParam(required = false, defaultValue = "false") Boolean includeInActive) {
         return contractService.getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(includeInActive);
+    }
+
+    /**
+     * Get external loyalties with allow redeem combobox from Loyalty API.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     * Note: This API uses a different base path (loyaltyapigw) instead of the standard webapigw.
+     *
+     * @param customerId The customer ID (required).
+     * @param branchId The branch ID (required).
+     * @return The response containing a list of external loyalties with allow redeem combobox items.
+     */
+    @GetMapping(path = LOYALTY_GET_EXTERNAL_LOYALTIES_WITH_ALLOW_REDEEM_COMBOBOX_FROM_LOYALTY_API, produces = "application/json")
+    public List<GetExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApiResponseBean> getExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApi(
+            @RequestParam(required = true) Integer customerId,
+            @RequestParam(required = true) Integer branchId) {
+
+        if (customerId == null) {
+            throw new IllegalArgumentException("customerId parameter is required.");
+        }
+        if (branchId == null) {
+            throw new IllegalArgumentException("branchId parameter is required.");
+        }
+
+        return contractService.getExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApi(customerId, branchId);
     }
 }
 
