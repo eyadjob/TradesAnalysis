@@ -27,6 +27,10 @@ public final class ApiPaths {
     public static final String GEO_SETTINGS_CHANGE_TENANT = "/GeoSettings/ChangeTenantSettings";
     public static final String GEO_SETTINGS_UPDATE_COUNTRY = "/GeoSettings/UpdateCountrySettings";
     public static final String GEO_SETTINGS_CHANGE_BRANCH = "/GeoSettings/ChangeBranchSettings";
+    public static final String BRANCH_SETTINGS_GET_SETTINGS = "/BranchSettings/GetSettings";
+    
+    // Rental Rates Schema endpoints
+    public static final String RENTAL_RATES_SCHEMA_GET_ALL = "/RentalRatesSchema/GetAllRentalRatesSchemas";
     
     // Rental Rates Schema endpoints
     public static final String RENTAL_RATES_SCHEMA_GET_ALL = "/RentalRatesSchema/GetAllRentalRatesSchemas";

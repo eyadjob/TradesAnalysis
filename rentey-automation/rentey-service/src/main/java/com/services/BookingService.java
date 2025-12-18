@@ -73,6 +73,9 @@ public class BookingService {
     @Autowired
     CustomerOperationsService customerOperationsService;
 
+    @Autowired
+    SettingsService settingsService;
+
 
 
     /**
@@ -433,10 +436,16 @@ public class BookingService {
         CreateOrUpdateCustomerResponseBean customerResponseBean= customerOperationsService.createCustomerWithRandomData(countryName);
         validatePreventRentingRestriction(customerResponseBean.result().id(),Integer.parseInt(branchId),Integer.parseInt(vehicleModelId),pickupDate);
         getCustomerContractInformationByName(customerResponseBean.result().fullName().displayName());
+        int rentalSchemaPeriodId = settingsService.getRentalSchemaIdByNameAndByPeriodTypeName(Integer.parseInt(countryId),  userDefinedVariables.get("automationRentalRateSchemaName"), "Daily");
         contractService.getIntegratedLoyaltiesFromLoyaltyApi();
         contractService.getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(false);
         contractService.getExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApi(customerResponseBean.result().id(),Integer.parseInt(branchId));
-        contractService.getContractExtraItems(branchId,vehicleCategoryId,);
+        contractService.getContractExtraItems(Integer.valueOf(branchId),Integer.valueOf(vehicleCategoryId),rentalSchemaPeriodId,1801,230,120,false,32100);
+        lookupsService.getPaymentMethodsComboboxItems(false,false);
+        getBestRentalRateForModel(Integer.valueOf(countryId),Integer.valueOf(branchId),Integer.valueOf(vehicleModelId),Integer.valueOf(userDefinedVariables.get("automationYear")),pickupDate,dropOffDate);
+        
+
+
     }
 
 
