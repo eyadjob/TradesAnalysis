@@ -5,6 +5,7 @@ import com.beans.booking.CalculateBillingInformationRequestBean;
 import com.beans.booking.CalculateBillingInformationResponseBean;
 import com.beans.booking.CreateBookingRequestBean;
 import com.beans.booking.CreateBookingResponseBean;
+import com.builders.CreateBookingRequestBuilder;
 import com.beans.booking.GetBestRentalRateForModelResponseBean;
 import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsRequestBean;
 import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsResponseBean;
@@ -29,6 +30,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -82,7 +85,7 @@ public class BookingService {
      * Get create booking date inputs.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param countryId The country ID for which to get the booking date inputs (required).
+     * @param countryId The country ID (required).
      * @return The response containing create booking date inputs.
      */
     @Cacheable(cacheNames = "createBookingDateInputsCache", keyGenerator = "AutoKeyGenerator")
@@ -90,35 +93,9 @@ public class BookingService {
     public GetCreateBookingDateInputsResponseBean getCreateBookingDateInputs(Integer countryId) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(apiBasePath + "/Booking/GetCreateBookingDateInputs")
-                        .queryParam("countryId", countryId)
-                        .build())
+                .uri(apiBasePath + "/Booking/GetCreateBookingDateInputs")
                 .retrieve()
                 .bodyToMono(GetCreateBookingDateInputsResponseBean.class)
-                .block();
-    }
-
-    /**
-     * Validate phone number.
-     * Authorization header and all headers from RenteyConfiguration are automatically included.
-     *
-     * @param phoneNumber The phone number to validate (required).
-     * @param phoneCode The phone code (country code) to validate (required).
-     * @return The response containing the validation result (true if valid, false otherwise).
-     */
-    @Cacheable(cacheNames = "isValidPhoneCache", keyGenerator = "AutoKeyGenerator")
-    @LogExecutionTime
-    public IsValidPhoneResponseBean isValidPhone(String phoneNumber, String phoneCode) {
-        // Authorization header and all headers from RenteyConfiguration are automatically included
-        return settingsWebClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(apiBasePathWithoutService + "/ValidatePhone/IsValid")
-                        .queryParam("phoneNumber", phoneNumber)
-                        .queryParam("phoneCode", phoneCode)
-                        .build())
-                .retrieve()
-                .bodyToMono(IsValidPhoneResponseBean.class)
                 .block();
     }
 
@@ -126,10 +103,9 @@ public class BookingService {
      * Get customer contract information by name.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param customerName The customer name to search for (required).
-     * @return The response containing customer contract information matching the name.
+     * @param customerName The customer name (required).
+     * @return The response containing customer contract information.
      */
-    @Cacheable(cacheNames = "customerContractInformationByNameCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
     public GetCustomerContractInformationByNameResponseBean getCustomerContractInformationByName(String customerName) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
@@ -140,73 +116,6 @@ public class BookingService {
                         .build())
                 .retrieve()
                 .bodyToMono(GetCustomerContractInformationByNameResponseBean.class)
-                .block();
-    }
-
-    /**
-     * Get all external loyalties configurations items.
-     * Authorization header and all headers from RenteyConfiguration are automatically included.
-     *
-     * @param includeInActive Whether to include inactive items (default: false).
-     * @return The response containing all external loyalties configurations items.
-     */
-    @Cacheable(cacheNames = "allExternalLoyaltiesConfigurationsItemsCache", keyGenerator = "AutoKeyGenerator")
-    @LogExecutionTime
-    public GetAllExternalLoyaltiesConfigurationsItemsResponseBean getAllExternalLoyaltiesConfigurationsItems(Boolean includeInActive) {
-        // Authorization header and all headers from RenteyConfiguration are automatically included
-        return settingsWebClient.get()
-                .uri(uriBuilder -> {
-                    var builder = uriBuilder
-                            .path(apiBasePath + "/ExternalLoyaltyConfiguration/GetAllExternalLoyaltiesConfigurationsItems");
-                    
-                    if (includeInActive != null) {
-                        builder.queryParam("includeInActive", includeInActive);
-                    }
-                    
-                    return builder.build();
-                })
-                .retrieve()
-                .bodyToMono(GetAllExternalLoyaltiesConfigurationsItemsResponseBean.class)
-                .block();
-    }
-
-    /**
-     * Get integrated loyalties.
-     * Authorization header and all headers from RenteyConfiguration are automatically included.
-     *
-     * @return The response containing all integrated loyalties.
-     */
-    @Cacheable(cacheNames = "integratedLoyaltiesCache", keyGenerator = "AutoKeyGenerator")
-    @LogExecutionTime
-    public GetIntegratedLoyaltiesResponseBean getIntegratedLoyalties() {
-        // Authorization header and all headers from RenteyConfiguration are automatically included
-        return settingsWebClient.get()
-                .uri(apiBasePath + "/ExternalLoyaltyConfiguration/GetIntegratedLoyalties")
-                .retrieve()
-                .bodyToMono(GetIntegratedLoyaltiesResponseBean.class)
-                .block();
-    }
-
-    /**
-     * Get external loyalties with allow redeem combobox.
-     * Authorization header and all headers from RenteyConfiguration are automatically included.
-     *
-     * @param customerId The customer ID (required).
-     * @param branchId The branch ID (required).
-     * @return The response containing external loyalties with allow redeem combobox items.
-     */
-    @Cacheable(cacheNames = "externalLoyaltiesWithAllowRedeemComboboxCache", keyGenerator = "AutoKeyGenerator")
-    @LogExecutionTime
-    public GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean getExternalLoyaltiesWithAllowRedeemCombobox(Integer customerId, Integer branchId) {
-        // Authorization header and all headers from RenteyConfiguration are automatically included
-        return settingsWebClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path(apiBasePath + "/CustomerMembership/GetExternalLoyaltiesWithAllowRedeemCombobox")
-                        .queryParam("customerId", customerId)
-                        .queryParam("branchId", branchId)
-                        .build())
-                .retrieve()
-                .bodyToMono(GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean.class)
                 .block();
     }
 
@@ -235,12 +144,12 @@ public class BookingService {
         return settingsWebClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path(apiBasePath + "/RentalVehicle/GetBestRentalRateForModel")
-                        .queryParam("CountryId", countryId)
-                        .queryParam("BranchId", branchId)
-                        .queryParam("ModelId", modelId)
-                        .queryParam("Year", year)
-                        .queryParam("PickupDate", pickupDate)
-                        .queryParam("DropoffDate", dropoffDate)
+                        .queryParam("countryId", countryId)
+                        .queryParam("branchId", branchId)
+                        .queryParam("modelId", modelId)
+                        .queryParam("year", year)
+                        .queryParam("pickupDate", pickupDate)
+                        .queryParam("dropoffDate", dropoffDate)
                         .build())
                 .retrieve()
                 .bodyToMono(GetBestRentalRateForModelResponseBean.class)
@@ -284,26 +193,25 @@ public class BookingService {
     }
 
     /**
-     * Validate duration and locations for booking.
+     * Validate duration and locations.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
-     * This endpoint validates pickup/dropoff dates and locations for a booking.
      *
-     * @param request The request containing booking duration and location information.
-     * @param pickupDate The pickup date as a query parameter (format: yyyy-MM-dd HH:mm:ss).
-     * @param dropOffDate The dropoff date as a query parameter (format: yyyy-MM-dd HH:mm:ss).
+     * @param request The request containing booking information for validation.
+     * @param pickupDate The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @param dropoffDate The dropoff date (required, format: yyyy-MM-dd HH:mm:ss).
      * @return The response containing validation results.
      */
     @LogExecutionTime
     public ValidateDurationAndLocationsResponseBean validateDurationAndLocations(
             ValidateDurationAndLocationsRequestBean request,
             String pickupDate,
-            String dropOffDate) {
+            String dropoffDate) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path(apiBasePath + "/Booking/ValidateDurationANDLocations")
                         .queryParam("pickupDate", pickupDate)
-                        .queryParam("dropOffDate", dropOffDate)
+                        .queryParam("dropOffDate", dropoffDate)
                         .build())
                 .bodyValue(request)
                 .retrieve()
@@ -314,11 +222,9 @@ public class BookingService {
     /**
      * Get branch available models for booking combobox items.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
-     * This endpoint retrieves available vehicle models, categories, and years for a specific branch and date range.
-     * Results are cached for 2 hours.
      *
-     * @param request The request containing branch ID, pickup/dropoff dates, and booking filters.
-     * @return The response containing available models organized by category with nested model and year items.
+     * @param request The request containing booking information.
+     * @return The response containing available models for booking combobox items.
      */
     @Cacheable(cacheNames = "branchAvailableModelsForBookingComboboxItemsCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
@@ -345,11 +251,9 @@ public class BookingService {
         return getBranchAvailableModelsForBookingComboboxItems(request).result().items().stream().filter(m -> m.displayText().equals(categoryName)).findFirst().map(m -> m.value()).orElse("-1");
     }
 
-
     /**
-     * Validate prevent renting restriction for booking.
+     * Validate prevent renting restriction.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
-     * This endpoint validates if there are any restrictions preventing a customer from renting a specific vehicle.
      *
      * @param customerId The customer ID (required).
      * @param pickupBranchId The pickup branch ID (required).
@@ -376,151 +280,4 @@ public class BookingService {
                 .bodyToMono(ValidateDurationAndLocationsResponseBean.class)
                 .block();
     }
-
-
-
-    public CreateBookingRequestBean buildBookingCreationRequest(String countryName, String branchName) {
-        String countryId = countryService.getOperationalCountryIdFromName(countryName);
-        String branchId = countryService.getBranchIdByName(countryId, branchName);
-        GetCountrySettingsResponseBean countrySettingsResponseBean =  countryService.getCountrySettings(Integer.parseInt(countryId),countryService.buildKeysForSettingsToGet("keys=App.CountryManagement.MinimumHoursToBooking&keys=App.CountryManagement.MinimumHoursToBrokerBooking&keys=App.CountryManagement.EnablePaymentOnSystemBooking&keys=App.CountryManagement.MaximumHoursToExecuteImmediateBooking&keys=App.CountryManagement.EnableExternalAuthorizationOnBooking&keys=App.CountryManagement.ContractMinimumHours&keys=App.CountryManagement.MaxDaysWhenAddContract&keys=App.CountryManagement.FreeHours&keys=App.CountryManagement.EnableFuelCost&keys=App.CountryManagement.MaxOdometerChange&keys=App.CountryManagement.MediumMaxAmount&keys=App.CountryManagement.ApplyExternalDriverAuthorizationOn"));
-        GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean extrasNamesExcludedFromBooking = contractService.getExtrasNamesExcludedFromBookingPaymentDetails();
-        GetCountriesPhoneResponseBean countriesPhoneResponseBean =  contractService.getCountriesPhone();
-        String residencyTypeId = lookupsService.getLookupItemIdByLookupTypeIdAndItemDisplayName(62,"Saudi Citizen");
-        String MaritalStatusesId = lookupsService.getLookupItemIdByLookupTypeNameAndItemDisplayName(LookupTypes.MARITAL_STATUSES,"Single");
-        String genderId = lookupsService.getLookupItemIdByLookupTypeIdAndItemDisplayName(6,"Male");
-        String vipLevelId = lookupsService.getLookupItemIdByLookupTypeNameAndItemDisplayName(LookupTypes.VIP_LEVELS,"Level One");
-        String relativeLevelId = lookupsService.getLookupItemIdByLookupTypeNameAndItemDisplayName(LookupTypes.LEVEL,"Father");
-        String creditCardTypeId = lookupsService.getLookupItemIdByLookupTypeNameAndItemDisplayName(LookupTypes.CREDIT_CARD_TYPES,"Visa");
-        String bankTypeId = lookupsService.getLookupItemIdByLookupTypeNameAndItemDisplayName(LookupTypes.BANK_NAMES,"Visa");
-        GetItemsByTypeResponseBean privacyPolicyTypes =lookupsService.getItemsByType(266,false);
-        GetCreateBookingDateInputsResponseBean createBookingDateInputs= getCreateBookingDateInputs(Integer.parseInt(countryId));
-
-        String pickupDate = createBookingDateInputs.result().minimumPickupDate();
-        String dropOffDate = createBookingDateInputs.result().maximumPickupDate();
-
-        ValidateDurationAndLocationsRequestBean validateRequest = buildValidateDurationAndLocationRequest(
-                Integer.parseInt(countryId),
-                Integer.parseInt(branchId),
-                Integer.parseInt(branchId),
-                pickupDate,
-                dropOffDate,
-                6102,
-                true,
-                null,
-                null                               
-        );
-
-        ValidateDurationAndLocationsResponseBean validateResponse = validateDurationAndLocations(
-                validateRequest,
-                pickupDate,
-                dropOffDate
-        );
-
-        GetBranchAvailableModelsForBookingComboboxItemsRequestBean availableModelsRequest = buildGetAvailableModelsRequest(
-                Integer.parseInt(branchId),        // branchId from branchId
-                pickupDate,                         // pickupDate from createBookingDateInputs
-                dropOffDate,                        // dropOffDate from createBookingDateInputs
-                "120",                              // source (default value, adjust as needed)
-                -1,                                 // bookingCategoryId (-1 for "Not assigned")
-                -1,                                 // bookingModelId (-1 for "Not assigned")
-                -1                                  // bookingVehicleYear (-1 for "Not assigned")
-        );
-
-        String carModelId = vehicleService.getCarModelIdByName(
-                vehicleService.getAllCarModels(),
-                userDefinedVariables.get("automationCarModelName"));
-
-        GetBranchAvailableModelsForBookingComboboxItemsResponseBean availableModelsResponse = getBranchAvailableModelsForBookingComboboxItems(availableModelsRequest);
-        String vehicleModelId = getModelIdByModelName(availableModelsRequest,  userDefinedVariables.get("automationCarModelName"));
-        String vehicleCategoryId = getCategoryIddByCategoryName(availableModelsRequest,  userDefinedVariables.get("automationCarCategoryName"));
-        CreateOrUpdateCustomerResponseBean customerResponseBean= customerOperationsService.createCustomerWithRandomData(countryName);
-        validatePreventRentingRestriction(customerResponseBean.result().id(),Integer.parseInt(branchId),Integer.parseInt(vehicleModelId),pickupDate);
-        getCustomerContractInformationByName(customerResponseBean.result().fullName().displayName());
-        int rentalSchemaPeriodId = settingsService.getRentalSchemaIdByNameAndByPeriodTypeName(Integer.parseInt(countryId),  userDefinedVariables.get("automationRentalRateSchemaName"), "Daily");
-        contractService.getIntegratedLoyaltiesFromLoyaltyApi();
-        contractService.getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(false);
-        contractService.getExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApi(customerResponseBean.result().id(),Integer.parseInt(branchId));
-        contractService.getContractExtraItems(Integer.valueOf(branchId),Integer.valueOf(vehicleCategoryId),rentalSchemaPeriodId,1801,230,120,false,32100);
-        lookupsService.getPaymentMethodsComboboxItems(false,false);
-        getBestRentalRateForModel(Integer.valueOf(countryId),Integer.valueOf(branchId),Integer.valueOf(vehicleModelId),Integer.valueOf(userDefinedVariables.get("automationYear")),pickupDate,dropOffDate);
-        
-
-
-    }
-
-
-    /**
-     * Build ValidateDurationAndLocationsRequestBean with provided parameters.
-     *
-     * @param branchCountryId The country ID for the branch.
-     * @param pickupBranchId The pickup branch ID.
-     * @param dropoffBranchId The dropoff branch ID.
-     * @param pickupDate The pickup date (format: yyyy-MM-dd HH:mm:ss).
-     * @param dropOffDate The dropoff date (format: yyyy-MM-dd HH:mm:ss).
-     * @param bookingType The booking type ID.
-     * @param validatePickUpDate Whether to validate pickup date.
-     * @param rentalRateSchemaPeriodId The rental rate schema period ID (optional).
-     * @param contractDuration The contract duration (optional).
-     * @return ValidateDurationAndLocationsRequestBean instance.
-     */
-    public ValidateDurationAndLocationsRequestBean buildValidateDurationAndLocationRequest(
-            Integer branchCountryId,
-            Integer pickupBranchId,
-            Integer dropoffBranchId,
-            String pickupDate,
-            String dropOffDate,
-            Integer bookingType,
-            Boolean validatePickUpDate,
-            Integer rentalRateSchemaPeriodId,
-            Integer contractDuration) {
-        return new ValidateDurationAndLocationsRequestBean(
-                branchCountryId,
-                pickupBranchId,
-                dropoffBranchId,
-                pickupDate,
-                dropOffDate,
-                bookingType,
-                validatePickUpDate,
-                rentalRateSchemaPeriodId,
-                contractDuration
-        );
-    }
-
-
-    /**
-     * Build GetBranchAvailableModelsForBookingComboboxItemsRequestBean with provided parameters.
-     *
-     * @param branchId The branch ID.
-     * @param pickupDate The pickup date (format: yyyy-MM-dd HH:mm:ss).
-     * @param dropOffDate The dropoff date (format: yyyy-MM-dd HH:mm:ss).
-     * @param source The source ID as a string.
-     * @param bookingCategoryId The booking category ID (use -1 for "Not assigned").
-     * @param bookingModelId The booking model ID (use -1 for "Not assigned").
-     * @param bookingVehicleYear The booking vehicle year (use -1 for "Not assigned").
-     * @return GetBranchAvailableModelsForBookingComboboxItemsRequestBean instance.
-     */
-    public GetBranchAvailableModelsForBookingComboboxItemsRequestBean buildGetAvailableModelsRequest(
-            Integer branchId,
-            String pickupDate,
-            String dropOffDate,
-            String source,
-            Integer bookingCategoryId,
-            Integer bookingModelId,
-            Integer bookingVehicleYear) {
-        return new GetBranchAvailableModelsForBookingComboboxItemsRequestBean(
-                branchId,
-                pickupDate,
-                dropOffDate,
-                source,
-                bookingCategoryId,
-                bookingModelId,
-                bookingVehicleYear
-        );
-    }
-
-
-
-
-
 }
-
