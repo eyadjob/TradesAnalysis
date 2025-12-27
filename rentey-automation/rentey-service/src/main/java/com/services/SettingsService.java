@@ -5,6 +5,7 @@ import com.beans.general.AbpResponseBean;
 import com.beans.setting.GetAllRentalRatesSchemasResponseBean;
 import com.beans.setting.GetBranchSettingsResponseBean;
 import com.beans.setting.GetOperationalCountriesResponseBean;
+import com.beans.setting.GetTenantSettingBySettingKeyResponseBean;
 import com.beans.setting.TenantAndCountrySettingsRequestBean;
 import com.beans.setting.UpdateAllSettingsRequestBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,6 +173,27 @@ public class SettingsService {
                 })
                 .retrieve()
                 .bodyToMono(GetBranchSettingsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get tenant setting by setting key.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param settingKey The setting key (required, e.g., App.TenantManagement.EnablePageTracking).
+     * @return The response containing the tenant setting information.
+     */
+    @Cacheable(cacheNames = "getTenantSettingBySettingKeyCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetTenantSettingBySettingKeyResponseBean getTenantSettingBySettingKey(String settingKey) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePath + "/GeoSettings/GetTenantSettingBySettingKey")
+                        .queryParam("settingKey", settingKey)
+                        .build())
+                .retrieve()
+                .bodyToMono(GetTenantSettingBySettingKeyResponseBean.class)
                 .block();
     }
 }

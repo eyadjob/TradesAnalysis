@@ -5,6 +5,7 @@ import com.beans.general.AbpResponseBean;
 import com.beans.setting.GetAllRentalRatesSchemasResponseBean;
 import com.beans.setting.GetBranchSettingsResponseBean;
 import com.beans.setting.GetOperationalCountriesResponseBean;
+import com.beans.setting.GetTenantSettingBySettingKeyResponseBean;
 import com.beans.setting.TenantAndCountrySettingsRequestBean;
 import com.beans.setting.UpdateAllSettingsRequestBean;
 import com.services.SettingsService;
@@ -182,6 +183,25 @@ public class SettingsController {
         }
 
         return settingsService.getBranchSettings(countryId, branchId, keys);
+    }
+
+    /**
+     * Get tenant setting by setting key.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param settingKey The setting key (required, e.g., App.TenantManagement.EnablePageTracking).
+     * @return The response containing the tenant setting information.
+     */
+    @GetMapping(path = GEO_SETTINGS_GET_TENANT_SETTING_BY_SETTING_KEY, produces = "application/json")
+    public GetTenantSettingBySettingKeyResponseBean getTenantSettingBySettingKey(
+            @RequestParam(required = true) String settingKey) {
+
+        if (settingKey == null || settingKey.isEmpty()) {
+            throw new IllegalArgumentException("settingKey parameter is required.");
+        }
+
+        return settingsService.getTenantSettingBySettingKey(settingKey);
     }
 }
 

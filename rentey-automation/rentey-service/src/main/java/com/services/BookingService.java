@@ -7,6 +7,7 @@ import com.beans.booking.CreateBookingRequestBean;
 import com.beans.booking.CreateBookingResponseBean;
 import com.builders.CreateBookingRequestBuilder;
 import com.beans.booking.GetBestRentalRateForModelResponseBean;
+import com.beans.general.AbpResponseBean;
 import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsRequestBean;
 import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsResponseBean;
 import com.beans.booking.GetCreateBookingDateInputsResponseBean;
@@ -93,9 +94,35 @@ public class BookingService {
     public GetCreateBookingDateInputsResponseBean getCreateBookingDateInputs(Integer countryId) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
-                .uri(apiBasePath + "/Booking/GetCreateBookingDateInputs")
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePath + "/Booking/GetCreateBookingDateInputs")
+                        .queryParam("countryId", countryId)
+                        .build())
                 .retrieve()
                 .bodyToMono(GetCreateBookingDateInputsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Validate phone number.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param phoneNumber The phone number to validate (required).
+     * @param phoneCode The phone code (country code) to validate (required).
+     * @return The response containing the validation result (true if valid, false otherwise).
+     */
+    @Cacheable(cacheNames = "isValidPhoneCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public IsValidPhoneResponseBean isValidPhone(String phoneNumber, String phoneCode) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePathWithoutService + "/ValidatePhone/IsValid")
+                        .queryParam("phoneNumber", phoneNumber)
+                        .queryParam("phoneCode", phoneCode)
+                        .build())
+                .retrieve()
+                .bodyToMono(IsValidPhoneResponseBean.class)
                 .block();
     }
 
@@ -278,6 +305,94 @@ public class BookingService {
                         .build())
                 .retrieve()
                 .bodyToMono(ValidateDurationAndLocationsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get all external loyalties configurations items.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param includeInActive Whether to include inactive items (default: false).
+     * @return The response containing all external loyalties configurations items.
+     */
+    @Cacheable(cacheNames = "allExternalLoyaltiesConfigurationsItemsCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetAllExternalLoyaltiesConfigurationsItemsResponseBean getAllExternalLoyaltiesConfigurationsItems(Boolean includeInActive) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> {
+                    var builder = uriBuilder
+                            .path(apiBasePath + "/ExternalLoyaltyConfiguration/GetAllExternalLoyaltiesConfigurationsItems");
+                    
+                    if (includeInActive != null) {
+                        builder.queryParam("includeInActive", includeInActive);
+                    }
+                    
+                    return builder.build();
+                })
+                .retrieve()
+                .bodyToMono(GetAllExternalLoyaltiesConfigurationsItemsResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get integrated loyalties.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @return The response containing all integrated loyalties.
+     */
+    @Cacheable(cacheNames = "integratedLoyaltiesCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetIntegratedLoyaltiesResponseBean getIntegratedLoyalties() {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(apiBasePath + "/ExternalLoyaltyConfiguration/GetIntegratedLoyalties")
+                .retrieve()
+                .bodyToMono(GetIntegratedLoyaltiesResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get external loyalties with allow redeem combobox.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param customerId The customer ID (required).
+     * @param branchId The branch ID (required).
+     * @return The response containing external loyalties with allow redeem combobox items.
+     */
+    @Cacheable(cacheNames = "externalLoyaltiesWithAllowRedeemComboboxCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean getExternalLoyaltiesWithAllowRedeemCombobox(Integer customerId, Integer branchId) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePath + "/CustomerMembership/GetExternalLoyaltiesWithAllowRedeemCombobox")
+                        .queryParam("customerId", customerId)
+                        .queryParam("branchId", branchId)
+                        .build())
+                .retrieve()
+                .bodyToMono(GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get all bookings.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param request The request query parameter containing pagination, filter, and sort information (e.g., page=1&pageSize=15&filter=bookingNumber~eq~'I25000U1024054046'&sort=pickupDate-).
+     * @return The response containing all bookings matching the request criteria.
+     */
+    @Cacheable(cacheNames = "getAllBookingsCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public AbpResponseBean getAllBookings(String request) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePath + "/Booking/GetAllBookings")
+                        .queryParam("Request", request)
+                        .build())
+                .retrieve()
+                .bodyToMono(AbpResponseBean.class)
                 .block();
     }
 }

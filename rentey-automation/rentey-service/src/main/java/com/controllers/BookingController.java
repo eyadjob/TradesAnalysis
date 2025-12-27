@@ -11,11 +11,13 @@ import com.beans.booking.GetCreateBookingDateInputsResponseBean;
 import com.beans.booking.ValidateDurationAndLocationsRequestBean;
 import com.beans.booking.ValidateDurationAndLocationsResponseBean;
 import com.beans.customer.GetCustomerContractInformationByNameResponseBean;
+import com.beans.general.AbpResponseBean;
 import com.beans.loyalty.GetAllExternalLoyaltiesConfigurationsItemsResponseBean;
 import com.beans.loyalty.GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean;
 import com.beans.loyalty.GetIntegratedLoyaltiesResponseBean;
 import com.beans.validation.IsValidPhoneResponseBean;
 import com.services.BookingService;
+import com.services.BookingOperationsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +32,9 @@ public class BookingController {
 
     @Autowired
     private BookingService bookingService;
+
+    @Autowired
+    private BookingOperationsService bookingOperationsService;
 
     /**
      * Get create booking date inputs.
@@ -48,6 +53,25 @@ public class BookingController {
         }
 
         return bookingService.getCreateBookingDateInputs(countryId);
+    }
+
+    /**
+     * Get all bookings.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param request The request query parameter containing pagination, filter, and sort information (e.g., page=1&pageSize=15&filter=bookingNumber~eq~'I25000U1024054046'&sort=pickupDate-).
+     * @return The response containing all bookings matching the request criteria.
+     */
+    @GetMapping(path = BOOKING_GET_ALL_BOOKINGS, produces = "application/json")
+    public AbpResponseBean getAllBookings(
+            @RequestParam(required = true) String request) {
+
+        if (request == null || request.isEmpty()) {
+            throw new IllegalArgumentException("request parameter is required.");
+        }
+
+        return bookingService.getAllBookings(request);
     }
 
     /**
@@ -288,7 +312,7 @@ public class BookingController {
      */
     @PostMapping(path = BOOKING_VALIDATE_PREVENT_RENTING_RESTRICTION, produces = "application/json")
     public ValidateDurationAndLocationsResponseBean validatePreventRentingRestriction(
-            @RequestParam(required = true) Integer customerId,
+            @RequestParam(required = true) Long customerId,
             @RequestParam(required = true) Integer pickupBranchId,
             @RequestParam(required = true) Integer vehicleModelId,
             @RequestParam(required = true) String pickupDate) {
@@ -309,7 +333,30 @@ public class BookingController {
         return bookingService.validatePreventRentingRestriction(customerId, pickupBranchId, vehicleModelId, pickupDate);
     }
 
+    /**
+     * Create booking with new customer and new vehicle.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     * This endpoint orchestrates multiple API calls to create a complete booking with a new customer and vehicle.
+     *
+     * @param countryName The country name (required).
+     * @param branchName The branch name (required).
+     * @return The response containing the created booking request.
+     */
+    @GetMapping(path = BOOKING_CREATE_BOOKING_WITH_NEW_CUSTOMER_AND_NEW_VEHICLE, produces = "application/json")
+    public CreateBookingResponseBean createBookingWithNewCustomerAndNewVehicle(
+            @RequestParam(required = true) String countryName,
+            @RequestParam(required = true) String branchName) {
 
+        if (countryName == null || countryName.isEmpty()) {
+            throw new IllegalArgumentException("countryName parameter is required.");
+        }
+        if (branchName == null || branchName.isEmpty()) {
+            throw new IllegalArgumentException("branchName parameter is required.");
+        }
+
+        return bookingOperationsService.CreateBookingWithNewCustomerAndNewVehicle(countryName, branchName);
+    }
 
 }
 

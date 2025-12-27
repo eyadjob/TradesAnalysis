@@ -1,13 +1,10 @@
 package com.services;
 
-import com.beans.booking.CalculateBillingInformationRequestBean;
-import com.beans.booking.CreateBookingRequestBean;
-import com.beans.booking.GetBestRentalRateForModelResponseBean;
-import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsRequestBean;
-import com.beans.booking.ValidateDurationAndLocationsRequestBean;
+import com.beans.booking.*;
 import com.beans.customer.CreateOrUpdateCustomerResponseBean;
 import com.builders.CreateBookingRequestBuilder;
 import com.enums.LookupTypes;
+import com.util.DateUtil;
 import com.util.PropertyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +49,7 @@ public class BookingOperationsService {
      * @param branchName The branch name.
      * @return CreateBookingRequestBean instance.
      */
-    public CreateBookingRequestBean buildBookingCreationRequest(String countryName, String branchName) {
+    public CreateBookingResponseBean CreateBookingWithNewCustomerAndNewVehicle(String countryName, String branchName) {
         String countryId = countryService.getOperationalCountryIdFromName(countryName);
         String branchId = countryService.getBranchIdByName(countryId, branchName);
         countryService.getCountrySettings(Integer.parseInt(countryId), countryService.buildKeysForSettingsToGet("keys=App.CountryManagement.MinimumHoursToBooking&keys=App.CountryManagement.MinimumHoursToBrokerBooking&keys=App.CountryManagement.EnablePaymentOnSystemBooking&keys=App.CountryManagement.MaximumHoursToExecuteImmediateBooking&keys=App.CountryManagement.EnableExternalAuthorizationOnBooking&keys=App.CountryManagement.ContractMinimumHours&keys=App.CountryManagement.MaxDaysWhenAddContract&keys=App.CountryManagement.FreeHours&keys=App.CountryManagement.EnableFuelCost&keys=App.CountryManagement.MaxOdometerChange&keys=App.CountryManagement.MediumMaxAmount&keys=App.CountryManagement.ApplyExternalDriverAuthorizationOn"));
@@ -69,7 +66,7 @@ public class BookingOperationsService {
         var createBookingDateInputs = bookingService.getCreateBookingDateInputs(Integer.parseInt(countryId));
 
         String pickupDate = createBookingDateInputs.result().minimumPickupDate();
-        String dropOffDate = createBookingDateInputs.result().maximumPickupDate();
+        String dropOffDate = DateUtil.addTimeToDate(pickupDate,1,0,0,0);
 
         ValidateDurationAndLocationsRequestBean validateRequest = buildValidateDurationAndLocationRequest(
                 Integer.parseInt(countryId),
@@ -113,7 +110,7 @@ public class BookingOperationsService {
         contractService.getIntegratedLoyaltiesFromLoyaltyApi();
         contractService.getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(false);
         contractService.getExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApi(customerResponseBean.result().id(), Integer.parseInt(branchId));
-        contractService.getContractExtraItems(Integer.valueOf(branchId), Integer.valueOf(vehicleCategoryId), rentalSchemaPeriodId, 1801, 230, 120, false, 32100);
+//        contractService.getContractExtraItems(Integer.valueOf(branchId), Integer.valueOf(vehicleCategoryId), rentalSchemaPeriodId, 1801, 230, 120, false, 32100);
         lookupsService.getPaymentMethodsComboboxItems(false, false);
         GetBestRentalRateForModelResponseBean bestRentalRateResponse = bookingService.getBestRentalRateForModel(Integer.valueOf(countryId), Integer.valueOf(branchId), Integer.valueOf(vehicleModelId), Integer.valueOf(userDefinedVariables.get("automationYear")), pickupDate, dropOffDate);
         lookupsService.getComboboxItemsValueByDisplayText("Card", 19);
@@ -177,9 +174,7 @@ public class BookingOperationsService {
                 .withBookingOffers(new ArrayList<>())
                 .build();
 
-        bookingService.createBooking(createBookingRequest);
-
-        return createBookingRequest;
+        return bookingService.createBooking(createBookingRequest);
     }
 
     /**
