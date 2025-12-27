@@ -7,6 +7,7 @@ import com.beans.booking.CreateBookingRequestBean;
 import com.beans.booking.CreateBookingResponseBean;
 import com.builders.CreateBookingRequestBuilder;
 import com.beans.booking.GetBestRentalRateForModelResponseBean;
+import com.beans.general.AbpResponseBean;
 import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsRequestBean;
 import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsResponseBean;
 import com.beans.booking.GetCreateBookingDateInputsResponseBean;
@@ -371,6 +372,27 @@ public class BookingService {
                         .build())
                 .retrieve()
                 .bodyToMono(GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get all bookings.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param request The request query parameter containing pagination, filter, and sort information (e.g., page=1&pageSize=15&filter=bookingNumber~eq~'I25000U1024054046'&sort=pickupDate-).
+     * @return The response containing all bookings matching the request criteria.
+     */
+    @Cacheable(cacheNames = "getAllBookingsCache", keyGenerator = "AutoKeyGenerator")
+    @LogExecutionTime
+    public AbpResponseBean getAllBookings(String request) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePath + "/Booking/GetAllBookings")
+                        .queryParam("Request", request)
+                        .build())
+                .retrieve()
+                .bodyToMono(AbpResponseBean.class)
                 .block();
     }
 }

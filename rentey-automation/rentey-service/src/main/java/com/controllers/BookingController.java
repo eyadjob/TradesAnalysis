@@ -11,6 +11,7 @@ import com.beans.booking.GetCreateBookingDateInputsResponseBean;
 import com.beans.booking.ValidateDurationAndLocationsRequestBean;
 import com.beans.booking.ValidateDurationAndLocationsResponseBean;
 import com.beans.customer.GetCustomerContractInformationByNameResponseBean;
+import com.beans.general.AbpResponseBean;
 import com.beans.loyalty.GetAllExternalLoyaltiesConfigurationsItemsResponseBean;
 import com.beans.loyalty.GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean;
 import com.beans.loyalty.GetIntegratedLoyaltiesResponseBean;
@@ -52,6 +53,25 @@ public class BookingController {
         }
 
         return bookingService.getCreateBookingDateInputs(countryId);
+    }
+
+    /**
+     * Get all bookings.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param request The request query parameter containing pagination, filter, and sort information (e.g., page=1&pageSize=15&filter=bookingNumber~eq~'I25000U1024054046'&sort=pickupDate-).
+     * @return The response containing all bookings matching the request criteria.
+     */
+    @GetMapping(path = BOOKING_GET_ALL_BOOKINGS, produces = "application/json")
+    public AbpResponseBean getAllBookings(
+            @RequestParam(required = true) String request) {
+
+        if (request == null || request.isEmpty()) {
+            throw new IllegalArgumentException("request parameter is required.");
+        }
+
+        return bookingService.getAllBookings(request);
     }
 
     /**
