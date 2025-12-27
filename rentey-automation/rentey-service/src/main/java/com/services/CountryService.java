@@ -265,7 +265,7 @@ public class CountryService {
                     }
                     if (keys != null && !keys.isEmpty()) {
                         for (String key : keys) {
-                            builder.queryParam("keys", key);
+                            builder.queryParam("", key);
                         }
                     }
                     

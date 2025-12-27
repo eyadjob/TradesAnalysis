@@ -24,8 +24,8 @@ public record GetCountriesPhoneResponseBean(
             @JsonProperty("name") String name,
             @JsonProperty("phoneCode") String phoneCode,
             @JsonProperty("flagUrl") String flagUrl,
-            @JsonProperty("flagId") Integer flagId,
-            @JsonProperty("id") Integer id
+            @JsonProperty("flagId") String flagId,
+            @JsonProperty("id") String id
     ) {
     }
 }

@@ -42,7 +42,7 @@ public class ContractController {
             throw new IllegalArgumentException("typeId parameter is required.");
         }
 
-        return contractService.getCountriesPhone(typeId, includeInActive, includeNotAssign);
+        return contractService.getCountriesPhone();
     }
 
     /**
@@ -169,7 +169,7 @@ public class ContractController {
      */
     @GetMapping(path = LOYALTY_GET_EXTERNAL_LOYALTIES_WITH_ALLOW_REDEEM_COMBOBOX_FROM_LOYALTY_API, produces = "application/json")
     public List<GetExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApiResponseBean> getExternalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApi(
-            @RequestParam(required = true) Integer customerId,
+            @RequestParam(required = true) Long customerId,
             @RequestParam(required = true) Integer branchId) {
 
         if (customerId == null) {

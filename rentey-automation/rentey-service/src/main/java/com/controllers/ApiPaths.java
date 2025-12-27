@@ -16,6 +16,8 @@ public final class ApiPaths {
      */
     public static final String BASE_PATH = "/api/services/app";
 
+    public static final String EXTERNAL_LOYALTY_BASE_PATH = "/api/services/app";
+
     public static final String BASE_PATH_WITHOUT_SERVICE = "/api";
 
     // Permission endpoints
@@ -31,10 +33,7 @@ public final class ApiPaths {
     
     // Rental Rates Schema endpoints
     public static final String RENTAL_RATES_SCHEMA_GET_ALL = "/RentalRatesSchema/GetAllRentalRatesSchemas";
-    
-    // Rental Rates Schema endpoints
-    public static final String RENTAL_RATES_SCHEMA_GET_ALL = "/RentalRatesSchema/GetAllRentalRatesSchemas";
-    
+
     // Country endpoints
     public static final String COUNTRY_GET_OPERATIONAL_COUNTRIES = "/Country/GetOperationalCountries";
     public static final String COUNTRY_GET_COUNTRIES_PHONE = "/Country/GetCountriesPhone";
@@ -113,6 +112,7 @@ public final class ApiPaths {
     public static final String BOOKING_CALCULATE_BILLING_INFORMATION = "/Booking/CalculateBillingInformation";
     public static final String BOOKING_VALIDATE_DURATION_AND_LOCATIONS = "/Booking/ValidateDurationANDLocations";
     public static final String BOOKING_VALIDATE_PREVENT_RENTING_RESTRICTION = "/Booking/ValidatePreventRentingRestriction";
+    public static final String BOOKING_CREATE_BOOKING_WITH_NEW_CUSTOMER_AND_NEW_VEHICLE = "/Booking/CreateBookingWithNewCustomerAndNewVehicle";
     
     // Create Booking endpoints
     public static final String CREATE_BOOKING_CREATE_BOOKING = "/CreateBooking/CreateBooking";
