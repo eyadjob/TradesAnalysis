@@ -4,15 +4,18 @@ import com.annotation.LogExecutionTime;
 import com.beans.booking.CreateBookingResponseBean;
 import com.beans.booking.GetAllBookingsResponseBean;
 import com.beans.booking.GetBookingForQuickSearchResponseBean;
+import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsRequestBean;
 import com.beans.contract.*;
+import com.beans.customer.GetCountriesPhoneResponseBean;
 import com.beans.customer.SearchCustomerRequestBean;
 import com.beans.driver.*;
 import com.beans.general.AbpResponseBean;
-import com.beans.vehicle.GetReadyVehiclesByCategoryAndModelRequestBean;
-import com.beans.vehicle.GetReadyVehiclesByCategoryAndModelResponseBean;
-import com.beans.vehicle.GetReadyVehiclesModelResponseBean;
-import com.beans.vehicle.GetVehicleCheckPreparationDataResponseBean;
+import com.beans.general.GetAllItemsComboboxItemsResponseBean;
+import com.beans.lookups.GetItemsByTypeResponseBean;
+import com.beans.validation.IsValidPhoneResponseBean;
+import com.beans.vehicle.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pojo.CreateBookingResponseWrapper;
 import com.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,9 +73,9 @@ public class ExecuteBookingOperations {
     @LogExecutionTime
     public AbpResponseBean ExecuteCreatedBookingWithNewCustomerAndNewVehicle(String countryName, String branchName) {
         // Step 1: Create booking with new customer and new vehicle
-        CreateBookingResponseBean createBookingResponse = bookingOperationsService.CreateBookingWithNewCustomerAndNewVehicle(countryName, branchName);
-        String bookingNumber = createBookingResponse.result().bookingNumber();
-        Long bookingId = Long.valueOf(createBookingResponse.result().bookingId());
+        CreateBookingResponseWrapper createBookingResponseWrapper = bookingOperationsService.CreateBookingWithNewCustomerAndNewVehicle(countryName, branchName);
+        String bookingNumber = createBookingResponseWrapper.getCreateBookingResponseBean().result().bookingNumber();
+        Long bookingId = Long.valueOf(createBookingResponseWrapper.getCreateBookingResponseBean().result().bookingId());
 
         // Step 2: Get all bookings using the booking number
         String getAllBookingsRequest = "page=1&pageSize=15&filter=bookingNumber~eq~'" + bookingNumber + "'&sort=pickupDate-";
@@ -90,66 +93,25 @@ public class ExecuteBookingOperations {
         AbpResponseBean isAllowedToExecuteResponse = executeBookingService.isAllowedToExecuteBooking(bookingId);
         Long customerId =  getAllBookingsResponse.result().data().get(0).driverId();
         executeBookingService.getLiteCustomer(customerId);
-        bookingService.isValidPhone(getAllBookingsResponse.result().data().getFirst().customerPrimaryPhone().split("-")[1], getAllBookingsResponse.result().data().getFirst().customerPrimaryPhone().split("-")[0]);
+        IsValidPhoneResponseBean isValidPhone = bookingService.isValidPhone(getAllBookingsResponse.result().data().get(0).customerPrimaryPhone().split("-")[1], getAllBookingsResponse.result().data().getFirst().customerPrimaryPhone().split("-")[0]);
         settingsService.getTenantSettingBySettingKey("App.TenantManagement.EnablePageTracking");
+        GetAllItemsComboboxItemsResponseBean contractStates = lookupsService.getAllItemsComboboxItems(26, false, true);
+        GetItemsByTypeResponseBean privacyPolicyTypes =lookupsService.getItemsByType(266, false);
+        GetCountriesPhoneResponseBean countriesPhone= contractService.getCountriesPhone();
+        GetAllCarModelsResponseBean vehicleModels= vehicleService.getAllCarModels();
+        GetAllItemsComboboxItemsResponseBean fuelLevels =lookupsService.getAllItemsComboboxItems(12, false, false);
+        GetExternalLoyaltiesConfigurationsItemsFromLoyaltyApiResponseBean externalLoyaltiesConfigurationsItems =contractService.getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(false);
 
-        // Step 9: GetAllItemsComboboxItems (typeId=26)
-        lookupsService.getAllItemsComboboxItems(26, false, true);
-
-        // Step 10: Lookups/GetItemsByType
-        lookupsService.getItemsByType(266, false);
-
-        // Step 11: Country/GetCountriesPhone - Note: ContractService.getCountriesPhone() doesn't accept parameters yet
-        // Using the method as-is, but ideally it should accept typeId, includeInActive, includeNotAssign
-        contractService.getCountriesPhone();
-
-        // Step 12: CarModel/GetAllCarModels
-        vehicleService.getAllCarModels();
-
-        // Step 13: GetAllItemsComboboxItems (typeId=12)
-        lookupsService.getAllItemsComboboxItems(12, false, false);
-
-        // Step 14: Get external loyalties configurations items
-        contractService.getExternalLoyaltiesConfigurationsItemsFromLoyaltyApi(false);
-
-        // Extract more booking details needed for subsequent calls
-        // We need vehicleId, modelId, categoryId, dropoffDate, etc.
-        Integer vehicleModelId = null;
-        Integer vehicleCategoryId = null;
         String dropoffDate = null;
-        Integer vehicleYear = null;
-        
-        // vehicleIdFromBooking is already extracted from bookingQuickSearchResult above
-        // Extract modelId and categoryId from booking if available
-        // These might need to come from GetReadyVehiclesByCategoryAndModel response
+        Integer modeId = 32200;
 
-        // Step 15: Get ready vehicles model - need branchId, categoryId, modeId
-        // modeId for booking execution is typically 32200, but we should extract from booking if available
-        Integer modeId = 32200; // Default modeId for booking execution
-        GetReadyVehiclesModelResponseBean getReadyVehiclesModelResponse = null;
-        if (pickupBranchId != null && vehicleCategoryId != null) {
-            getReadyVehiclesModelResponse = executeBookingService.getReadyVehiclesModel(pickupBranchId, vehicleCategoryId, modeId);
-        }
-
-        // Step 16: Get ready vehicles by category and model
-        GetReadyVehiclesByCategoryAndModelResponseBean getReadyVehiclesResponse = null;
-        if (vehicleCategoryId != null && vehicleModelId != null && pickupBranchId != null) {
-            GetReadyVehiclesByCategoryAndModelRequestBean getReadyVehiclesRequest = new GetReadyVehiclesByCategoryAndModelRequestBean(
-                vehicleCategoryId, vehicleModelId, pickupBranchId, false, false);
-            getReadyVehiclesResponse = executeBookingService.getReadyVehiclesByCategoryAndModel(getReadyVehiclesRequest);
-            
-            // Extract vehicleId from response if not already available
-            if (vehicleIdFromBooking == null && getReadyVehiclesResponse != null && 
-                getReadyVehiclesResponse.result() != null && 
-                getReadyVehiclesResponse.result().items() != null && 
-                !getReadyVehiclesResponse.result().items().isEmpty()) {
-                vehicleIdFromBooking = getReadyVehiclesResponse.result().items().get(0).id();
-                vehicleModelId = getReadyVehiclesResponse.result().items().get(0).modelId();
-                vehicleCategoryId = getReadyVehiclesResponse.result().items().get(0).categoryId();
-                vehicleYear = getReadyVehiclesResponse.result().items().get(0).year();
-            }
-        }
-
+        GetReadyVehiclesModelResponseBean getReadyVehiclesModelResponse = executeBookingService.getReadyVehiclesModel(pickupBranchId, , modeId);
+        GetReadyVehiclesByCategoryAndModelRequestBean getReadyVehiclesRequest = new GetReadyVehiclesByCategoryAndModelRequestBean(vehicleCategoryId, vehicleModelId, pickupBranchId, false, false);
+        GetReadyVehiclesByCategoryAndModelResponseBean getReadyVehiclesResponse = executeBookingService.getReadyVehiclesByCategoryAndModel(getReadyVehiclesRequest);
+//        Integer vehicleIdFromBooking = getReadyVehiclesResponse.result().items().get(0).id();
+        Integer      vehicleModelId = getReadyVehiclesResponse.result().items().get(0).modelId();
+        Integer      vehicleCategoryId = getReadyVehiclesResponse.result().items().get(0).categoryId();
+        Integer      vehicleYear = getReadyVehiclesResponse.result().items().get(0).year();
         // Step 17: Validate contract info
         if (vehicleIdFromBooking != null && pickupBranchId != null && customerId != null && pickupDateFromBooking != null) {
             // Need dropoffDate - extract from booking or calculate
