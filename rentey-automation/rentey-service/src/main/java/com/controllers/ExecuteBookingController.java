@@ -1,7 +1,6 @@
 package com.controllers;
 
 import com.beans.contract.ExecuteBookingRequestBean;
-import com.beans.contract.ExecuteBookingRequestBean;
 import com.beans.contract.ValidateCustomerResponseBean;
 import com.beans.customer.IsCustomerEligibleForCustomerProvidersIntegrationResponseBean;
 import com.beans.customer.SearchCustomerRequestBean;
@@ -9,6 +8,7 @@ import com.beans.general.AbpResponseBean;
 import com.beans.vehicle.GetReadyVehiclesByCategoryAndModelRequestBean;
 import com.beans.vehicle.GetReadyVehiclesByCategoryAndModelResponseBean;
 import com.beans.vehicle.GetReadyVehiclesModelResponseBean;
+import com.services.ExecuteBookingOperations;
 import com.services.ExecuteBookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +24,9 @@ public class ExecuteBookingController {
 
     @Autowired
     private ExecuteBookingService executeBookingService;
+
+    @Autowired
+    private ExecuteBookingOperations executeBookingOperations;
 
     /**
      * Search customer by customer ID, phone number, or identity number.
@@ -204,6 +207,31 @@ public class ExecuteBookingController {
         }
 
         return executeBookingService.executeBooking(request);
+    }
+
+    /**
+     * Execute created booking with new customer and new vehicle.
+     * This endpoint orchestrates a series of API calls to execute a booking that was previously created.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param countryName The country name (required).
+     * @param branchName The branch name (required).
+     * @return The response containing the execution result.
+     */
+    @PostMapping(path = BOOKING_EXECUTE_CREATED_BOOKING_WITH_NEW_CUSTOMER_AND_NEW_VEHICLE, produces = "application/json")
+    public AbpResponseBean executeCreatedBookingWithNewCustomerAndNewVehicle(
+            @RequestParam(required = true) String countryName,
+            @RequestParam(required = true) String branchName) {
+
+        if (countryName == null || countryName.trim().isEmpty()) {
+            throw new IllegalArgumentException("countryName parameter is required and cannot be empty.");
+        }
+        if (branchName == null || branchName.trim().isEmpty()) {
+            throw new IllegalArgumentException("branchName parameter is required and cannot be empty.");
+        }
+
+        return executeBookingOperations.ExecuteCreatedBookingWithNewCustomerAndNewVehicle(countryName, branchName);
     }
 }
 

@@ -134,6 +134,7 @@ public final class ApiPaths {
     public static final String BOOKING_VALIDATE_DURATION_AND_LOCATIONS = "/Booking/ValidateDurationANDLocations";
     public static final String BOOKING_VALIDATE_PREVENT_RENTING_RESTRICTION = "/Booking/ValidatePreventRentingRestriction";
     public static final String BOOKING_CREATE_BOOKING_WITH_NEW_CUSTOMER_AND_NEW_VEHICLE = "/Booking/CreateBookingWithNewCustomerAndNewVehicle";
+    public static final String BOOKING_EXECUTE_CREATED_BOOKING_WITH_NEW_CUSTOMER_AND_NEW_VEHICLE = "/Booking/ExecuteCreatedBookingWithNewCustomerAndNewVehicle";
     
     // Create Booking endpoints
     public static final String CREATE_BOOKING_CREATE_BOOKING = "/CreateBooking/CreateBooking";

@@ -1,6 +1,6 @@
 package com.controllers;
 
-import com.beans.general.AbpResponseBean;
+import com.beans.booking.GetBookingForQuickSearchResponseBean;
 import com.services.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ public class DashboardController {
      * @return The response containing booking information for quick search.
      */
     @GetMapping(path = BOOKING_GET_BOOKING_FOR_QUICK_SEARCH, produces = "application/json")
-    public AbpResponseBean getBookingForQuickSearch(
+    public GetBookingForQuickSearchResponseBean getBookingForQuickSearch(
             @RequestParam(required = true) String bookingNo) {
 
         if (bookingNo == null || bookingNo.isEmpty()) {

@@ -2,6 +2,8 @@ package com.services;
 
 import com.annotation.LogExecutionTime;
 import com.beans.booking.CreateBookingResponseBean;
+import com.beans.booking.GetAllBookingsResponseBean;
+import com.beans.booking.GetBookingForQuickSearchResponseBean;
 import com.beans.contract.*;
 import com.beans.customer.SearchCustomerRequestBean;
 import com.beans.driver.*;
@@ -11,6 +13,7 @@ import com.beans.vehicle.GetReadyVehiclesByCategoryAndModelResponseBean;
 import com.beans.vehicle.GetReadyVehiclesModelResponseBean;
 import com.beans.vehicle.GetVehicleCheckPreparationDataResponseBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,70 +76,21 @@ public class ExecuteBookingOperations {
 
         // Step 2: Get all bookings using the booking number
         String getAllBookingsRequest = "page=1&pageSize=15&filter=bookingNumber~eq~'" + bookingNumber + "'&sort=pickupDate-";
-        AbpResponseBean getAllBookingsResponse = bookingService.getAllBookings(getAllBookingsRequest);
+        GetAllBookingsResponseBean getAllBookingsResponse = bookingService.getAllBookings(getAllBookingsRequest);
         
         // Step 3: Get booking for quick search using booking number
-        AbpResponseBean getBookingForQuickSearchResponse = dashboardService.getBookingForQuickSearch(bookingNumber);
-        
+        GetBookingForQuickSearchResponseBean getBookingForQuickSearchResponse = dashboardService.getBookingForQuickSearch(bookingNumber);
+
         // Extract booking details from GetBookingForQuickSearch response
-        Map<String, Object> bookingQuickSearchResult = objectMapper.convertValue(getBookingForQuickSearchResponse.result(), Map.class);
-        Long bookingIdFromQuickSearch = Long.valueOf(((Number) bookingQuickSearchResult.get("id")).longValue());
-        Integer pickupBranchId = (Integer) bookingQuickSearchResult.get("pickupBranchId");
-        Integer bookingTypeId = (Integer) bookingQuickSearchResult.get("bookingTypeId");
-        String pickupDateFromBooking = (String) bookingQuickSearchResult.get("pickupDate");
-        Integer vehicleIdFromBooking = bookingQuickSearchResult.get("vehicleId") != null ? 
-            ((Number) bookingQuickSearchResult.get("vehicleId")).intValue() : null;
-
-        // Step 4: Check if booking is allowed to be executed
+        GetBookingForQuickSearchResponseBean.BookingQuickSearchResult bookingQuickSearchResult =  getBookingForQuickSearchResponse != null && getBookingForQuickSearchResponse.result() != null ?   getBookingForQuickSearchResponse.result() : null;
+        Integer pickupBranchId = bookingQuickSearchResult != null ? bookingQuickSearchResult.pickupBranchId() : null;
+        Integer bookingTypeId = bookingQuickSearchResult != null ? bookingQuickSearchResult.bookingTypeId() : null;
+        String pickupDateFromBooking = bookingQuickSearchResult != null ? bookingQuickSearchResult.pickupDate() : null;
+        Integer vehicleIdFromBooking = bookingQuickSearchResult != null ? bookingQuickSearchResult.vehicleId() : null;
         AbpResponseBean isAllowedToExecuteResponse = executeBookingService.isAllowedToExecuteBooking(bookingId);
-
-        // Extract customer ID from booking - need to get it from getAllBookings or booking details
-        // Since the booking response structure varies, we'll extract from SearchCustomer after searching
-        // For now, we'll need to search for the customer - the customerId should be in the booking details
-        // Extract customerId from getAllBookings response if available, otherwise we'll need to search
-        Long customerId = null;
-        try {
-            Map<String, Object> allBookingsResult = objectMapper.convertValue(getAllBookingsResponse.result(), Map.class);
-            if (allBookingsResult != null && allBookingsResult.containsKey("items")) {
-                List<Map<String, Object>> items = (List<Map<String, Object>>) allBookingsResult.get("items");
-                if (items != null && !items.isEmpty()) {
-                    Map<String, Object> firstBooking = items.get(0);
-                    if (firstBooking.containsKey("customerId")) {
-                        customerId = Long.valueOf(((Number) firstBooking.get("customerId")).longValue());
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // If extraction fails, we'll try to get it from SearchCustomer
-        }
-
-        // Step 5: Search customer using customerId if we have it, otherwise search will be done later
-        AbpResponseBean searchCustomerResponse = null;
-        if (customerId != null) {
-            SearchCustomerRequestBean searchCustomerRequest = new SearchCustomerRequestBean(
-                customerId, "", "");
-            searchCustomerResponse = executeBookingService.searchCustomer(searchCustomerRequest);
-            // Extract customer details from search response
-            try {
-                List<Map<String, Object>> customers = (List<Map<String, Object>>) searchCustomerResponse.result();
-                if (customers != null && !customers.isEmpty()) {
-                    Map<String, Object> customer = customers.get(0);
-                    customerId = Long.valueOf(((Number) customer.get("id")).longValue());
-                }
-            } catch (Exception e) {
-                // Handle extraction error
-            }
-        }
-
-        // Step 6: Get lite customer
-        if (customerId != null) {
-            executeBookingService.getLiteCustomer(customerId);
-        }
-
-        // Step 7: ValidatePhone/IsValid
-        bookingService.isValidPhone("515546871", "966");
-
-        // Step 8: GetTenantSettingBySettingKey
+        Long customerId =  getAllBookingsResponse.result().data().get(0).driverId();
+        executeBookingService.getLiteCustomer(customerId);
+        bookingService.isValidPhone(getAllBookingsResponse.result().data().getFirst().customerPrimaryPhone().split("-")[1], getAllBookingsResponse.result().data().getFirst().customerPrimaryPhone().split("-")[0]);
         settingsService.getTenantSettingBySettingKey("App.TenantManagement.EnablePageTracking");
 
         // Step 9: GetAllItemsComboboxItems (typeId=26)
@@ -165,16 +119,9 @@ public class ExecuteBookingOperations {
         String dropoffDate = null;
         Integer vehicleYear = null;
         
-        // Extract from booking quick search or getAllBookings
-        try {
-            if (bookingQuickSearchResult.containsKey("vehicleId") && bookingQuickSearchResult.get("vehicleId") != null) {
-                vehicleIdFromBooking = ((Number) bookingQuickSearchResult.get("vehicleId")).intValue();
-            }
-            // Extract modelId and categoryId from booking if available
-            // These might need to come from GetReadyVehiclesByCategoryAndModel response
-        } catch (Exception e) {
-            // Handle extraction error
-        }
+        // vehicleIdFromBooking is already extracted from bookingQuickSearchResult above
+        // Extract modelId and categoryId from booking if available
+        // These might need to come from GetReadyVehiclesByCategoryAndModel response
 
         // Step 15: Get ready vehicles model - need branchId, categoryId, modeId
         // modeId for booking execution is typically 32200, but we should extract from booking if available
@@ -360,8 +307,8 @@ public class ExecuteBookingOperations {
      */
     private ExecuteBookingRequestBean buildExecuteBookingRequest(
             CreateBookingResponseBean createBookingResponse,
-            AbpResponseBean getBookingForQuickSearchResponse,
-            AbpResponseBean getAllBookingsResponse,
+            GetBookingForQuickSearchResponseBean getBookingForQuickSearchResponse,
+            GetAllBookingsResponseBean getAllBookingsResponse,
             GetReadyVehiclesByCategoryAndModelResponseBean getReadyVehiclesResponse,
             CalculateBillingInformationResponseBean calculateBillingResponse,
             GetVehicleCheckPreparationDataResponseBean vehicleCheckPrepResponse,
@@ -505,4 +452,6 @@ public class ExecuteBookingOperations {
             120, null, new ArrayList<>(), vehicleInfo, customerInfo, true, readyVehicleBlockingKey,
             pickupDate, new HashMap<>(), "", driverAuthorizationTypeId, vehicleCheckData);
     }
+
+
 }
