@@ -84,6 +84,7 @@ public class CacheConfiguration implements CachingConfigurer {
                 "openContractDateInputsCache",
                 "authenticationCache",
                 "countrySettingsCache",
+                "getTenantSettingBySettingKeyCache",
                 "branchAvailableModelsForBookingComboboxItemsCache",
                 "integratedLoyaltiesFromLoyaltyApiCache",
                 "externalLoyaltiesConfigurationsItemsFromLoyaltyApiCache",

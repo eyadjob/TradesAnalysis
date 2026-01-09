@@ -16,6 +16,7 @@ import com.beans.loyalty.GetAllExternalLoyaltiesConfigurationsItemsResponseBean;
 import com.beans.loyalty.GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean;
 import com.beans.loyalty.GetIntegratedLoyaltiesResponseBean;
 import com.beans.validation.IsValidPhoneResponseBean;
+import com.pojo.CreateBookingResponseWrapper;
 import com.services.BookingService;
 import com.services.BookingOperationsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -344,7 +345,7 @@ public class BookingController {
      * @return The response containing the created booking request.
      */
     @GetMapping(path = BOOKING_CREATE_BOOKING_WITH_NEW_CUSTOMER_AND_NEW_VEHICLE, produces = "application/json")
-    public CreateBookingResponseBean createBookingWithNewCustomerAndNewVehicle(
+    public CreateBookingResponseWrapper createBookingWithNewCustomerAndNewVehicle(
             @RequestParam(required = true) String countryName,
             @RequestParam(required = true) String branchName) {
 
@@ -355,7 +356,7 @@ public class BookingController {
             throw new IllegalArgumentException("branchName parameter is required.");
         }
 
-        return bookingOperationsService.CreateBookingWithNewCustomerAndNewVehicle(countryName, branchName);
+        return bookingOperationsService.CreateBookingWithNewCustomer(countryName, branchName);
     }
 
 }
