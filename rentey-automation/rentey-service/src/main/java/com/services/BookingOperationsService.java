@@ -4,6 +4,7 @@ import com.beans.booking.*;
 import com.beans.customer.CreateOrUpdateCustomerResponseBean;
 import com.builders.CreateBookingRequestBuilder;
 import com.enums.LookupTypes;
+import com.pojo.CreateBookingResponseWrapper;
 import com.util.DateUtil;
 import com.util.PropertyManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class BookingOperationsService {
      * @param branchName The branch name.
      * @return CreateBookingRequestBean instance.
      */
-    public CreateBookingResponseBean CreateBookingWithNewCustomerAndNewVehicle(String countryName, String branchName) {
+    public CreateBookingResponseWrapper CreateBookingWithNewCustomer(String countryName, String branchName) {
         String countryId = countryService.getOperationalCountryIdFromName(countryName);
         String branchId = countryService.getBranchIdByName(countryId, branchName);
         countryService.getCountrySettings(Integer.parseInt(countryId), countryService.buildKeysForSettingsToGet("keys=App.CountryManagement.MinimumHoursToBooking&keys=App.CountryManagement.MinimumHoursToBrokerBooking&keys=App.CountryManagement.EnablePaymentOnSystemBooking&keys=App.CountryManagement.MaximumHoursToExecuteImmediateBooking&keys=App.CountryManagement.EnableExternalAuthorizationOnBooking&keys=App.CountryManagement.ContractMinimumHours&keys=App.CountryManagement.MaxDaysWhenAddContract&keys=App.CountryManagement.FreeHours&keys=App.CountryManagement.EnableFuelCost&keys=App.CountryManagement.MaxOdometerChange&keys=App.CountryManagement.MediumMaxAmount&keys=App.CountryManagement.ApplyExternalDriverAuthorizationOn"));
@@ -173,8 +174,9 @@ public class BookingOperationsService {
                 .withUserDiscounts(new ArrayList<>())
                 .withBookingOffers(new ArrayList<>())
                 .build();
-
-        return bookingService.createBooking(createBookingRequest);
+        CreateBookingResponseBean createBookingResponseBean= bookingService.createBooking(createBookingRequest);
+        CreateBookingResponseWrapper createBookingResponseWrapper = new CreateBookingResponseWrapper(createBookingResponseBean,createBookingRequest,customerResponseBean);
+        return createBookingResponseWrapper;
     }
 
     /**

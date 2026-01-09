@@ -84,12 +84,19 @@ public class CacheConfiguration implements CachingConfigurer {
                 "openContractDateInputsCache",
                 "authenticationCache",
                 "countrySettingsCache",
+                "getTenantSettingBySettingKeyCache",
                 "branchAvailableModelsForBookingComboboxItemsCache",
                 "integratedLoyaltiesFromLoyaltyApiCache",
                 "externalLoyaltiesConfigurationsItemsFromLoyaltyApiCache",
                 "externalLoyaltiesWithAllowRedeemComboboxFromLoyaltyApiCache",
                 "allRentalRatesSchemasCache",
-                "branchSettingsCache"
+                "branchSettingsCache",
+                "getAllBookingsCache",
+                "getBookingForQuickSearchCache",
+                "searchCustomerCache",
+                "getLiteCustomerCache",
+                "getLiteCarModelCache",
+                "getReadyVehiclesModelCache"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above

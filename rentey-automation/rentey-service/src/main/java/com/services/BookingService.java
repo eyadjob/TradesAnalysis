@@ -1,29 +1,12 @@
 package com.services;
 
 import com.annotation.LogExecutionTime;
-import com.beans.booking.CalculateBillingInformationRequestBean;
-import com.beans.booking.CalculateBillingInformationResponseBean;
-import com.beans.booking.CreateBookingRequestBean;
-import com.beans.booking.CreateBookingResponseBean;
-import com.builders.CreateBookingRequestBuilder;
-import com.beans.booking.GetBestRentalRateForModelResponseBean;
-import com.beans.general.AbpResponseBean;
-import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsRequestBean;
-import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsResponseBean;
-import com.beans.booking.GetCreateBookingDateInputsResponseBean;
-import com.beans.booking.ValidateDurationAndLocationsRequestBean;
-import com.beans.booking.ValidateDurationAndLocationsResponseBean;
-import com.beans.contract.GetExtrasNamesExcludedFromBookingPaymentDetailsResponseBean;
-import com.beans.country.GetCountrySettingsResponseBean;
-import com.beans.customer.CreateOrUpdateCustomerResponseBean;
-import com.beans.customer.GetCountriesPhoneResponseBean;
+import com.beans.booking.*;
 import com.beans.customer.GetCustomerContractInformationByNameResponseBean;
-import com.beans.lookups.GetItemsByTypeResponseBean;
 import com.beans.loyalty.GetAllExternalLoyaltiesConfigurationsItemsResponseBean;
 import com.beans.loyalty.GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean;
 import com.beans.loyalty.GetIntegratedLoyaltiesResponseBean;
 import com.beans.validation.IsValidPhoneResponseBean;
-import com.enums.LookupTypes;
 import com.util.PropertyManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -31,8 +14,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 
@@ -42,45 +23,32 @@ import java.util.Map;
 @Service
 public class BookingService {
 
+    private static final Map<String, String> userDefinedVariables = PropertyManager.loadPropertyFileIntoMap("user-defined-variables.properties");
+    @Autowired
+    CountryService countryService;
+    @Autowired
+    LookupsService lookupsService;
+    @Autowired
+    CustomerService customerService;
+    @Autowired
+    VehicleService vehicleService;
+    @Autowired
+    VehicleOperationsService vehicleOperationsService;
+    @Autowired
+    ContractService contractService;
+    @Autowired
+    CustomerOperationsService customerOperationsService;
+    @Autowired
+    SettingsService settingsService;
     @Autowired
     @Qualifier("settingsWebClient")
     private WebClient settingsWebClient;
-
-    private static final Map<String, String> userDefinedVariables = PropertyManager.loadPropertyFileIntoMap("user-defined-variables.properties");
-
     @Autowired
     @Qualifier("apiBasePath")
     private String apiBasePath;
-
     @Autowired
     @Qualifier("apiBasePathWithoutService")
     private String apiBasePathWithoutService;
-
-    @Autowired
-    CountryService countryService;
-
-    @Autowired
-    LookupsService lookupsService;
-
-    @Autowired
-    CustomerService customerService;
-
-    @Autowired
-    VehicleService vehicleService;
-
-    @Autowired
-    VehicleOperationsService vehicleOperationsService;
-
-    @Autowired
-    ContractService contractService;
-
-    @Autowired
-    CustomerOperationsService customerOperationsService;
-
-    @Autowired
-    SettingsService settingsService;
-
-
 
     /**
      * Get create booking date inputs.
@@ -108,7 +76,7 @@ public class BookingService {
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
      * @param phoneNumber The phone number to validate (required).
-     * @param phoneCode The phone code (country code) to validate (required).
+     * @param phoneCode   The phone code (country code) to validate (required).
      * @return The response containing the validation result (true if valid, false otherwise).
      */
     @Cacheable(cacheNames = "isValidPhoneCache", keyGenerator = "AutoKeyGenerator")
@@ -150,11 +118,11 @@ public class BookingService {
      * Get best rental rate for model.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param countryId The country ID (required).
-     * @param branchId The branch ID (required).
-     * @param modelId The model ID (required).
-     * @param year The year (required).
-     * @param pickupDate The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @param countryId   The country ID (required).
+     * @param branchId    The branch ID (required).
+     * @param modelId     The model ID (required).
+     * @param year        The year (required).
+     * @param pickupDate  The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
      * @param dropoffDate The dropoff date (required, format: yyyy-MM-dd HH:mm:ss).
      * @return The response containing the best rental rate for the model.
      */
@@ -223,8 +191,8 @@ public class BookingService {
      * Validate duration and locations.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param request The request containing booking information for validation.
-     * @param pickupDate The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @param request     The request containing booking information for validation.
+     * @param pickupDate  The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
      * @param dropoffDate The dropoff date (required, format: yyyy-MM-dd HH:mm:ss).
      * @return The response containing validation results.
      */
@@ -274,6 +242,7 @@ public class BookingService {
                 .map(model -> model.value())
                 .orElse("-1");
     }
+
     public String getCategoryIddByCategoryName(GetBranchAvailableModelsForBookingComboboxItemsRequestBean request, String categoryName) {
         return getBranchAvailableModelsForBookingComboboxItems(request).result().items().stream().filter(m -> m.displayText().equals(categoryName)).findFirst().map(m -> m.value()).orElse("-1");
     }
@@ -282,10 +251,10 @@ public class BookingService {
      * Validate prevent renting restriction.
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
-     * @param customerId The customer ID (required).
+     * @param customerId     The customer ID (required).
      * @param pickupBranchId The pickup branch ID (required).
      * @param vehicleModelId The vehicle model ID (required).
-     * @param pickupDate The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
+     * @param pickupDate     The pickup date (required, format: yyyy-MM-dd HH:mm:ss).
      * @return The response containing validation results.
      */
     @LogExecutionTime
@@ -323,11 +292,11 @@ public class BookingService {
                 .uri(uriBuilder -> {
                     var builder = uriBuilder
                             .path(apiBasePath + "/ExternalLoyaltyConfiguration/GetAllExternalLoyaltiesConfigurationsItems");
-                    
+
                     if (includeInActive != null) {
                         builder.queryParam("includeInActive", includeInActive);
                     }
-                    
+
                     return builder.build();
                 })
                 .retrieve()
@@ -357,7 +326,7 @@ public class BookingService {
      * Authorization header and all headers from RenteyConfiguration are automatically included.
      *
      * @param customerId The customer ID (required).
-     * @param branchId The branch ID (required).
+     * @param branchId   The branch ID (required).
      * @return The response containing external loyalties with allow redeem combobox items.
      */
     @Cacheable(cacheNames = "externalLoyaltiesWithAllowRedeemComboboxCache", keyGenerator = "AutoKeyGenerator")
@@ -384,7 +353,7 @@ public class BookingService {
      */
     @Cacheable(cacheNames = "getAllBookingsCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
-    public AbpResponseBean getAllBookings(String request) {
+    public GetAllBookingsResponseBean getAllBookings(String request) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -392,7 +361,7 @@ public class BookingService {
                         .queryParam("Request", request)
                         .build())
                 .retrieve()
-                .bodyToMono(AbpResponseBean.class)
+                .bodyToMono(GetAllBookingsResponseBean.class)
                 .block();
     }
 }

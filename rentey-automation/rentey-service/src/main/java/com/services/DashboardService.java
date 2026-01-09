@@ -1,7 +1,7 @@
 package com.services;
 
 import com.annotation.LogExecutionTime;
-import com.beans.general.AbpResponseBean;
+import com.beans.booking.GetBookingForQuickSearchResponseBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,7 +31,7 @@ public class DashboardService {
      */
     @Cacheable(cacheNames = "getBookingForQuickSearchCache", keyGenerator = "AutoKeyGenerator")
     @LogExecutionTime
-    public AbpResponseBean getBookingForQuickSearch(String bookingNo) {
+    public GetBookingForQuickSearchResponseBean getBookingForQuickSearch(String bookingNo) {
         // Authorization header and all headers from RenteyConfiguration are automatically included
         return settingsWebClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -39,7 +39,7 @@ public class DashboardService {
                         .queryParam("bookingNo", bookingNo)
                         .build())
                 .retrieve()
-                .bodyToMono(AbpResponseBean.class)
+                .bodyToMono(GetBookingForQuickSearchResponseBean.class)
                 .block();
     }
 }

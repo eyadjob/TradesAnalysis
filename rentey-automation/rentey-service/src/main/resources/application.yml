@@ -8,6 +8,8 @@ spring:
       fail-on-invalid-subtype: false
       fail-on-null-for-primitives: false
     default-property-inclusion: non_null
+  codec:
+    max-in-memory-size: 50MB
   profiles:
     active: 2
   datasource:

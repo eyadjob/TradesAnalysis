@@ -4,6 +4,7 @@ import com.beans.booking.CalculateBillingInformationRequestBean;
 import com.beans.booking.CalculateBillingInformationResponseBean;
 import com.beans.booking.CreateBookingRequestBean;
 import com.beans.booking.CreateBookingResponseBean;
+import com.beans.booking.GetAllBookingsResponseBean;
 import com.beans.booking.GetBestRentalRateForModelResponseBean;
 import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsRequestBean;
 import com.beans.booking.GetBranchAvailableModelsForBookingComboboxItemsResponseBean;
@@ -11,11 +12,11 @@ import com.beans.booking.GetCreateBookingDateInputsResponseBean;
 import com.beans.booking.ValidateDurationAndLocationsRequestBean;
 import com.beans.booking.ValidateDurationAndLocationsResponseBean;
 import com.beans.customer.GetCustomerContractInformationByNameResponseBean;
-import com.beans.general.AbpResponseBean;
 import com.beans.loyalty.GetAllExternalLoyaltiesConfigurationsItemsResponseBean;
 import com.beans.loyalty.GetExternalLoyaltiesWithAllowRedeemComboboxResponseBean;
 import com.beans.loyalty.GetIntegratedLoyaltiesResponseBean;
 import com.beans.validation.IsValidPhoneResponseBean;
+import com.pojo.CreateBookingResponseWrapper;
 import com.services.BookingService;
 import com.services.BookingOperationsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ public class BookingController {
      * @return The response containing all bookings matching the request criteria.
      */
     @GetMapping(path = BOOKING_GET_ALL_BOOKINGS, produces = "application/json")
-    public AbpResponseBean getAllBookings(
+    public GetAllBookingsResponseBean getAllBookings(
             @RequestParam(required = true) String request) {
 
         if (request == null || request.isEmpty()) {
@@ -344,7 +345,7 @@ public class BookingController {
      * @return The response containing the created booking request.
      */
     @GetMapping(path = BOOKING_CREATE_BOOKING_WITH_NEW_CUSTOMER_AND_NEW_VEHICLE, produces = "application/json")
-    public CreateBookingResponseBean createBookingWithNewCustomerAndNewVehicle(
+    public CreateBookingResponseWrapper createBookingWithNewCustomerAndNewVehicle(
             @RequestParam(required = true) String countryName,
             @RequestParam(required = true) String branchName) {
 
@@ -355,7 +356,7 @@ public class BookingController {
             throw new IllegalArgumentException("branchName parameter is required.");
         }
 
-        return bookingOperationsService.CreateBookingWithNewCustomerAndNewVehicle(countryName, branchName);
+        return bookingOperationsService.CreateBookingWithNewCustomer(countryName, branchName);
     }
 
 }

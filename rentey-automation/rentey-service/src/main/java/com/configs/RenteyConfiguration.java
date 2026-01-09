@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
@@ -35,15 +34,12 @@ public class RenteyConfiguration {
             @Value("${settings.api.headers.origin}") String origin,
             @Value("${settings.api.headers.referer}") String referer) {
         
-        // Increase buffer limit to 10MB to handle large responses
-        final int size = 10 * 1024 * 1024;
-        final ExchangeStrategies strategies = ExchangeStrategies.builder()
-                .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
-                .build();
+        // Increase buffer limit to 50MB to handle large responses (e.g., getReadyVehiclesByCategoryAndModel)
+        final int size = 50 * 1024 * 1024; // 50MB
         
         return WebClient.builder()
                 .baseUrl(baseUrl)
-                .exchangeStrategies(strategies)
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(size))
                 // Add Authorization header filter FIRST, so it's applied to all requests
                 // This filter dynamically retrieves the token from authorization-service and adds it as "Bearer <token>"
                 .filter(AuthorizationHeaderFilter.addAuthorizationHeader(authorizationTokenService))
@@ -112,15 +108,12 @@ public class RenteyConfiguration {
             @Value("${settings.api.headers.origin}") String origin,
             @Value("${settings.api.headers.referer}") String referer) {
         
-        // Increase buffer limit to 10MB to handle large responses
-        final int size = 10 * 1024 * 1024;
-        final ExchangeStrategies strategies = ExchangeStrategies.builder()
-                .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(size))
-                .build();
+        // Increase buffer limit to 50MB to handle large responses
+        final int size = 50 * 1024 * 1024; // 50MB
         
         return WebClient.builder()
                 .baseUrl(baseUrl)
-                .exchangeStrategies(strategies)
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(size))
                 // NOTE: No AuthorizationHeaderFilter here to avoid circular dependency
                 // AuthorizationService provides tokens, so it doesn't need a token to authenticate
                 .filter(WebClientLoggingFilter.logRequestAndResponse())

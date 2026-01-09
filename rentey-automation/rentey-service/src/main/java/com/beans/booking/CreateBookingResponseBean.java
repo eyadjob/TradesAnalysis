@@ -15,8 +15,8 @@ public record CreateBookingResponseBean(
         @JsonProperty("error") Object error,
         @JsonProperty("unAuthorizedRequest") Boolean unAuthorizedRequest,
         @JsonProperty("__abp") Boolean abp
+
 ) implements ResponsePayload {
-    
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record BookingResult(
             @JsonProperty("bookingId") Integer bookingId,
