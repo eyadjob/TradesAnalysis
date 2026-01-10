@@ -179,39 +179,96 @@ public class WebClientLoggingFilter {
 
     /**
      * Logs response details including the body.
-     * Uses ClientResponse.from() to create a cached version that can be read multiple times.
+     * For large responses, skips body logging to avoid buffer limit issues.
+     * Properly caches the body so it can be read multiple times.
      */
     private static Mono<ClientResponse> logResponseDetailsWithBody(ClientResponse response) {
         logger.info("=== Response from External API ===");
         logger.info("Status: {}", response.statusCode());
         logger.info("Headers: {}", formatHeaders(response.headers().asHttpHeaders()));
         
-        // Read the body, log it, and recreate the response using ClientResponse.from()
-        return response.bodyToMono(String.class)
-                .defaultIfEmpty("")
-                .flatMap(body -> {
+        // Check Content-Length header to decide if we should attempt body logging
+        String contentLength = response.headers().asHttpHeaders().getFirst(HttpHeaders.CONTENT_LENGTH);
+        boolean isLargeResponse = false;
+        if (contentLength != null) {
+            try {
+                long length = Long.parseLong(contentLength);
+                // Skip body logging for responses larger than 500KB to avoid buffer limit issues
+                isLargeResponse = length > 500 * 1024;
+            } catch (NumberFormatException e) {
+                // If we can't parse content length, assume it might be large
+            }
+        }
+        
+        if (isLargeResponse) {
+            // For large responses, skip body logging to avoid buffer limit exceptions
+            logger.info("Response Body: (skipped - response too large for logging, size: {} bytes)", 
+                    contentLength != null ? contentLength : "unknown");
+            logger.info("==================================");
+            // Return response as-is - the service will handle deserialization with proper codec config
+            return Mono.just(response);
+        }
+        
+        // For smaller responses, buffer the body properly so it can be read multiple times
+        // We need to read the body as DataBuffers, copy them, log it, then recreate the response
+        DataBufferFactory bufferFactory = new DefaultDataBufferFactory();
+        
+        return response.bodyToFlux(DataBuffer.class)
+                .collectList()
+                .flatMap(dataBuffers -> {
+                    // Copy DataBuffers and build body string for logging
+                    StringBuilder bodyBuilder = new StringBuilder();
+                    java.util.List<DataBuffer> copiedBuffers = new java.util.ArrayList<>(dataBuffers.size());
+                    
+                    for (DataBuffer buffer : dataBuffers) {
+                        // Copy the buffer so we can reuse it
+                        byte[] bytes = new byte[buffer.readableByteCount()];
+                        int position = buffer.readPosition();
+                        buffer.read(bytes);
+                        buffer.readPosition(position); // Reset position for original buffer
+                        
+                        // Create a copy of the buffer for the cached response
+                        DataBuffer copiedBuffer = bufferFactory.wrap(bytes);
+                        copiedBuffers.add(copiedBuffer);
+                        
+                        // Build string for logging
+                        bodyBuilder.append(new String(bytes, StandardCharsets.UTF_8));
+                    }
+                    
+                    String bodyString = bodyBuilder.toString();
+                    
                     // Log the response body
-                    if (body != null && !body.trim().isEmpty()) {
-                        logger.info("Response Body: {}", body);
+                    if (bodyString != null && !bodyString.trim().isEmpty()) {
+                        if (bodyString.length() > 10000) {
+                            logger.info("Response Body (truncated, size: {} bytes): {}...", 
+                                    bodyString.length(), bodyString.substring(0, 10000));
+                        } else {
+                            logger.info("Response Body: {}", bodyString);
+                        }
                     } else {
                         logger.info("Response Body: (empty)");
                     }
                     logger.info("==================================");
                     
-                    // Recreate the ClientResponse with the cached body
-                    // Convert string body to DataBuffer for the response
-                    DataBufferFactory bufferFactory = new DefaultDataBufferFactory();
-                    DataBuffer dataBuffer = bufferFactory.wrap((body != null ? body : "").getBytes());
+                    // Create a new cached response with the copied DataBuffers
+                    // This allows the body to be read multiple times
+                    ClientResponse cachedResponse = ClientResponse.from(response)
+                            .body(Flux.fromIterable(copiedBuffers))
+                            .build();
                     
-                    return Mono.just(ClientResponse.create(response.statusCode())
-                            .headers(headers -> headers.addAll(response.headers().asHttpHeaders()))
-                            .body(flux -> Flux.just(dataBuffer))
-                            .build());
+                    return Mono.just(cachedResponse);
                 })
+                .timeout(java.time.Duration.ofSeconds(30))
                 .onErrorResume(error -> {
-                    logger.warn("Error reading response body: {}", error.getMessage());
+                    // If body reading fails (buffer limit or other), skip body logging
+                    if (error instanceof org.springframework.core.io.buffer.DataBufferLimitException) {
+                        logger.info("Response Body: (too large to log - buffer limit exceeded)");
+                    } else {
+                        logger.warn("Could not read response body for logging: {}", error.getMessage());
+                        logger.info("Response Body: (skipped)");
+                    }
                     logger.info("==================================");
-                    // Return original response if body reading fails
+                    // Return original response - let the service handle it
                     return Mono.just(response);
                 });
     }

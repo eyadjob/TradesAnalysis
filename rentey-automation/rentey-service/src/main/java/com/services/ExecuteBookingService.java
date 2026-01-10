@@ -6,6 +6,7 @@ import com.beans.contract.ValidateCustomerResponseBean;
 import com.beans.customer.IsCustomerEligibleForCustomerProvidersIntegrationResponseBean;
 import com.beans.customer.SearchCustomerRequestBean;
 import com.beans.general.AbpResponseBean;
+import com.beans.vehicle.GetBookingVehiclesResponseBean;
 import com.beans.vehicle.GetReadyVehiclesByCategoryAndModelRequestBean;
 import com.beans.vehicle.GetReadyVehiclesByCategoryAndModelResponseBean;
 import com.beans.vehicle.GetReadyVehiclesModelResponseBean;
@@ -208,6 +209,57 @@ public class ExecuteBookingService {
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(AbpResponseBean.class)
+                .block();
+    }
+
+    /**
+     * Get booking vehicles.
+     * Authorization header and all headers from RenteyConfiguration are automatically included.
+     *
+     * @param branchId The branch ID (required).
+     * @param modelId The model ID (required).
+     * @param year The year (required).
+     * @param rentalRateId The rental rate ID (required).
+     * @param contractType The contract type (required).
+     * @param isSpotOrganizationBookingUpgrade Whether spot organization booking upgrade is enabled.
+     * @param isBooked Whether to include booked vehicles.
+     * @param isVehiclesMaintenancePlanShown Whether to show vehicles maintenance plan.
+     * @param sourceId The source ID (required).
+     * @param rentalType The rental type (required).
+     * @param modeId The mode ID (required).
+     * @return The response containing booking vehicles information.
+     */
+    @LogExecutionTime
+    public GetBookingVehiclesResponseBean getBookingVehicles(
+            Integer branchId,
+            Integer modelId,
+            Integer year,
+            Integer rentalRateId,
+            Integer contractType,
+            Boolean isSpotOrganizationBookingUpgrade,
+            Boolean isBooked,
+            Boolean isVehiclesMaintenancePlanShown,
+            Integer sourceId,
+            Integer rentalType,
+            Integer modeId) {
+        // Authorization header and all headers from RenteyConfiguration are automatically included
+        return settingsWebClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBasePath + "/RentalVehicle/GetBookingVehicles")
+                        .queryParam("BranchId", branchId)
+                        .queryParam("ModelId", modelId)
+                        .queryParam("Year", year)
+                        .queryParam("RentalRateId", rentalRateId)
+                        .queryParam("ContractType", contractType)
+                        .queryParam("IsSpotOrganizationBookingUpgrade", isSpotOrganizationBookingUpgrade)
+                        .queryParam("IsBooked", isBooked)
+                        .queryParam("IsVehiclesMaintenancePlanShown", isVehiclesMaintenancePlanShown)
+                        .queryParam("SourceId", sourceId)
+                        .queryParam("RentalType", rentalType)
+                        .queryParam("ModeId", modeId)
+                        .build())
+                .retrieve()
+                .bodyToMono(GetBookingVehiclesResponseBean.class)
                 .block();
     }
 }

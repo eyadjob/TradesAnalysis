@@ -96,7 +96,8 @@ public class CacheConfiguration implements CachingConfigurer {
                 "searchCustomerCache",
                 "getLiteCustomerCache",
                 "getLiteCarModelCache",
-                "getReadyVehiclesModelCache"
+                "getReadyVehiclesModelCache",
+                "getBookingVehiclesCache"
         ));
         
         // Allow dynamic cache creation for any cache name not listed above

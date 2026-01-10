@@ -107,10 +107,8 @@ public class ExecuteBookingOperations {
         int vehicleModelId = Integer.parseInt(createBookingResponseWrapper.getCreateBookingRequestBean().modelId());
         GetReadyVehiclesModelResponseBean getReadyVehiclesModelResponse = executeBookingService.getReadyVehiclesModel(pickupBranchId, vehicleCategoryId, modeId);
         GetReadyVehiclesByCategoryAndModelRequestBean getReadyVehiclesRequest = new GetReadyVehiclesByCategoryAndModelRequestBean(vehicleCategoryId, vehicleModelId, pickupBranchId, false, false);
-        GetReadyVehiclesByCategoryAndModelResponseBean getReadyVehiclesResponse = executeBookingService.getReadyVehiclesByCategoryAndModel(getReadyVehiclesRequest);
-//        Integer      readyVehiclesModelId = getReadyVehiclesResponse.result().items().get(0).modelId();
-//        Integer      vehicleCategoryId = getReadyVehiclesResponse.result().items().get(0).categoryId();
-//        Integer      vehicleYear = getReadyVehiclesResponse.result().items().get(0).year();
+//        GetReadyVehiclesByCategoryAndModelResponseBean getReadyVehiclesResponse = executeBookingService.getReadyVehiclesByCategoryAndModel(getReadyVehiclesRequest);
+        GetBookingVehiclesResponseBean readyVehiclesResponse = executeBookingService.getBookingVehicles(pickupBranchId,vehicleModelId,createBookingResponseWrapper.createBookingRequestBean.year(),createBookingResponseWrapper.createBookingRequestBean.rentalRateId(),230,false,false,false,120,32100,32200);
         ValidateContractInfoRequestBean.CustomerInfo customerInfo = new ValidateContractInfoRequestBean.CustomerInfo(
                 customerId, null); // identityId should be extracted from customer response
         ValidateContractInfoRequestBean validateContractInfoRequest = new ValidateContractInfoRequestBean(vehicleIdFromBooking, pickupBranchId, pickupBranchId, pickupDateFromBooking, dropoffDate, String.valueOf(bookingId), customerInfo, true);
@@ -147,11 +145,7 @@ public class ExecuteBookingOperations {
         CalculateBillingInformationResponseBean calculateBillingResponse = null;
         // Extract rentalRateId from getReadyVehiclesResponse
         Integer rentalRateId = null;
-        if (getReadyVehiclesResponse != null && getReadyVehiclesResponse.result() != null &&
-                getReadyVehiclesResponse.result().items() != null && !getReadyVehiclesResponse.result().items().isEmpty()) {
-            rentalRateId = getReadyVehiclesResponse.result().items().get(0).rentalRate().rentalRateId();
-        }
-
+//        rentalRateId = getReadyVehiclesResponse.result().items().get(0).rentalRate().rentalRateId();
         CalculateBillingInformationRequestBean calculateBillingRequest = new CalculateBillingInformationRequestBean(
                 vehicleIdFromBooking, rentalRateId, pickupDateFromBooking, dropoffDate, 210, 2300,
                 pickupBranchId, pickupBranchId, null, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(),
@@ -167,7 +161,7 @@ public class ExecuteBookingOperations {
         // Build ExecuteBookingRequestBean from all collected data
         ExecuteBookingRequestBean executeBookingRequest = buildExecuteBookingRequest(
                 createBookingResponseWrapper.getCreateBookingResponseBean(), getBookingForQuickSearchResponse, getAllBookingsResponse,
-                getReadyVehiclesResponse, calculateBillingResponse, vehicleCheckPrepResponse,
+                readyVehiclesResponse, calculateBillingResponse, vehicleCheckPrepResponse,
                 vehicleIdFromBooking, customerId, pickupBranchId, pickupDateFromBooking, dropoffDate,
                 readyVehicleBlockingKey, bookingId, cancelDriverAuthRequest, authorizeDriverRequest);
         return executeBookingService.executeBooking(executeBookingRequest);
@@ -181,7 +175,7 @@ public class ExecuteBookingOperations {
             CreateBookingResponseBean createBookingResponse,
             GetBookingForQuickSearchResponseBean getBookingForQuickSearchResponse,
             GetAllBookingsResponseBean getAllBookingsResponse,
-            GetReadyVehiclesByCategoryAndModelResponseBean getReadyVehiclesResponse,
+            GetBookingVehiclesResponseBean getReadyVehiclesResponse,
             CalculateBillingInformationResponseBean calculateBillingResponse,
             GetVehicleCheckPreparationDataResponseBean vehicleCheckPrepResponse,
             Integer vehicleId, Long customerId, Integer pickupBranchId, String pickupDate, String dropoffDate,
