@@ -5,6 +5,7 @@ import com.beans.contract.ValidateCustomerResponseBean;
 import com.beans.customer.IsCustomerEligibleForCustomerProvidersIntegrationResponseBean;
 import com.beans.customer.SearchCustomerRequestBean;
 import com.beans.general.AbpResponseBean;
+import com.beans.vehicle.GetBookingVehiclesResponseBean;
 import com.beans.vehicle.GetReadyVehiclesByCategoryAndModelRequestBean;
 import com.beans.vehicle.GetReadyVehiclesByCategoryAndModelResponseBean;
 import com.beans.vehicle.GetReadyVehiclesModelResponseBean;
@@ -188,6 +189,67 @@ public class ExecuteBookingController {
         }
 
         return executeBookingService.validateCustomer(customerId);
+    }
+
+    /**
+     * Get booking vehicles.
+     * This endpoint automatically calls the authorization-service to get the refreshToken
+     * and uses it in the Authorization header when calling the external API.
+     *
+     * @param branchId The branch ID (required).
+     * @param modelId The model ID (required).
+     * @param year The year (required).
+     * @param rentalRateId The rental rate ID (required).
+     * @param contractType The contract type (required).
+     * @param isSpotOrganizationBookingUpgrade Whether spot organization booking upgrade is enabled (default: false).
+     * @param isBooked Whether to include booked vehicles (default: false).
+     * @param isVehiclesMaintenancePlanShown Whether to show vehicles maintenance plan (default: false).
+     * @param sourceId The source ID (required).
+     * @param rentalType The rental type (required).
+     * @param modeId The mode ID (required).
+     * @return The response containing booking vehicles information.
+     */
+    @GetMapping(path = RENTAL_VEHICLE_GET_BOOKING_VEHICLES, produces = "application/json")
+    public GetBookingVehiclesResponseBean getBookingVehicles(
+            @RequestParam(required = true) Integer branchId,
+            @RequestParam(required = true) Integer modelId,
+            @RequestParam(required = true) Integer year,
+            @RequestParam(required = true) Integer rentalRateId,
+            @RequestParam(required = true) Integer contractType,
+            @RequestParam(required = false, defaultValue = "false") Boolean isSpotOrganizationBookingUpgrade,
+            @RequestParam(required = false, defaultValue = "false") Boolean isBooked,
+            @RequestParam(required = false, defaultValue = "false") Boolean isVehiclesMaintenancePlanShown,
+            @RequestParam(required = true) Integer sourceId,
+            @RequestParam(required = true) Integer rentalType,
+            @RequestParam(required = true) Integer modeId) {
+
+        if (branchId == null) {
+            throw new IllegalArgumentException("branchId parameter is required.");
+        }
+        if (modelId == null) {
+            throw new IllegalArgumentException("modelId parameter is required.");
+        }
+        if (year == null) {
+            throw new IllegalArgumentException("year parameter is required.");
+        }
+        if (rentalRateId == null) {
+            throw new IllegalArgumentException("rentalRateId parameter is required.");
+        }
+        if (contractType == null) {
+            throw new IllegalArgumentException("contractType parameter is required.");
+        }
+        if (sourceId == null) {
+            throw new IllegalArgumentException("sourceId parameter is required.");
+        }
+        if (rentalType == null) {
+            throw new IllegalArgumentException("rentalType parameter is required.");
+        }
+        if (modeId == null) {
+            throw new IllegalArgumentException("modeId parameter is required.");
+        }
+
+        return executeBookingService.getBookingVehicles(branchId, modelId, year, rentalRateId, contractType,
+                isSpotOrganizationBookingUpgrade, isBooked, isVehiclesMaintenancePlanShown, sourceId, rentalType, modeId);
     }
 
     /**

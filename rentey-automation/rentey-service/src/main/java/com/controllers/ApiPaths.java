@@ -122,6 +122,7 @@ public final class ApiPaths {
     public static final String RENTAL_VEHICLE_GET_READY_VEHICLES_MODEL = "/RentalVehicle/GetReadyVehiclesModel";
     public static final String RENTAL_VEHICLE_BLOCK_VEHICLE_USAGE_FOR_LONG_PERIOD = "/RentalVehicle/BlockVehicleUsageForLongPeriod";
     public static final String RENTAL_VEHICLE_GET_READY_VEHICLES_BY_CATEGORY_AND_MODEL = "/RentalVehicle/GetReadyVehiclesByCategoryAndModel";
+    public static final String RENTAL_VEHICLE_GET_BOOKING_VEHICLES = "/RentalVehicle/GetBookingVehicles";
     public static final String VEHICLE_CHECK_GET_PREPARATION_DATA = "/VehicleCheck/GetVehicleCheckPreparationData";
     public static final String RENTAL_VEHICLE_RECEIVE_NEW_VEHICLE = "/RentalVehicle/ReceiveNewVehicle";
     
